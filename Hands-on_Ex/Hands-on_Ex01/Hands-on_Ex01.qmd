@@ -163,4 +163,118 @@ glimpse(listings_sf)
 ```
 
 # Geoprocessing with sf package
+
 sf package also offers a wide range of geoprocessing (also known as GIS analysis) functions.
+
+## Buffering
+
+**The scenario:**
+
+The authority is planning to upgrade the exiting cycling paths. To do so, they need to acquire 5 metres of reserved land on both sides of the current cycling path. You are tasked to determine the extend of the land needed to be acquired and their total area.
+
+**The solution:**
+
+Firstly, `st_buffer()` of sf package is used to compute the 5-meter buffers around cycling paths.
+
+```{r}
+buffer_cycling <- st_buffer(cyclingpath,
+                            dist = 5,
+                            nQuadSegs = 30)
+```
+
+This is followed by calculating the area of the buffers.
+
+```{r}
+buffer_cycling$AREA <- st_area(buffer_cycling)
+```
+
+Lastly, `sum()` of Base R will be used to derive the total land involved.
+
+```{r}
+sum(buffer_cycling$AREA)
+```
+
+## Point-in-polygon count
+
+**The scenario:**
+
+A pre-school service group want to find out the numbers of pre-schools in each Planning Subzone.
+
+**The solution:**
+
+The code chunk below performs two operations at one go. Firstly, identify pre-schools located inside each Planning Subzone by using `st_intersects()`. Next, `length()` of Base R is used to calculate numbers of pre-schools that fall inside each planning subzone.
+
+```{r}
+mpsz3414$`PreSch Count` <- lengths(st_intersects(mpsz3414, preschool3414))
+summary(mpsz3414$`PreSch Count`)
+```
+
+To list the planning subzone with the most number of pre-school, the `top_n()` of dplyr package is used as shown in the code chunk below.
+
+```{r}
+top_n(mpsz3414, 1, `PreSch Count`)
+```
+
+### DIY: Calculate the density of pre-school by planning subzone
+
+The solution:
+
+Firstly, the code below uses `st_area()` of sf package to derive the area of each planning subzone.
+
+```{r}
+mpsz3414$Area <- mpsz3414 %>%
+  st_area()
+```
+
+Next, `mutate()` of dplyr package is used to compute the density.
+
+```{r}
+mpsz3414 <- mpsz3414 %>%
+  mutate(`PreSch Density` = `PreSch Count`/Area * 1000000)
+```
+
+# Exploratory Data Analysis (EDA)
+
+In practice, many geospatial analytics start with EDA. In this section, you will learn how to use appropriate [ggplot2](http://ggplot2.tidyverse.org) functions to create functional and yet truthful statistical graphs for EDA purposes.
+
+Firstly, we will plot a histogram to reveal the distribution of `PreSch Density`. Conventionally, `hist()` of R Graphics will be used as shown below.
+
+```{r}
+hist(mpsz3414$`PreSch Density`)
+```
+
+Although the syntax is easy, the function has limited customization.
+
+In the code below, appropriate ggplot2 functions will be used.
+
+```{r}
+ggplot(data = mpsz3414,
+       aes(x= as.numeric(`PreSch Density`)))+
+  geom_histogram(bins=20,
+                 color="black",
+                 fill="light blue") +
+  labs(title = "Are pre-schools evenly distributed in Singapore?",
+       subtitle = "There are many planning sub-zones with a single pre-school, on the other hand, \nthere are two planning sub-zones with at least 20 pre-schools.",
+       x = "Pre-school density (per km sq)",
+       y = "Frequency")
+
+```
+
+### DIY: Using ggplot2 method
+Plot a scatterplot showing the relatinoship between Pre-school Density and Pre-school Count
+
+The solution:
+
+```{r}
+ggplot(data=mpsz3414,
+       aes(y = `PreSch Count`,
+           x = as.numeric(`PreSch Density`))) +
+  geom_point(color='black',
+             fill='light blue') + 
+  xlim(0,40) +
+  ylim(0,40) +
+  labs (title = "",
+        x = "Pre-school density (per km sq)",
+        y = "Pre-school count")
+
+```
