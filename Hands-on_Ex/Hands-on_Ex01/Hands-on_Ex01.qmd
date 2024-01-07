@@ -1,0 +1,31 @@
+---
+title: "Hands-on Exercise 1: Geospatial Data Wrangling with R"
+execute:
+  warning: False  # This turns off warning messages being displayed
+date: "`r Sys.Date()`"  # This will automatically pull the current date
+---
+
+# Getting Started
+
+## Installing and loading R packages
+
+In this section, I will install and load tidyverse and sf packages.
+
+```{r}
+pacman::p_load(tidyverse, sf)
+```
+
+# Importing Geospatial Data in Shapefile format
+
+```{r}
+mpsz <- st_read(dsn = "data/geospatial",
+                layer = "MP14_SUBZONE_WEB_PL")
+```
+
+## Plotting the Geospatial Data
+
+```{r}
+#| echo: true  # This turns on/off the code block
+#| eval: true  # This turns on/off the results
+plot(mpsz)
+```
