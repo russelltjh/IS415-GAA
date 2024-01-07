@@ -15,17 +15,152 @@ In this section, I will install and load tidyverse and sf packages.
 pacman::p_load(tidyverse, sf)
 ```
 
-# Importing Geospatial Data in Shapefile format
+# Importing Geospatial Data
+
+The data sources are:
+
+-   Master Plan 2014 Subzone Boundary (Web) from [data.gov.sg](https://beta.data.gov.sg/collections/1708/view)
+
+-   Pre-Schools Location from [data.gov.sg](https://beta.data.gov.sg/collections/2064/view)
+
+-   Cycling Path from [LTADataMall](https://datamall.lta.gov.sg/content/datamall/en/search_datasets.html?searchText=cycling%20path)
+
+-   Latest version of Singapore Airbnb listing data from [Inside Airbnb](http://insideairbnb.com/)
+
+## Importing polygon feature data in Shapefile format
+
+Import "MP14_SUBZONE_WEB_PL" shapefile into R as a polygon feature data frame.
 
 ```{r}
 mpsz <- st_read(dsn = "data/geospatial",
                 layer = "MP14_SUBZONE_WEB_PL")
+# dsn: defines the data path
+# layer: defines the name of the shapefile
+# no file extension is required to be specified here
 ```
 
-## Plotting the Geospatial Data
+## Importing polyline feature data in Shapefile format
+
+Import "CyclingPath" shapefile into R as a line feature data frame.
+
+```{r}
+cyclingpath = st_read(dsn = "data/geospatial",
+                      layer = "CyclingPathGazette")
+```
+
+## Importing GIS data in kml format
+
+Import "PreSchoolsLocation" kml file into R
+
+```{r}
+preschool = st_read("data/geospatial/PreSchoolsLocation.kml")
+# kml file extension needs to be specified
+```
+
+# Checking the Content of a Simple Feature Data Frame
+
+```{r}
+st_geometry(mpsz)
+```
+
+```{r}
+glimpse(mpsz)
+```
+
+```{r}
+head(mpsz, n=5)
+```
+
+# Plotting the Geospatial Data
 
 ```{r}
 #| echo: true  # This turns on/off the code block
 #| eval: true  # This turns on/off the results
 plot(mpsz)
+plot(st_geometry(mpsz))
+plot(mpsz["PLN_AREA_N"])
 ```
+
+# Working with Projection
+
+In order to perform geoprocessing using two geospatial data we need to ensure that both geospatial data are projected using similar coordinate system.
+
+In this section, we will project a simple feature data frame from one coordinate system to another coordinate system. The technical term of this process is called **Projection Transformation**.
+
+## Assigning EPSG code to a simple feature data frame
+
+One common issue that can happen during importing geospatial data into R is that the coordinate system of the source data wasis missing (such as due to missing .proj for ESRI shapefile) or wrongly assigned during the importing process.
+
+This is an example using the `mpsz` simple feature data frame.
+
+```{r}
+st_crs(mpsz)
+```
+
+Although `mpsz` data frame is projected in svy21, the EPSG is 9001 as indicated at the end of the print. This is the wrong EPSG code as the correct code for svy21 should be [3414](http://epsg.io/3414). We need to assign the correct EPSG code.
+
+```{r}
+mpsz3414 <- st_set_crs(mpsz, 3414)
+st_crs(mpsz3414)
+```
+
+## Transforming the projection of preschool from wgs84 to svy21
+
+In geospatial analytics, it is very common for us to transform the original data from **GEOGRAPHIC** coordinate system to **PROJECTED** coordinate system. This is because geographic coordinate system is not appropriate if the analysis needs to use distance or/and area measurements.
+
+This is an example using the preschool simple feature data frame.
+
+```{r}
+st_geometry(preschool)
+```
+
+The Geodetic CRS for preschool is wgs84. We will transform that.
+
+This is a scenario that `st_set_crs()` is not appropriate and `st_transform()` of sf package should be used. This is because we need to re-project the data frame from one coordinate system to another coordinate system mathematically.
+
+```{r}
+preschool3414 <- st_transform(preschool,crs = 3414)
+st_geometry(preschool3414)
+```
+
+It is in svy21 projected coordinated system now.
+
+Furthermore, if you refer to Bounding box:, the values are greater than 0-360 range of decimal degree commonly used by most of the geographic coordinate systems. If `st_set_crs()` was used, the bounding box would not have changed.
+
+# Importing Aspatial Data
+
+Since the listings data set is in csv format, we will use `read_csv()` to import listing.csv.\
+The output R object is called listings and it is a [tibble data frame](http://r4ds.had.co.nz/tibbles.html)
+
+```{r}
+listings <- read_csv("data/aspatial/listings.csv")
+list(listings)
+```
+
+Two useful fields we are going to use in the next phase are `latitude` and `longitude`. Note that they are in decimal degree format. As a best guess, we will assume that the data is in **wgs84** Geographic Coordinate System.
+
+## Creating a simple feature data frame from an aspatial data frame
+
+```{r}
+listings_sf <- st_as_sf(listings,
+                        coords = c("longitude","latitude"),
+                        crs=4326) %>%
+  st_transform(crs = 3414)
+```
+
+Notes from the code above:
+
+-   *coords* argument requires you to provide the column name of the x-coordinates first then followed by the column name of the y-coordinates.
+
+-   *crs* argument requires you to provide the coordinates system in epsg format. [EPSG:4326](https://epsg.io/4326) is wgs84 Geographic Coordinate System and [EPSG:3414](https://epsg.io/3414) is Singapore SVY21 Projected Coordinate System. You can search for other country's epsg code by referring to [epsg.io](http://epsg.io).
+
+-   *%\>%* is used to nest `st_transform()` to transform the newly created simple feature data frame into svy21 projected coordinates system.
+
+Let's examine the content of the new simple feature data frame.
+
+```{r}
+glimpse(listings_sf)
+```
+
+# Geoprocessing with sf package
+sf package also offers a wide range of geoprocessing (also known as GIS analysis) functions.
