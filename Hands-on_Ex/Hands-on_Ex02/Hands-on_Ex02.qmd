@@ -1,5 +1,6 @@
 ---
-title: "Hands-on Exercise 2: Choropeth Mapping with R"
+title: "Choropeth Mapping with R"
+subtitle: "Hands-on Exercise 2"
 execute:
   warning: False  # This turns off warning messages being displayed
 date: 8 January, 2024
@@ -53,3 +54,41 @@ Two data set will be used to create the Choropeth map.
     -   Downloaded from [Department of Statistics, Singapore](https://singstat.gov.sg)
 
     -   Although it does not contain any coordinate values, it's PA and SZ fields can be used as unique identifiers to geocode to `MP14_SUBZONE_WEB_PL` shapefile.
+
+## Importing Geospatial Data
+
+```{r}
+mpsz <- st_read(dsn = "../../data/geospatial/MP14_SUBZONE_WEB_PL",
+                layer = "MP14_SUBZONE_WEB_PL")
+mpsz
+```
+
+## Importing Attribute Data
+
+We will import *`repopagesextod2011to2020.csv`* file and save it as a R dataframe called *popdata.*
+
+Using `read_csv()` from readr package:
+
+```{r}
+popdata <- read_csv("../../data/aspatial/respopagesextod2011to2020/respopagesextod2011to2020.csv")
+```
+
+## Data Preparation
+
+Before a thematic map can be prepared, we must prepare a data table with year 2020 values. The data table should include the variables PA, SZ, YOUNG, ECONOMY ACTIVE, AGED, TOTAL, DEPENDENCY.
+
+-   YOUNG: age group 0 to 4 until age group 20 to 24
+
+-   ECONOMY ACTIVE: age group 25-29 until age group 60-64
+
+-   AGED: age group 65 and above
+
+-   TOTAL: all age group
+
+-   DEPENDENCY: the ratio between young and aged against economy active group
+
+#### Data Wrangling
+
+#### Joining the Attribute data and Geospatial data
+
+# Choropleth Mapping Geospatial Data using `tmap`

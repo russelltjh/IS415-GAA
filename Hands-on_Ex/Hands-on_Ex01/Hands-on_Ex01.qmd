@@ -1,9 +1,11 @@
 ---
-title: "Hands-on Exercise 1: Geospatial Data Wrangling with R"
+title: "Geospatial Data Wrangling with R"
+subtitle: "Hands-on Exercise 1"
 execute:
   warning: False  # This turns off warning messages being displayed
 date: 8 January, 2024
 date-modified: "last-modified"
+editor: visual
 ---
 
 Geospatial Data Science is a process of importing, wrangling, integrating, and processing geographically referenced data sets. In this exercise, we will perform geospatial data science tasks in R by using the `sf` package.
