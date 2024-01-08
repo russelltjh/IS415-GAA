@@ -2,7 +2,6 @@
 title: "Hands-on Exercise 1: Geospatial Data Wrangling with R"
 execute:
   warning: False  # This turns off warning messages being displayed
-# date: "`r Sys.Date()`"  # This will automatically pull the current date
 date: 8 January, 2024
 date-modified: "last-modified"
 ---
@@ -36,7 +35,7 @@ The data sources are:
 Import "MP14_SUBZONE_WEB_PL" shapefile into R as a polygon feature data frame.
 
 ```{r}
-mpsz <- st_read(dsn = "data/geospatial",
+mpsz <- st_read(dsn = "../../data/geospatial/MP14_SUBZONE_WEB_PL",
                 layer = "MP14_SUBZONE_WEB_PL")
 # dsn: defines the data path
 # layer: defines the name of the shapefile
@@ -48,7 +47,7 @@ mpsz <- st_read(dsn = "data/geospatial",
 Import "CyclingPath" shapefile into R as a line feature data frame.
 
 ```{r}
-cyclingpath = st_read(dsn = "data/geospatial",
+cyclingpath = st_read(dsn = "../../data/geospatial/CyclingPath",
                       layer = "CyclingPathGazette")
 ```
 
@@ -57,7 +56,7 @@ cyclingpath = st_read(dsn = "data/geospatial",
 Import "PreSchoolsLocation" kml file into R
 
 ```{r}
-preschool = st_read("data/geospatial/PreSchoolsLocation.kml")
+preschool = st_read("../../data/geospatial/PreSchoolsLocation/PreSchoolsLocation.kml")
 # kml file extension needs to be specified
 ```
 
@@ -137,7 +136,7 @@ Since the listings data set is in csv format, we will use `read_csv()` to import
 The output R object is called listings and it is a [tibble data frame](http://r4ds.had.co.nz/tibbles.html)
 
 ```{r}
-listings <- read_csv("data/aspatial/listings.csv")
+listings <- read_csv("../../data/aspatial/AirbnbListings/listings.csv")
 list(listings)
 ```
 

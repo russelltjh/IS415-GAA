@@ -10,6 +10,8 @@ website:
       menu:
         - text: "Hands-on Exercise 1"
           href: "Hands-on_Ex/Hands-on_Ex01/Hands-on_Ex01.html"
+        - text: "Hands-on Exercise 2"
+          href: "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html"
     right:
       - href: index.qmd
         text: Home
@@ -18,25 +20,6 @@ website:
   page-footer: 
     left: "Russell Tio" 
     right:
-      - icon: linkedin
-        href: https://www.linkedin.com/in/russelltio/
-      #- icon: github
-      #  href: https://github.com/russelltjh
-        
-  sidebar:
-    style: "floating"
-    search: true
-    contents: 
-      - text: "Hands-on Exercise"
-        contents:
-        - text: "Hands-on Exercise 1"
-          href: "Hands-on_Ex/Hands-on_Ex01/Hands-on_Ex01.html"
-        - text: "Hands-on Exercise 2"
-          href: "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html"
-      - text: "In-Class Exercise"
-        contents:
-        - text: "In-Class Exercise 1"
-    tools:
       - icon: linkedin
         href: https://www.linkedin.com/in/russelltio/
       #- icon: github

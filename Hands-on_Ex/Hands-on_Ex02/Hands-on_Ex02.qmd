@@ -31,3 +31,25 @@ In this section, we will use:
 ```{r}
 pacman::p_load(sf, tmap, tidyverse)
 ```
+
+# Importing Data
+
+Two data set will be used to create the Choropeth map.
+
+-   Master Plan 2014 Subzone Boundary (Web) (i.e. `MP14_SUBZONE_WEB_PL`)
+
+    -   ESRI shapefile format (Geospatial data)
+
+    -   Downloaded from [data.gov.sg](https://data.gov.sg)
+
+    -   Consists of the geographical boundary of Singapore at the planning subzone level.
+
+    -   The data is based on URA Master Plan 2014
+
+-   Singapore Residents by Planning Area / Subzone, Age Group, Sex and Type of Dwelling, June 2011-2020 (i.e. `respopagesextod2011to2020.csv`)
+
+    -   CSV format (Aspatial data)
+
+    -   Downloaded from [Department of Statistics, Singapore](https://singstat.gov.sg)
+
+    -   Although it does not contain any coordinate values, it's PA and SZ fields can be used as unique identifiers to geocode to `MP14_SUBZONE_WEB_PL` shapefile.
