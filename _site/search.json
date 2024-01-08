@@ -4,7 +4,7 @@
     "href": "index.html",
     "title": "IS415-GAA",
     "section": "",
-    "text": "Welcome to IS415 Geospatial Analytics and Applications\nThis is the course website of IS415 which I am studying this term.\nYou will find my course work on this website."
+    "text": "Welcome to IS415 Geospatial Analytics and Applications\nThis is the course website of IS415 which I am studying this term.\nYou will find my course work on this website.\n\n\n\n Back to top"
   },
   {
     "objectID": "about.html",
@@ -18,14 +18,14 @@
     "href": "Hands-on_Ex/Hands-on_Ex01/Hands-on_Ex01.html",
     "title": "Hands-on Exercise 1: Geospatial Data Wrangling with R",
     "section": "",
-    "text": "In this section, I will install and load tidyverse and sf packages.\n\npacman::p_load(tidyverse, sf)"
+    "text": "Geospatial Data Science is a process of importing, wrangling, integrating, and processing geographically referenced data sets. In this exercise, we will perform geospatial data science tasks in R by using the sf package."
   },
   {
     "objectID": "Hands-on_Ex/Hands-on_Ex01/Hands-on_Ex01.html#installing-and-loading-r-packages",
     "href": "Hands-on_Ex/Hands-on_Ex01/Hands-on_Ex01.html#installing-and-loading-r-packages",
     "title": "Hands-on Exercise 1: Geospatial Data Wrangling with R",
-    "section": "",
-    "text": "In this section, I will install and load tidyverse and sf packages.\n\npacman::p_load(tidyverse, sf)"
+    "section": "Installing and loading R packages",
+    "text": "Installing and loading R packages\nIn this section, I will install and load tidyverse and sf packages.\n\npacman::p_load(tidyverse, sf)"
   },
   {
     "objectID": "Hands-on_Ex/Hands-on_Ex01/Hands-on_Ex01.html#plotting-the-geospatial-data",
@@ -89,5 +89,19 @@
     "title": "Hands-on Exercise 1: Geospatial Data Wrangling with R",
     "section": "Point-in-polygon count",
     "text": "Point-in-polygon count\nThe scenario:\nA pre-school service group want to find out the numbers of pre-schools in each Planning Subzone.\nThe solution:\nThe code chunk below performs two operations at one go. Firstly, identify pre-schools located inside each Planning Subzone by using st_intersects(). Next, length() of Base R is used to calculate numbers of pre-schools that fall inside each planning subzone.\n\nmpsz3414$`PreSch Count` &lt;- lengths(st_intersects(mpsz3414, preschool3414))\nsummary(mpsz3414$`PreSch Count`)\n\n   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. \n   0.00    0.00    4.00    7.09   10.00   72.00 \n\n\nTo list the planning subzone with the most number of pre-school, the top_n() of dplyr package is used as shown in the code chunk below.\n\ntop_n(mpsz3414, 1, `PreSch Count`)\n\nSimple feature collection with 1 feature and 16 fields\nGeometry type: MULTIPOLYGON\nDimension:     XY\nBounding box:  xmin: 39655.33 ymin: 35966 xmax: 42940.57 ymax: 38622.37\nProjected CRS: SVY21 / Singapore TM\n  OBJECTID SUBZONE_NO     SUBZONE_N SUBZONE_C CA_IND PLN_AREA_N PLN_AREA_C\n1      189          2 TAMPINES EAST    TMSZ02      N   TAMPINES         TM\n     REGION_N REGION_C          INC_CRC FMEL_UPD_D   X_ADDR   Y_ADDR SHAPE_Leng\n1 EAST REGION       ER 21658EAAF84F4D8D 2014-12-05 41122.55 37392.39   10180.62\n  SHAPE_Area                       geometry PreSch Count\n1    4339824 MULTIPOLYGON (((42196.76 38...           72\n\n\n\nDIY: Calculate the density of pre-school by planning subzone\nThe solution:\nFirstly, the code below uses st_area() of sf package to derive the area of each planning subzone.\n\nmpsz3414$Area &lt;- mpsz3414 %&gt;%\n  st_area()\n\nNext, mutate() of dplyr package is used to compute the density.\n\nmpsz3414 &lt;- mpsz3414 %&gt;%\n  mutate(`PreSch Density` = `PreSch Count`/Area * 1000000)"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html",
+    "href": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html",
+    "title": "Hands-on Exercise 2: Choropeth Mapping with R",
+    "section": "",
+    "text": "Thematic mapping involves the use of map symbols to visualize selected properties of geographic features that are not naturally visible, such as population, temperature, crime rate, and property prices, just to mention a few of them.\nGeovisualization, on the other hand, works by providing graphical ideation to render a place, a phenomenon or a process visible, enabling human’s most powerful information-processing abilities - those of spatial cognition associated with our eye-brain vision system - to be directly brought to bear.\nIn this chapter, you will learn how to plot functional and truthful choropleth maps by using R package called tmap package."
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#installing-and-loading-r-packages",
+    "href": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#installing-and-loading-r-packages",
+    "title": "Hands-on Exercise 2: Choropeth Mapping with R",
+    "section": "Installing and loading R packages",
+    "text": "Installing and loading R packages\nIn this section, we will use:\n\ntmap\nreadr for importing delimited text file\ntidyr for tidying data\ndplyr for wrangling data\nsf for handling geospatial data\n\n\npacman::p_load(sf, tmap, tidyverse)"
   }
 ]

@@ -2,8 +2,12 @@
 title: "Hands-on Exercise 1: Geospatial Data Wrangling with R"
 execute:
   warning: False  # This turns off warning messages being displayed
-date: "`r Sys.Date()`"  # This will automatically pull the current date
+# date: "`r Sys.Date()`"  # This will automatically pull the current date
+date: 8 January, 2024
+date-modified: "last-modified"
 ---
+
+Geospatial Data Science is a process of importing, wrangling, integrating, and processing geographically referenced data sets. In this exercise, we will perform geospatial data science tasks in R by using the `sf` package.
 
 # Getting Started
 
@@ -261,6 +265,7 @@ ggplot(data = mpsz3414,
 ```
 
 ### DIY: Using ggplot2 method
+
 Plot a scatterplot showing the relatinoship between Pre-school Density and Pre-school Count
 
 The solution:

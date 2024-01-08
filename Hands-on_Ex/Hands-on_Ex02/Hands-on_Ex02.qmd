@@ -1,0 +1,33 @@
+---
+title: "Hands-on Exercise 2: Choropeth Mapping with R"
+execute:
+  warning: False  # This turns off warning messages being displayed
+date: 8 January, 2024
+date-modified: "last-modified"
+---
+
+Thematic mapping involves the use of map symbols to visualize selected properties of geographic features that are not naturally visible, such as population, temperature, crime rate, and property prices, just to mention a few of them.
+
+Geovisualization, on the other hand, works by providing graphical ideation to render a place, a phenomenon or a process visible, enabling human's most powerful information-processing abilities - those of spatial cognition associated with our eye-brain vision system - to be directly brought to bear.
+
+In this chapter, you will learn how to plot functional and truthful choropleth maps by using R package called **tmap** package.
+
+# Getting Started
+
+## Installing and loading R packages
+
+In this section, we will use:
+
+-   `tmap`
+
+-   `readr` for importing delimited text file
+
+-   `tidyr` for tidying data
+
+-   `dplyr` for wrangling data
+
+-   `sf` for handling geospatial data
+
+```{r}
+pacman::p_load(sf, tmap, tidyverse)
+```
