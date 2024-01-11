@@ -89,6 +89,149 @@ Before a thematic map can be prepared, we must prepare a data table with year 20
 
 #### Data Wrangling
 
+The following data wrangling and transformation functions will be used:
+
+-   `pivot_wider()` of **tidyr** package
+
+-   `mutate()`, `filter()`, `group_by()` and `select()` of **dplyr** package
+
+```{r}
+popdata2020 <- popdata %>%
+  filter(Time == 2020) %>%
+  group_by(PA, SZ, AG) %>%
+  summarise(`POP` = sum(`Pop`)) %>%
+  ungroup()%>%
+  pivot_wider(names_from=AG, 
+              values_from=POP) %>%
+  mutate(YOUNG = rowSums(.[3:6])
+         +rowSums(.[12])) %>%
+mutate(`ECONOMY ACTIVE` = rowSums(.[7:11])+
+rowSums(.[13:15]))%>%
+mutate(`AGED`=rowSums(.[16:21])) %>%
+mutate(`TOTAL`=rowSums(.[3:21])) %>%  
+mutate(`DEPENDENCY` = (`YOUNG` + `AGED`)
+/`ECONOMY ACTIVE`) %>%
+  select(`PA`, `SZ`, `YOUNG`, 
+       `ECONOMY ACTIVE`, `AGED`, 
+       `TOTAL`, `DEPENDENCY`)
+```
+
 #### Joining the Attribute data and Geospatial data
 
+Before we can perform the georelational join, one extra step is required to convert the values in PA and SZ fields to uppercase. This is because the values of PA and SZ fields are made up of upper- and lowercase. On the other, hand the SUBZONE_N and PLN_AREA_N are in uppercase.
+
+```{r}
+popdata2020 <- popdata2020 %>%
+  mutate_at(.vars = vars(PA, SZ), 
+          .funs = list(toupper)) %>%
+  filter(`ECONOMY ACTIVE` > 0)
+```
+
+Next, `left_join()` of **dplyr** is used to join the geographical data and attribute table using planning subzone name e.g. *SUBZONE_N* and *SZ* as the common identifier.
+
+```{r}
+mpsz_pop2020 <- left_join(mpsz, popdata2020,
+                          by = c("SUBZONE_N" = "SZ"))
+```
+
+Thing to learn from the code chunk above:
+
+-   `left_join()` of **dplyr** package is used with `mpsz` simple feature data frame as the left data table is to ensure that the output will be a simple features data frame.
+
+```{r}
+write_rds(mpsz_pop2020, "../../data/rds/mpszpop2020.rds")
+```
+
 # Choropleth Mapping Geospatial Data using `tmap`
+
+## Plotting a Choropleth map quickly using `qtm()`
+
+```{r}
+tmap_mode("plot")
+qtm(mpsz_pop2020,
+    fill = "DEPENDENCY")
+```
+
+## Creating a Choropleth map by using `tmap`'s elements
+
+```{r}
+tm_shape(mpsz_pop2020)+
+  tm_fill("DEPENDENCY",
+          style = "quantile",
+          palette = "Blues",
+          title = "Dependency ratio") +
+  tm_layout(main.title = "Distribution of Dependency Ratio by planning subzone",
+            main.title.position = "center",
+            main.title.size = 1.2,
+            legend.height = 0.45,
+            legend.width = 0.35,
+            frame = TRUE) +
+  tm_borders(alpha = 0.5) + 
+  tm_compass(type="8star", size = 2) +
+  tm_scale_bar() +
+  tm_grid(alpha=0.2) +
+  tm_credits("Source: Planning Sub-zone boundary from Urban Redevelopment Authority (URA)\n and Population data from Department of Statistics DOS",
+             position = c("left", "bottom"))
+```
+
+### Drawing a base map
+
+```{R}
+tm_shape(mpsz_pop2020) +
+  tm_polygons()
+```
+
+### Drawing a choropleth map using `tm_polygons()`
+
+```{r}
+tm_shape(mpsz_pop2020) +
+  tm_polygons("DEPENDENCY")
+```
+
+### Drawing a choropleth map using `tm_fill()` and `tm_border()`
+
+```{r}
+tm_shape(mpsz_pop2020) +
+  tm_fill("DEPENDENCY")
+```
+
+```{r}
+tm_shape(mpsz_pop2020) +
+  tm_fill("DEPENDENCY") +
+  tm_borders(lwd = 0.1, alpha = 1)
+```
+
+## Data Classification methods of `tmap`
+
+### Plotting choropleth maps with built-in classification methods
+
+```{r}
+tm_shape(mpsz_pop2020) + 
+  tm_fill("DEPENDENCY",
+          n = 5,
+          style = "jenks") +
+  tm_borders(alpha = 0.5)
+```
+
+```{r}
+tm_shape(mpsz_pop2020) +
+  tm_fill("DEPENDENCY",
+          n = 5,
+          style = "equal") + 
+  tm_borders(alpha = 0.5)
+```
+
+### Plotting choropleth map with custom break
+
+```{r}
+summary(mpsz_pop2020$DEPENDENCY)
+```
+
+```{r}
+tm_shape(mpsz_pop2020)+
+  tm_fill("DEPENDENCY",
+          breaks = c(0, 0.60, 0.70, 0.80, 0.90, 1.00)) +
+  tm_borders(alpha = 0.5)
+```
+
+## Colour Scheme
