@@ -8,7 +8,7 @@
 
 <meta name="dcterms.date" content="2024-01-15">
 
-<title>IS415-GAA - 1st Order Spatial Point Patterns Analysis Methods</title>
+<title>IS415-GAA - R for Geospatial Data Science</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -150,6 +150,17 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </li>  
     </ul>
   </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-take-home-exercise" role="button" data-bs-toggle="dropdown" aria-expanded="false" rel="" target="">
+ <span class="menu-text">Take-home Exercise</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-take-home-exercise">    
+        <li>
+    <a class="dropdown-item" href="../../Take-home_Ex/Take-home_Ex01/Take-home_Ex01.html" rel="" target="">
+ <span class="dropdown-text">Take-home Exercise 1</span></a>
+  </li>  
+    </ul>
+  </li>
 </ul>
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item">
@@ -176,13 +187,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#overview" id="toc-overview" class="nav-link active" data-scroll-target="#overview">Overview</a></li>
-  <li><a href="#the-data" id="toc-the-data" class="nav-link" data-scroll-target="#the-data">The Data</a></li>
-  <li><a href="#installing-and-loading-the-r-packages" id="toc-installing-and-loading-the-r-packages" class="nav-link" data-scroll-target="#installing-and-loading-the-r-packages">Installing and Loading the R packages</a></li>
-  <li><a href="#spatial-data-wrangling" id="toc-spatial-data-wrangling" class="nav-link" data-scroll-target="#spatial-data-wrangling">Spatial Data Wrangling</a>
-  <ul class="collapse">
-  <li><a href="#importing-the-spatial-data" id="toc-importing-the-spatial-data" class="nav-link" data-scroll-target="#importing-the-spatial-data">Importing the spatial data</a></li>
-  </ul></li>
+  <li><a href="#getting-started" id="toc-getting-started" class="nav-link active" data-scroll-target="#getting-started">Getting Started</a></li>
   </ul>
 </nav>
     </div>
@@ -191,8 +196,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">1st Order Spatial Point Patterns Analysis Methods</h1>
-<p class="subtitle lead">Hands-on Exercise 3-1</p>
+<h1 class="title">R for Geospatial Data Science</h1>
+<p class="subtitle lead">In-class Exercise 2</p>
 </div>
 
 
@@ -219,82 +224,21 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 </header>
 
-<section id="overview" class="level1">
-<h1>Overview</h1>
-<p>Spatial Point Pattern Analysis is the evaluation of the pattern or distribution, of a set of points on a surface. The point can be a location of:</p>
+<section id="getting-started" class="level1">
+<h1>Getting Started</h1>
+<p>The following R packages will be used:</p>
 <ul>
-<li><p>events such as crime, traffic accident and disease onset</p></li>
-<li><p>business services (coffee and fast-food outlets) or facilities such as childcare and elder-care</p></li>
+<li><p>arrow</p></li>
+<li><p>lubridate</p></li>
+<li><p>tidyverse</p></li>
+<li><p>tmap</p></li>
+<li><p>sf</p></li>
 </ul>
-<p>Using appropriate functions of <code>spatstat</code>, this hands-on exercise aims to discover the spatial point processes of childcare centers in Singapore.</p>
-<p>The specific questions we would like to answer are as follows:</p>
-<ul>
-<li><p>Are childcare centers in Singapore randomly distributed throughout the country?</p></li>
-<li><p>If the answer is not, then the next logical question is where are the locations with higher concentration of childcare centers?</p></li>
-</ul>
-</section>
-<section id="the-data" class="level1">
-<h1>The Data</h1>
-<p>To provide answers to the questions above, three data sets will be used. They are:</p>
-<ul>
-<li><p><code>CHILDCARE</code></p>
-<ul>
-<li><p>a point feature data providing both location and attribute information of childcare centers.</p></li>
-<li><p>Downloaded from Data.gov.sg and is in geojson format</p></li>
-</ul></li>
-<li><p><code>MP14_SUBZONE_WEB_PL</code></p>
-<ul>
-<li><p>a polygon feature data providing information of URA 2014 Master Plan Planning Subzone boundary data.</p></li>
-<li><p>Downloaded from Data.gov.sg and is in ESRI shapefile format</p></li>
-</ul></li>
-<li><p><code>CostalOutline</code></p>
-<ul>
-<li><p>a polygon feature data showing the national boundary of Singapore.</p></li>
-<li><p>Provided by SLA and is in ESRI shapefile format</p></li>
-</ul></li>
-</ul>
-</section>
-<section id="installing-and-loading-the-r-packages" class="level1">
-<h1>Installing and Loading the R packages</h1>
-<p>In this hands-on exercise, five R packages will be used, they are:</p>
-<ul>
-<li><p><a href="https://r-spatial.github.io/sf/"><strong>sf</strong></a></p>
-<ul>
-<li>a relatively new R package specially designed to import, manage and process vector-based geospatial data in R</li>
-</ul></li>
-<li><p><a href="https://spatstat.org/"><strong>spatstat</strong></a></p>
-<ul>
-<li><p>which has a wide range of useful functions for point pattern analysis.</p></li>
-<li><p>In this hands-on exercise, it will be used to perform 1st- and 2nd-order spatial point patterns analysis and derive kernel density estimation (KDE) layer.</p></li>
-</ul></li>
-<li><p><a href="https://cran.r-project.org/web/packages/raster/"><strong>raster</strong></a></p>
-<ul>
-<li><p>which reads, writes, manipulates, analyses and model gridded spatial data (i.e.&nbsp;raster).</p></li>
-<li><p>In this hands-on exercise, it will be used to convert image output generated by <strong>spatstat</strong> into raster format</p></li>
-</ul></li>
-<li><p><a href="https://cran.r-project.org/web/packages/maptools/"><strong>maptools</strong></a></p>
-<ul>
-<li><p>which provides a set of tools for manipulating geographic data.</p></li>
-<li><p>In this hands-on exercise, we mainly use it to convert <code>Spatial</code> objects into <code>ppp</code> format of <strong>spatstat</strong>.</p></li>
-</ul></li>
-<li><p><a href="https://cran.r-project.org/web/packages/tmap/"><strong>tmap</strong></a></p>
-<ul>
-<li>which provides functions for plotting cartographic quality static point pattern maps or interactive maps by using <a href="https://leafletjs.com/">leaflet</a> API</li>
-</ul></li>
-</ul>
-<p>Use the code below to install and launch the five R packages.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(maptools, sf, raster, spatstat, tmap)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(sf, tmap, tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-</section>
-<section id="spatial-data-wrangling" class="level1">
-<h1>Spatial Data Wrangling</h1>
-<section id="importing-the-spatial-data" class="level2">
-<h2 class="anchored" data-anchor-id="importing-the-spatial-data">Importing the spatial data</h2>
-<p>In this section, <code>st_read()</code> of <strong>sf</strong> package will be used to import these three geospatial data sets into R.</p>
 
 
-</section>
 </section>
 
 <a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Back to top</a></main> <!-- /main -->

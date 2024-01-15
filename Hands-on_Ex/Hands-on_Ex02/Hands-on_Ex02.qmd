@@ -297,7 +297,7 @@ The code below shows a `quantile` data classification that uses 5 classes.
 tm_shape(mpsz_pop2020) + 
   tm_fill("DEPENDENCY",
           n = 5,
-          style = "jenks") +
+          style = "quantile") +
   tm_borders(alpha = 0.5)
 ```
 

@@ -1,0 +1,26 @@
+---
+title: "R for Geospatial Data Science"
+subtitle: "In-class Exercise 2"
+execute:
+  warning: False  # This turns off warning messages being displayed
+date: 15 January, 2024
+date-modified: "last-modified"
+---
+
+# Getting Started
+
+The following R packages will be used:
+
+-   arrow
+
+-   lubridate
+
+-   tidyverse
+
+-   tmap
+
+-   sf
+
+```{r}
+pacman::p_load(sf, tmap, tidyverse)
+```
