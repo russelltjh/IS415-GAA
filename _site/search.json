@@ -1,17 +1,171 @@
 [
   {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "IS415-GAA",
+    "objectID": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01.html",
+    "href": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01.html",
+    "title": "Application of Spatial Point Patterns Analysis to discover the geographical distribution of Grab hailing services in Singapore",
     "section": "",
-    "text": "Welcome to IS415 Geospatial Analytics and Applications\nThis is the course website of IS415 which I am studying this term.\nYou will find my course work on this website.\n\n\n\n Back to top"
+    "text": "Human mobility, the movement of human beings in space and time, reflects the spatial-temporal characteristics of human behavior. With the advancement of Information and Communication Technologies (ICT) especially smart phone, a large volume of data related to human mobility have been collected. By using appropriate GIS analysis methods, these data are potentially useful in supporting smart city planning and management."
+  },
+  {
+    "objectID": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01.html#aspatial-data",
+    "href": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01.html#aspatial-data",
+    "title": "Application of Spatial Point Patterns Analysis to discover the geographical distribution of Grab hailing services in Singapore",
+    "section": "Aspatial data",
+    "text": "Aspatial data\nFor the purpose of this assignment, Grab-Posisi of Singapore will be used"
+  },
+  {
+    "objectID": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01.html#geospatial-data",
+    "href": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01.html#geospatial-data",
+    "title": "Application of Spatial Point Patterns Analysis to discover the geographical distribution of Grab hailing services in Singapore",
+    "section": "Geospatial data",
+    "text": "Geospatial data\n\nRoad data set from OpenStreetMap of Geofabrik download server. The Malaysia, Singapore, and Brunei coverage should be downloaded.\nMaster Plan 2019 Subzone Boundary (No Sea) from Data.gov.sg"
+  },
+  {
+    "objectID": "In-class_Ex/In-class_Ex02/In-class_Ex02.html",
+    "href": "In-class_Ex/In-class_Ex02/In-class_Ex02.html",
+    "title": "R for Geospatial Data Science",
+    "section": "",
+    "text": "The following R packages will be used:\n\narrow\n\nTo handle cross-language development platform to handle databases and data conversion. (e.g. read Parquet files)\n\nlubridate\n\nTo work with date and time. Part of the tidyverse family, but needs to be installed independently.\n\ntidyverse\n\nA family of R packages commonly used for data science work\n\ntmap\nsf\n\n\n\nCode\npacman::p_load(arrow, lubridate, tidyverse, tmap, sf)"
+  },
+  {
+    "objectID": "In-class_Ex/In-class_Ex02/In-class_Ex02.html#extracting-trip-starting-locations",
+    "href": "In-class_Ex/In-class_Ex02/In-class_Ex02.html#extracting-trip-starting-locations",
+    "title": "R for Geospatial Data Science",
+    "section": "Extracting trip starting locations",
+    "text": "Extracting trip starting locations\n\nextracting trips’ origin locations\nderive three new columns (i.e. variables) for weekday, starting hour and day of the month\nname the output tibble data.frame origin_df\n\n\n\nCode\norigin_df &lt;- df %&gt;%\n  group_by(trj_id) %&gt;%\n  arrange(pingtimestamp) %&gt;% # from dplyr package\n  filter(row_number()==1) %&gt;%\n  mutate(weekday = wday(pingtimestamp, # functions from lubridate package\n                        label=TRUE,\n                        abbr=TRUE),\n         start_hr = factor(hour(pingtimestamp)), # With factor(), it makes it ordinal\n         day = factor(mday(pingtimestamp)))\nview(origin_df)"
+  },
+  {
+    "objectID": "In-class_Ex/In-class_Ex02/In-class_Ex02.html#extract-trip-ending-locations",
+    "href": "In-class_Ex/In-class_Ex02/In-class_Ex02.html#extract-trip-ending-locations",
+    "title": "R for Geospatial Data Science",
+    "section": "Extract trip ending locations",
+    "text": "Extract trip ending locations\n\nextracting trips’ ending locations\nderive three new columns for weekday, ending hour and day of the month\nname the output tibble data.frame destination_df\n\n\n\nCode\ndestination_df &lt;- df %&gt;%\n  group_by(trj_id) %&gt;%\n  arrange(desc(pingtimestamp)) %&gt;% # from dplyr package\n  filter(row_number()==1) %&gt;%\n  mutate(weekday = wday(pingtimestamp, # functions from lubridate package\n                        label=TRUE,\n                        abbr=TRUE),\n         end_hr = factor(hour(pingtimestamp)), # With factor(), it makes it ordinal\n         day = factor(mday(pingtimestamp)))\nview(destination_df)"
+  },
+  {
+    "objectID": "In-class_Ex/In-class_Ex02/In-class_Ex02.html#save-the-extracted-data",
+    "href": "In-class_Ex/In-class_Ex02/In-class_Ex02.html#save-the-extracted-data",
+    "title": "R for Geospatial Data Science",
+    "section": "Save the extracted data",
+    "text": "Save the extracted data\n\n\nCode\nwrite_rds(origin_df,\"../../data/rds/In-class_Ex/origin_df.rds\")\nwrite_rds(destination_df,\"../../data/rds/In-class_Ex/destination_df.rds\")"
+  },
+  {
+    "objectID": "In-class_Ex/In-class_Ex02/In-class_Ex02.html#import-saved-data",
+    "href": "In-class_Ex/In-class_Ex02/In-class_Ex02.html#import-saved-data",
+    "title": "R for Geospatial Data Science",
+    "section": "Import saved data",
+    "text": "Import saved data\n\n\nCode\norigin_df &lt;- read_rds(\"../../data/rds/In-class_Ex/origin_df.rds\")\ndestination_df &lt;- read_rds(\"../../data/rds/In-class_Ex/destination_df.rds\")\n\n\n\nVisualizing frequency distribution\n\n\nCode\n#ggplot(data = origin_df,\n#       weekday)"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html",
+    "href": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html",
+    "title": "Choropeth Mapping with R",
+    "section": "",
+    "text": "Thematic mapping involves the use of map symbols to visualize selected properties of geographic features that are not naturally visible, such as population, temperature, crime rate, and property prices, just to mention a few of them.\nGeoVisualization, on the other hand, works by providing graphical ideation to render a place, a phenomenon or a process visible, enabling human’s most powerful information-processing abilities - those of spatial cognition associated with our eye-brain vision system - to be directly brought to bear.\nIn this chapter, you will learn how to plot functional and truthful choropleth maps by using R package called tmap package."
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#the-data",
+    "href": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#the-data",
+    "title": "Choropeth Mapping with R",
+    "section": "The Data",
+    "text": "The Data\nTwo data set will be used to create the choropeth map.\n\nMaster Plan 2014 Subzone Boundary (Web) (i.e. MP14_SUBZONE_WEB_PL)\n\nESRI shapefile format (Geospatial data)\nDownloaded from data.gov.sg\nConsists of the geographical boundary of Singapore at the planning subzone level.\nThe data is based on URA Master Plan 2014\n\nSingapore Residents by Planning Area / Subzone, Age Group, Sex and Type of Dwelling, June 2011-2020 (i.e. respopagesextod2011to2020.csv)\n\nCSV format (Aspatial data)\nDownloaded from Department of Statistics, Singapore\nAlthough it does not contain any coordinate values, it’s PA and SZ fields can be used as unique identifiers to geocode to MP14_SUBZONE_WEB_PL shapefile."
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#importing-geospatial-data",
+    "href": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#importing-geospatial-data",
+    "title": "Choropeth Mapping with R",
+    "section": "Importing Geospatial Data",
+    "text": "Importing Geospatial Data\nThe code below uses the st_read() function of sf package to import MP14_SUBZONE_WEB_PL shapefile into R as a simple feature data frame called mpsz.\n\nmpsz &lt;- st_read(dsn = \"../../data/geospatial/MP14_SUBZONE_WEB_PL\",\n                layer = \"MP14_SUBZONE_WEB_PL\")\n\nReading layer `MP14_SUBZONE_WEB_PL' from data source \n  `C:\\russelltjh\\IS415-GAA\\data\\geospatial\\MP14_SUBZONE_WEB_PL' \n  using driver `ESRI Shapefile'\nSimple feature collection with 323 features and 15 fields\nGeometry type: MULTIPOLYGON\nDimension:     XY\nBounding box:  xmin: 2667.538 ymin: 15748.72 xmax: 56396.44 ymax: 50256.33\nProjected CRS: SVY21\n\nmpsz\n\nSimple feature collection with 323 features and 15 fields\nGeometry type: MULTIPOLYGON\nDimension:     XY\nBounding box:  xmin: 2667.538 ymin: 15748.72 xmax: 56396.44 ymax: 50256.33\nProjected CRS: SVY21\nFirst 10 features:\n   OBJECTID SUBZONE_NO       SUBZONE_N SUBZONE_C CA_IND      PLN_AREA_N\n1         1          1    MARINA SOUTH    MSSZ01      Y    MARINA SOUTH\n2         2          1    PEARL'S HILL    OTSZ01      Y          OUTRAM\n3         3          3       BOAT QUAY    SRSZ03      Y SINGAPORE RIVER\n4         4          8  HENDERSON HILL    BMSZ08      N     BUKIT MERAH\n5         5          3         REDHILL    BMSZ03      N     BUKIT MERAH\n6         6          7  ALEXANDRA HILL    BMSZ07      N     BUKIT MERAH\n7         7          9   BUKIT HO SWEE    BMSZ09      N     BUKIT MERAH\n8         8          2     CLARKE QUAY    SRSZ02      Y SINGAPORE RIVER\n9         9         13 PASIR PANJANG 1    QTSZ13      N      QUEENSTOWN\n10       10          7       QUEENSWAY    QTSZ07      N      QUEENSTOWN\n   PLN_AREA_C       REGION_N REGION_C          INC_CRC FMEL_UPD_D   X_ADDR\n1          MS CENTRAL REGION       CR 5ED7EB253F99252E 2014-12-05 31595.84\n2          OT CENTRAL REGION       CR 8C7149B9EB32EEFC 2014-12-05 28679.06\n3          SR CENTRAL REGION       CR C35FEFF02B13E0E5 2014-12-05 29654.96\n4          BM CENTRAL REGION       CR 3775D82C5DDBEFBD 2014-12-05 26782.83\n5          BM CENTRAL REGION       CR 85D9ABEF0A40678F 2014-12-05 26201.96\n6          BM CENTRAL REGION       CR 9D286521EF5E3B59 2014-12-05 25358.82\n7          BM CENTRAL REGION       CR 7839A8577144EFE2 2014-12-05 27680.06\n8          SR CENTRAL REGION       CR 48661DC0FBA09F7A 2014-12-05 29253.21\n9          QT CENTRAL REGION       CR 1F721290C421BFAB 2014-12-05 22077.34\n10         QT CENTRAL REGION       CR 3580D2AFFBEE914C 2014-12-05 24168.31\n     Y_ADDR SHAPE_Leng SHAPE_Area                       geometry\n1  29220.19   5267.381  1630379.3 MULTIPOLYGON (((31495.56 30...\n2  29782.05   3506.107   559816.2 MULTIPOLYGON (((29092.28 30...\n3  29974.66   1740.926   160807.5 MULTIPOLYGON (((29932.33 29...\n4  29933.77   3313.625   595428.9 MULTIPOLYGON (((27131.28 30...\n5  30005.70   2825.594   387429.4 MULTIPOLYGON (((26451.03 30...\n6  29991.38   4428.913  1030378.8 MULTIPOLYGON (((25899.7 297...\n7  30230.86   3275.312   551732.0 MULTIPOLYGON (((27746.95 30...\n8  30222.86   2208.619   290184.7 MULTIPOLYGON (((29351.26 29...\n9  29893.78   6571.323  1084792.3 MULTIPOLYGON (((20996.49 30...\n10 30104.18   3454.239   631644.3 MULTIPOLYGON (((24472.11 29...\n\n\nYou can examine the content of mpsz by using the code below.\n\nmpsz\n\nSimple feature collection with 323 features and 15 fields\nGeometry type: MULTIPOLYGON\nDimension:     XY\nBounding box:  xmin: 2667.538 ymin: 15748.72 xmax: 56396.44 ymax: 50256.33\nProjected CRS: SVY21\nFirst 10 features:\n   OBJECTID SUBZONE_NO       SUBZONE_N SUBZONE_C CA_IND      PLN_AREA_N\n1         1          1    MARINA SOUTH    MSSZ01      Y    MARINA SOUTH\n2         2          1    PEARL'S HILL    OTSZ01      Y          OUTRAM\n3         3          3       BOAT QUAY    SRSZ03      Y SINGAPORE RIVER\n4         4          8  HENDERSON HILL    BMSZ08      N     BUKIT MERAH\n5         5          3         REDHILL    BMSZ03      N     BUKIT MERAH\n6         6          7  ALEXANDRA HILL    BMSZ07      N     BUKIT MERAH\n7         7          9   BUKIT HO SWEE    BMSZ09      N     BUKIT MERAH\n8         8          2     CLARKE QUAY    SRSZ02      Y SINGAPORE RIVER\n9         9         13 PASIR PANJANG 1    QTSZ13      N      QUEENSTOWN\n10       10          7       QUEENSWAY    QTSZ07      N      QUEENSTOWN\n   PLN_AREA_C       REGION_N REGION_C          INC_CRC FMEL_UPD_D   X_ADDR\n1          MS CENTRAL REGION       CR 5ED7EB253F99252E 2014-12-05 31595.84\n2          OT CENTRAL REGION       CR 8C7149B9EB32EEFC 2014-12-05 28679.06\n3          SR CENTRAL REGION       CR C35FEFF02B13E0E5 2014-12-05 29654.96\n4          BM CENTRAL REGION       CR 3775D82C5DDBEFBD 2014-12-05 26782.83\n5          BM CENTRAL REGION       CR 85D9ABEF0A40678F 2014-12-05 26201.96\n6          BM CENTRAL REGION       CR 9D286521EF5E3B59 2014-12-05 25358.82\n7          BM CENTRAL REGION       CR 7839A8577144EFE2 2014-12-05 27680.06\n8          SR CENTRAL REGION       CR 48661DC0FBA09F7A 2014-12-05 29253.21\n9          QT CENTRAL REGION       CR 1F721290C421BFAB 2014-12-05 22077.34\n10         QT CENTRAL REGION       CR 3580D2AFFBEE914C 2014-12-05 24168.31\n     Y_ADDR SHAPE_Leng SHAPE_Area                       geometry\n1  29220.19   5267.381  1630379.3 MULTIPOLYGON (((31495.56 30...\n2  29782.05   3506.107   559816.2 MULTIPOLYGON (((29092.28 30...\n3  29974.66   1740.926   160807.5 MULTIPOLYGON (((29932.33 29...\n4  29933.77   3313.625   595428.9 MULTIPOLYGON (((27131.28 30...\n5  30005.70   2825.594   387429.4 MULTIPOLYGON (((26451.03 30...\n6  29991.38   4428.913  1030378.8 MULTIPOLYGON (((25899.7 297...\n7  30230.86   3275.312   551732.0 MULTIPOLYGON (((27746.95 30...\n8  30222.86   2208.619   290184.7 MULTIPOLYGON (((29351.26 29...\n9  29893.78   6571.323  1084792.3 MULTIPOLYGON (((20996.49 30...\n10 30104.18   3454.239   631644.3 MULTIPOLYGON (((24472.11 29...\n\n\nNotice that only the first ten records will be displayed!"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#importing-attribute-data",
+    "href": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#importing-attribute-data",
+    "title": "Choropeth Mapping with R",
+    "section": "Importing Attribute Data",
+    "text": "Importing Attribute Data\nWe will import repopagesextod2011to2020.csv into RStudio and save the file into an R dataframe called popdata.\nThe task will be performed by using read_csv() from readr package as show below.\n\npopdata &lt;- read_csv(\"../../data/aspatial/respopagesextod2011to2020/respopagesextod2011to2020.csv\")"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#data-preparation",
+    "href": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#data-preparation",
+    "title": "Choropeth Mapping with R",
+    "section": "Data Preparation",
+    "text": "Data Preparation\nBefore a thematic map can be prepared, we must prepare a data table with year 2020 values. The data table should include the variables PA, SZ, YOUNG, ECONOMY ACTIVE, AGED, TOTAL, DEPENDENCY.\n\nYOUNG: age group 0 to 4 until age group 20 to 24\nECONOMY ACTIVE: age group 25-29 until age group 60-64\nAGED: age group 65 and above\nTOTAL: all age group\nDEPENDENCY: the ratio between young and aged against economy active group\n\n\nData Wrangling\nThe following data wrangling and transformation functions will be used:\n\npivot_wider() of tidyr package\nmutate(), filter(), group_by() and select() of dplyr package\n\n\npopdata2020 &lt;- popdata %&gt;%\n  filter(Time == 2020) %&gt;%\n  group_by(PA, SZ, AG) %&gt;%\n  summarise(`POP` = sum(`Pop`)) %&gt;%\n  ungroup()%&gt;%\n  pivot_wider(names_from=AG, \n              values_from=POP) %&gt;%\n  mutate(YOUNG = rowSums(.[3:6])\n         +rowSums(.[12])) %&gt;%\nmutate(`ECONOMY ACTIVE` = rowSums(.[7:11])+\nrowSums(.[13:15]))%&gt;%\nmutate(`AGED`=rowSums(.[16:21])) %&gt;%\nmutate(`TOTAL`=rowSums(.[3:21])) %&gt;%  \nmutate(`DEPENDENCY` = (`YOUNG` + `AGED`)\n/`ECONOMY ACTIVE`) %&gt;%\n  select(`PA`, `SZ`, `YOUNG`, \n       `ECONOMY ACTIVE`, `AGED`, \n       `TOTAL`, `DEPENDENCY`)\n\n\n\nJoining the Attribute data and Geospatial data\nBefore we can perform the georelational join, one extra step is required to convert the values in PA and SZ fields to uppercase. This is because the values of PA and SZ fields are made up of upper- and lowercase. On the other, hand the SUBZONE_N and PLN_AREA_N are in uppercase.\n\npopdata2020 &lt;- popdata2020 %&gt;%\n  mutate_at(.vars = vars(PA, SZ), \n          .funs = list(toupper)) %&gt;%\n  filter(`ECONOMY ACTIVE` &gt; 0)\n\nNext, left_join() of dplyr is used to join the geographical data and attribute table using planning subzone name e.g. SUBZONE_N and SZ as the common identifier.\n\nmpsz_pop2020 &lt;- left_join(mpsz, popdata2020,\n                          by = c(\"SUBZONE_N\" = \"SZ\"))\n\nThing to learn from the code chunk above:\n\nleft_join() of dplyr package is used with mpsz simple feature data frame as the left data table is to ensure that the output will be a simple features data frame.\n\n\nwrite_rds(mpsz_pop2020, \"../../data/rds/mpszpop2020.rds\")"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#plotting-a-choropleth-map-quickly-using-qtm",
+    "href": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#plotting-a-choropleth-map-quickly-using-qtm",
+    "title": "Choropeth Mapping with R",
+    "section": "Plotting a Choropleth map quickly using qtm()",
+    "text": "Plotting a Choropleth map quickly using qtm()\nThe easiest and quickest to draw a choropleth map using tmap is using qtm(). It is concise and provides a good default visualization in many cases.\nThe code below will draw a cartographic standard choropleth map as shown below.\n\ntmap_mode(\"plot\")\nqtm(mpsz_pop2020,\n    fill = \"DEPENDENCY\")\n\n\n\n\nThings to learn from the code chunk above:\n\ntmap_mode() with “plot” option is used to produce a static map. For interactive mode, “view” option should be used.\nfill argument is used to map the attribute (i.e. DEPENDENCY)"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#creating-a-choropleth-map-by-using-tmaps-elements",
+    "href": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#creating-a-choropleth-map-by-using-tmaps-elements",
+    "title": "Choropeth Mapping with R",
+    "section": "Creating a Choropleth map by using tmap’s elements",
+    "text": "Creating a Choropleth map by using tmap’s elements\nDespite its usefulness of drawing a choropleth map quickly and easily, the disadvantage of qtm() is that it makes aesthetics of individual layers harder to control. To draw a high quality cartographic choropleth map, tmap’s drawing elements should be used.\n\ntm_shape(mpsz_pop2020)+\n  tm_fill(\"DEPENDENCY\",\n          style = \"quantile\",\n          palette = \"Blues\",\n          title = \"Dependency ratio\") +\n  tm_layout(main.title = \"Distribution of Dependency Ratio by planning subzone\",\n            main.title.position = \"center\",\n            main.title.size = 1.2,\n            legend.height = 0.45,\n            legend.width = 0.35,\n            frame = TRUE) +\n  tm_borders(alpha = 0.5) + \n  tm_compass(type=\"8star\", size = 2) +\n  tm_scale_bar() +\n  tm_grid(alpha=0.2) +\n  tm_credits(\"Source: Planning Sub-zone boundary from Urban Redevelopment Authority (URA)\\n and Population data from Department of Statistics DOS\",\n             position = c(\"left\", \"bottom\"))\n\n\n\n\nIn the following sections, we will break down the process for plotting these elements.\n\nDrawing a base map\nThe basic building block of tmap is tm_shape() followed by one or more layer elements such as tm_fill() and tm_polygons().\nIn the code below,\n\ntm_shape() is used to define the input data (i.e. mpsz_pop2020) and\ntm_polygons() is used to draw the planning subzone polygons.\n\n\ntm_shape(mpsz_pop2020) +\n  tm_polygons()\n\n\n\n\n\n\nDrawing a choropleth map using tm_polygons()\nTo draw a choropleth map showing the geographical distribution of a selected variable by planning subzone, we just need to assign the target variable such as Dependency to tm_polygons().\n\ntm_shape(mpsz_pop2020) +\n  tm_polygons(\"DEPENDENCY\")\n\n\n\n\nThings to learn from tm_polygons():\n\nThe default interval binning used to draw the choropleth map is called “pretty”.\nThe default color scheme used is YlOrRd of ColorBrewer.\nBy default, missing values will be shaded in grey.\n\n\n\nDrawing a choropleth map using tm_fill() and tm_border()\nActually, tm_polygons() is a wrapper of tm_fill() and tm_border().\n\ntm_fill() shades the polygons by using the default color scheme\ntm_borders() adds the borders of the shapefile onto the choropleth map\n\nThe code below draws a choropleth map by using the tm_fill() alone.\n\ntm_shape(mpsz_pop2020) +\n  tm_fill(\"DEPENDENCY\")\n\n\n\n\nNotice that the planning subzones are shared according to the respective dependency values.\nTo add the boundary of the planning subzones, tm_borders() will be used in the code below.\n\ntm_shape(mpsz_pop2020) +\n  tm_fill(\"DEPENDENCY\") +\n  tm_borders(lwd = 0.1, alpha = 1)\n\n\n\n\nNotice that light-gray border lines have been added.\nThe alpha argument is used to define transparency number between 0 (transparent) and 1 (opaque). By default, the alpha value of the col is used (normally 1).\nBesides alpha argument, there are three other arguments for tm_borders(), they are:\n\ncol = border color.\nlwd = border line width. The default is 1.\nlty = border line type. The default is “solid”."
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#data-classification-methods-of-tmap",
+    "href": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#data-classification-methods-of-tmap",
+    "title": "Choropeth Mapping with R",
+    "section": "Data Classification methods of tmap",
+    "text": "Data Classification methods of tmap\nMost choropleth maps employ some methods of data classification. The point of classification is to take a large number of observations and group them into data ranges or classes.\ntmap provides a total of 10 data classification methods: fixed, sd, equal, pretty (default), quantile, kmeans, hclust, bclust, fisher, and jenks.\nTo define a data classification method, the style argument of tm_fill() or tm_polygons() will be used.\n\nPlotting choropleth maps with built-in classification methods\nThe code below shows a quantile data classification that uses 5 classes.\n\ntm_shape(mpsz_pop2020) + \n  tm_fill(\"DEPENDENCY\",\n          n = 5,\n          style = \"quantile\") +\n  tm_borders(alpha = 0.5)\n\n\n\n\nIn the code below, equal data classification method is used.\n\ntm_shape(mpsz_pop2020) +\n  tm_fill(\"DEPENDENCY\",\n          n = 5,\n          style = \"equal\") + \n  tm_borders(alpha = 0.5)\n\n\n\n\nNotice that the distribution of quantile data classification method are more evenly distributed than equal data classification method.\n\n\n\n\n\n\nWarning: Maps Lie!\n\n\n\nDIY: Using what you had learned prepare choropleth maps by using different classification methods supported by tmap and compare their differences\nDIY: Preparing choropleth maps by using similar classification method but with different numbers of classes (i.e. 2, 6, 10, 20). Compare the output maps, what observation can you draw?\nSee the bottom of this page for the maps.\n\n\n\n\nPlotting choropleth map with custom break\nFor all the built-in styles, the category breaks are computed internally. In order to override these defaults, the breakpoints can be set explicitly by means of the breaks argument in tm_fill(). It is important to note that, in tmap, the breaks include a minimum and maximum. As a result, in order to end up with n categories, n+1 elements must be specified in the breaks option (the values must be in increasing order).\nBefore we get started, it is always a good practice to get some descriptive statistics on the variable before setting the break points. The code below will be used to compute and display the descriptive statistics of DEPENDENCY field.\n\nsummary(mpsz_pop2020$DEPENDENCY)\n\n   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's \n 0.1111  0.7147  0.7866  0.8585  0.8763 19.0000      92 \n\n\nWith reference to the results above, we set break point at 0.60, 0.70, 0.80, and 0.90. In addition, we also need to include a minimum and maximum, which we set at 0 and 100. Our breaks vector is thus c(0, 0.60, 0.70, 0.80, 0.90, 1.00)\nNow, we will plot the choropleth map using the code below.\n\ntm_shape(mpsz_pop2020)+\n  tm_fill(\"DEPENDENCY\",\n          breaks = c(0, 0.60, 0.70, 0.80, 0.90, 1.00)) +\n  tm_borders(alpha = 0.5)"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#color-scheme",
+    "href": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#color-scheme",
+    "title": "Choropeth Mapping with R",
+    "section": "Color Scheme",
+    "text": "Color Scheme\ntmap supports color ramps either defined by the user or a set of predefined color ramps from the RColorBrewer package.\n\nUsing ColorBrewer palette\nTo change the color, we assign the preferred color to palette argument of tm_fill() as shown below.\n\ntm_shape(mpsz_pop2020) + \n  tm_fill(\"DEPENDENCY\",\n          n = 6,\n          style = \"quantile\",\n          palette = \"Blues\") +\n  tm_borders(alpha = 0.5)\n\n\n\n\nTo reverse the color shading, add a “-” prefix.\n\ntm_shape(mpsz_pop2020) + \n  tm_fill(\"DEPENDENCY\",\n          n = 6,\n          style = \"quantile\",\n          palette = \"-Blues\") +\n  tm_borders(alpha = 0.5)"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#map-layouts",
+    "href": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#map-layouts",
+    "title": "Choropeth Mapping with R",
+    "section": "Map Layouts",
+    "text": "Map Layouts\nMap Layouts refers to the combination of all map elements into a cohesive map. Map elements include among others the objects to be mapped, the title, the scale bar, the compass, margins and aspect ratios. Colour settings and data classification methods covered in the previous section relate to the palette and break-points are used to affect how the map looks.\n\nMap Legend\nIn tmap, several legend options are provided to change the placement, format and appearance of the legend.\n\ntm_shape(mpsz_pop2020) + \n  tm_fill(\"DEPENDENCY\",\n          n = 6,\n          style = \"jenks\",\n          palette = \"Blues\",\n          legend.hist = TRUE,\n          legend.is.portrait = TRUE,\n          legend.hist.z = 0.1) +\n  tm_layout(main.title = \"Distribution of Dependency Ratio by planning subzone \\n(Jenks Classification)\",\n            main.title.position = \"center\",\n            main.title.size = 1,\n            legend.height = 0.45,\n            legend.width = 0.35,\n            legend.outside = FALSE,\n            legend.position = c(\"right\", \"bottom\"),\n            frame = FALSE) +\n  tm_borders(alpha = 0.5)\n\n\n\n\n\n\nMap Style\ntmap allows a wide variety of layout settings to be changed. They can be called by using tmap_style()\nThe code chunk below shows the classic style is used.\n\ntm_shape(mpsz_pop2020) + \n  tm_fill(\"DEPENDENCY\",\n          style = \"quantile\",\n          palette = \"-Greens\",) +\n  tm_borders(alpha = 0.5) +\n  tmap_style(\"classic\")\n\n\n\n\n\n\nCartographic Furniture\nBesides map style, tmap also provides arguments to draw other map furniture such as compass, scale bar and grid lines.\nIn the code chunk below, tm_compass(), tm_scale_bar() and tm_grid() are used to add compass, scale bar and grid lines onto the choropleth map.\n\ntm_shape(mpsz_pop2020) + \n  tm_fill(\"DEPENDENCY\",\n          style = \"quantile\",\n          palette = \"Blues\",\n          title = \"No. of persons\") +\n  tm_layout(main.title = \"Distribution of Dependency Ratio \\nby planning subzone\",\n            main.title.position = \"center\",\n            main.title.size = 1.2,\n            legend.height = 0.45,\n            legend.width = 0.35,\n            frame = TRUE) +\n  tm_borders(alpha = 0.5) +\n  tm_compass(type = \"8star\", size = 2) +\n  tm_scale_bar(width = 0.15) +\n  tm_grid(lwd = 0.1, alpha = 0.2) +\n  tm_credits(\"Source: Planning Sub-zone boundary from Urban Redevelopment Authority (URA)\\n and Population data from Department of Statistics DOS\",\n             position = c(\"left\", \"bottom\"))\n\n\n\n\nTo reset the default style, refer to the code below.\n\ntmap_style(\"white\")"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#drawing-small-multiple-choropleth-maps",
+    "href": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#drawing-small-multiple-choropleth-maps",
+    "title": "Choropeth Mapping with R",
+    "section": "Drawing Small Multiple Choropleth Maps",
+    "text": "Drawing Small Multiple Choropleth Maps\nSmall multiple maps, also referred to as facet maps, are composed of many maps arrange side-by-side, and sometimes stacked vertically. Small multiple maps enable the visualization of how spatial relationships change with respect to another variable, such as time.\nIn tmap, small multiple maps can be plotted in 3 ways:\n\nby assigning multiple values to at least one of the aesthetic arguments\nby defining a group-by variable in tm_facets()\nby creating multiple stand-alone maps with tmap_arrange()\n\n\nBy assigning multiple values to at least one of the aesthetic arguments\nIn this example, small multiple choropleth maps are created by defining ncols in tm_fill()\n\ntm_shape(mpsz_pop2020) +\n  tm_fill(c(\"YOUNG\", \"AGED\"),\n          style = \"equal\",\n          palette = \"Blues\") +\n  tm_layout(legend.position = c(\"right\", \"bottom\")) +\n  tm_borders(alpha = 0.5) +\n  tmap_style(\"white\")\n\n\n\n\nIn this example, small multiple choropleth maps are created by assigning multiple values to at least one of the aesthetic arguments\n\ntm_shape(mpsz_pop2020) + \n  tm_polygons(c(\"DEPENDENCY\",\"AGED\"),\n              style = c(\"equal\", \"quantile\"),\n              palette = list(\"Blues\",\"Greens\")) +\n  tm_layout(legend.position = c(\"right\", \"bottom\"))\n\n\n\n\n\n\nBy defining a group-by variable in tm_facets()\nIn this example, multiple small choropleth maps are created by using tm_facets()\n\ntm_shape(mpsz_pop2020) + \n  tm_fill(\"DEPENDENCY\",\n          style = \"quantile\",\n          palette = \"Blues\",\n          thres.poly = 0) +\n  tm_facets(by = \"REGION_N\",\n            free.coords = TRUE,\n            drop.shapes = TRUE) +\n  tm_layout(legend.show = FALSE,\n            title.position = c(\"center\", \"center\"),\n            title.size = 20) +\n  tm_borders(alpha = 0.5)\n\n\n\n\n\n\nBy creating multiple stand-alone maps with tmap_arrange()\nIn this example, multiple small choropleth maps are created by creating multiple stand-alone maps with tmap_arrange()\n\nyoungmap &lt;- tm_shape(mpsz_pop2020) +\n  tm_polygons(\"YOUNG\",\n              style = \"quantile\",\n              palette = \"Blues\")\n\nagedmap &lt;- tm_shape(mpsz_pop2020) +\n  tm_polygons(\"AGED\",\n              style = \"quantile\",\n              palette = \"Blues\")\n\ntmap_arrange(youngmap, agedmap, asp=1, ncol=2)"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#mapping-spatial-object-meeting-a-selection-criterion",
+    "href": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#mapping-spatial-object-meeting-a-selection-criterion",
+    "title": "Choropeth Mapping with R",
+    "section": "Mapping Spatial Object Meeting a Selection Criterion",
+    "text": "Mapping Spatial Object Meeting a Selection Criterion\nInstead of creating small multiple choropleth map, you can also use selection function to map spatial objects meeting the selection criterion.\n\ntm_shape(mpsz_pop2020[mpsz_pop2020$REGION_N==\"CENTRAL REGION\", ]) +\n  tm_fill(\"DEPENDENCY\",\n          style = \"quantile\",\n          palette = \"Blues\",\n          legend.hist = TRUE,\n          legend.is.portrait = TRUE,\n          legend.hist.z = 0.1) +\n  tm_layout(legend.outside = TRUE,\n            legend.height = 0.45,\n            legend.width = 5.0,\n            legend.position = c(\"right\", \"bottom\"),\n            frame = FALSE) +\n  tm_borders(alpha = 0.5)"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#all-about-tmap-package",
+    "href": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#all-about-tmap-package",
+    "title": "Choropeth Mapping with R",
+    "section": "All about tmap package",
+    "text": "All about tmap package\n\ntmap: Thematic Maps in R\ntmap\ntmap: get started!"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#geospatial-data-wrangling",
+    "href": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#geospatial-data-wrangling",
+    "title": "Choropeth Mapping with R",
+    "section": "Geospatial Data Wrangling",
+    "text": "Geospatial Data Wrangling\n\nsf: Simple Features for R\nSimple Features for R: Standardized Support for Spatial Vector Data\nReading, Writing and Converting Simple Features"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#data-wrangling-1",
+    "href": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#data-wrangling-1",
+    "title": "Choropeth Mapping with R",
+    "section": "Data Wrangling",
+    "text": "Data Wrangling\n\ndplyr\nTidy data\ntidyr: Easily Tidy Data with 'spread()' and 'gather()' Functions"
   },
   {
     "objectID": "about.html",
     "href": "about.html",
     "title": "About",
     "section": "",
-    "text": "About this site\n\n1 + 1\n\n[1] 2"
+    "text": "About this site\n\n1 + 1\n\n[1] 2\n\n\n\n\n\n Back to top"
   },
   {
     "objectID": "Hands-on_Ex/Hands-on_Ex01/Hands-on_Ex01.html",
@@ -26,13 +180,6 @@
     "title": "Geospatial Data Wrangling with R",
     "section": "Installing and loading R packages",
     "text": "Installing and loading R packages\nIn this section, I will install and load tidyverse and sf packages.\n\npacman::p_load(tidyverse, sf)"
-  },
-  {
-    "objectID": "Hands-on_Ex/Hands-on_Ex01/Hands-on_Ex01.html#plotting-the-geospatial-data",
-    "href": "Hands-on_Ex/Hands-on_Ex01/Hands-on_Ex01.html#plotting-the-geospatial-data",
-    "title": "Hands-on Exercise 1: Geospatial Data Wrangling with R",
-    "section": "Plotting the Geospatial Data",
-    "text": "Plotting the Geospatial Data\n\nplot(mpsz)"
   },
   {
     "objectID": "Hands-on_Ex/Hands-on_Ex01/Hands-on_Ex01.html#importing-polygon-feature-data-in-shapefile-format",
@@ -91,125 +238,6 @@
     "text": "Point-in-polygon count\nThe scenario:\nA pre-school service group want to find out the numbers of pre-schools in each Planning Subzone.\nThe solution:\nThe code chunk below performs two operations at one go. Firstly, identify pre-schools located inside each Planning Subzone by using st_intersects(). Next, length() of Base R is used to calculate numbers of pre-schools that fall inside each planning subzone.\n\nmpsz3414$`PreSch Count` &lt;- lengths(st_intersects(mpsz3414, preschool3414))\nsummary(mpsz3414$`PreSch Count`)\n\n   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. \n   0.00    0.00    4.00    7.09   10.00   72.00 \n\n\nTo list the planning subzone with the most number of pre-school, the top_n() of dplyr package is used as shown in the code chunk below.\n\ntop_n(mpsz3414, 1, `PreSch Count`)\n\nSimple feature collection with 1 feature and 16 fields\nGeometry type: MULTIPOLYGON\nDimension:     XY\nBounding box:  xmin: 39655.33 ymin: 35966 xmax: 42940.57 ymax: 38622.37\nProjected CRS: SVY21 / Singapore TM\n  OBJECTID SUBZONE_NO     SUBZONE_N SUBZONE_C CA_IND PLN_AREA_N PLN_AREA_C\n1      189          2 TAMPINES EAST    TMSZ02      N   TAMPINES         TM\n     REGION_N REGION_C          INC_CRC FMEL_UPD_D   X_ADDR   Y_ADDR SHAPE_Leng\n1 EAST REGION       ER 21658EAAF84F4D8D 2014-12-05 41122.55 37392.39   10180.62\n  SHAPE_Area                       geometry PreSch Count\n1    4339824 MULTIPOLYGON (((42196.76 38...           72\n\n\n\nDIY: Calculate the density of pre-school by planning subzone\nThe solution:\nFirstly, the code below uses st_area() of sf package to derive the area of each planning subzone.\n\nmpsz3414$Area &lt;- mpsz3414 %&gt;%\n  st_area()\n\nNext, mutate() of dplyr package is used to compute the density.\n\nmpsz3414 &lt;- mpsz3414 %&gt;%\n  mutate(`PreSch Density` = `PreSch Count`/Area * 1000000)"
   },
   {
-    "objectID": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html",
-    "href": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html",
-    "title": "Choropeth Mapping with R",
-    "section": "",
-    "text": "Thematic mapping involves the use of map symbols to visualize selected properties of geographic features that are not naturally visible, such as population, temperature, crime rate, and property prices, just to mention a few of them.\nGeoVisualization, on the other hand, works by providing graphical ideation to render a place, a phenomenon or a process visible, enabling human’s most powerful information-processing abilities - those of spatial cognition associated with our eye-brain vision system - to be directly brought to bear.\nIn this chapter, you will learn how to plot functional and truthful choropleth maps by using R package called tmap package."
-  },
-  {
-    "objectID": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#installing-and-loading-r-packages",
-    "href": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#installing-and-loading-r-packages",
-    "title": "Choropeth Mapping with R",
-    "section": "Installing and loading R packages",
-    "text": "Installing and loading R packages\nIn this section, we will use:\n\ntmap\nreadr for importing delimited text file\ntidyr for tidying data\ndplyr for wrangling data\nsf for handling geospatial data\n\n\npacman::p_load(sf, tmap, tidyverse)"
-  },
-  {
-    "objectID": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#importing-geospatial-data",
-    "href": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#importing-geospatial-data",
-    "title": "Choropeth Mapping with R",
-    "section": "Importing Geospatial Data",
-    "text": "Importing Geospatial Data\nThe code below uses the st_read() function of sf package to import MP14_SUBZONE_WEB_PL shapefile into R as a simple feature data frame called mpsz.\n\nmpsz &lt;- st_read(dsn = \"../../data/geospatial/MP14_SUBZONE_WEB_PL\",\n                layer = \"MP14_SUBZONE_WEB_PL\")\n\nReading layer `MP14_SUBZONE_WEB_PL' from data source \n  `C:\\russelltjh\\IS415-GAA\\data\\geospatial\\MP14_SUBZONE_WEB_PL' \n  using driver `ESRI Shapefile'\nSimple feature collection with 323 features and 15 fields\nGeometry type: MULTIPOLYGON\nDimension:     XY\nBounding box:  xmin: 2667.538 ymin: 15748.72 xmax: 56396.44 ymax: 50256.33\nProjected CRS: SVY21\n\nmpsz\n\nSimple feature collection with 323 features and 15 fields\nGeometry type: MULTIPOLYGON\nDimension:     XY\nBounding box:  xmin: 2667.538 ymin: 15748.72 xmax: 56396.44 ymax: 50256.33\nProjected CRS: SVY21\nFirst 10 features:\n   OBJECTID SUBZONE_NO       SUBZONE_N SUBZONE_C CA_IND      PLN_AREA_N\n1         1          1    MARINA SOUTH    MSSZ01      Y    MARINA SOUTH\n2         2          1    PEARL'S HILL    OTSZ01      Y          OUTRAM\n3         3          3       BOAT QUAY    SRSZ03      Y SINGAPORE RIVER\n4         4          8  HENDERSON HILL    BMSZ08      N     BUKIT MERAH\n5         5          3         REDHILL    BMSZ03      N     BUKIT MERAH\n6         6          7  ALEXANDRA HILL    BMSZ07      N     BUKIT MERAH\n7         7          9   BUKIT HO SWEE    BMSZ09      N     BUKIT MERAH\n8         8          2     CLARKE QUAY    SRSZ02      Y SINGAPORE RIVER\n9         9         13 PASIR PANJANG 1    QTSZ13      N      QUEENSTOWN\n10       10          7       QUEENSWAY    QTSZ07      N      QUEENSTOWN\n   PLN_AREA_C       REGION_N REGION_C          INC_CRC FMEL_UPD_D   X_ADDR\n1          MS CENTRAL REGION       CR 5ED7EB253F99252E 2014-12-05 31595.84\n2          OT CENTRAL REGION       CR 8C7149B9EB32EEFC 2014-12-05 28679.06\n3          SR CENTRAL REGION       CR C35FEFF02B13E0E5 2014-12-05 29654.96\n4          BM CENTRAL REGION       CR 3775D82C5DDBEFBD 2014-12-05 26782.83\n5          BM CENTRAL REGION       CR 85D9ABEF0A40678F 2014-12-05 26201.96\n6          BM CENTRAL REGION       CR 9D286521EF5E3B59 2014-12-05 25358.82\n7          BM CENTRAL REGION       CR 7839A8577144EFE2 2014-12-05 27680.06\n8          SR CENTRAL REGION       CR 48661DC0FBA09F7A 2014-12-05 29253.21\n9          QT CENTRAL REGION       CR 1F721290C421BFAB 2014-12-05 22077.34\n10         QT CENTRAL REGION       CR 3580D2AFFBEE914C 2014-12-05 24168.31\n     Y_ADDR SHAPE_Leng SHAPE_Area                       geometry\n1  29220.19   5267.381  1630379.3 MULTIPOLYGON (((31495.56 30...\n2  29782.05   3506.107   559816.2 MULTIPOLYGON (((29092.28 30...\n3  29974.66   1740.926   160807.5 MULTIPOLYGON (((29932.33 29...\n4  29933.77   3313.625   595428.9 MULTIPOLYGON (((27131.28 30...\n5  30005.70   2825.594   387429.4 MULTIPOLYGON (((26451.03 30...\n6  29991.38   4428.913  1030378.8 MULTIPOLYGON (((25899.7 297...\n7  30230.86   3275.312   551732.0 MULTIPOLYGON (((27746.95 30...\n8  30222.86   2208.619   290184.7 MULTIPOLYGON (((29351.26 29...\n9  29893.78   6571.323  1084792.3 MULTIPOLYGON (((20996.49 30...\n10 30104.18   3454.239   631644.3 MULTIPOLYGON (((24472.11 29...\n\n\nYou can examine the content of mpsz by using the code below.\n\nmpsz\n\nSimple feature collection with 323 features and 15 fields\nGeometry type: MULTIPOLYGON\nDimension:     XY\nBounding box:  xmin: 2667.538 ymin: 15748.72 xmax: 56396.44 ymax: 50256.33\nProjected CRS: SVY21\nFirst 10 features:\n   OBJECTID SUBZONE_NO       SUBZONE_N SUBZONE_C CA_IND      PLN_AREA_N\n1         1          1    MARINA SOUTH    MSSZ01      Y    MARINA SOUTH\n2         2          1    PEARL'S HILL    OTSZ01      Y          OUTRAM\n3         3          3       BOAT QUAY    SRSZ03      Y SINGAPORE RIVER\n4         4          8  HENDERSON HILL    BMSZ08      N     BUKIT MERAH\n5         5          3         REDHILL    BMSZ03      N     BUKIT MERAH\n6         6          7  ALEXANDRA HILL    BMSZ07      N     BUKIT MERAH\n7         7          9   BUKIT HO SWEE    BMSZ09      N     BUKIT MERAH\n8         8          2     CLARKE QUAY    SRSZ02      Y SINGAPORE RIVER\n9         9         13 PASIR PANJANG 1    QTSZ13      N      QUEENSTOWN\n10       10          7       QUEENSWAY    QTSZ07      N      QUEENSTOWN\n   PLN_AREA_C       REGION_N REGION_C          INC_CRC FMEL_UPD_D   X_ADDR\n1          MS CENTRAL REGION       CR 5ED7EB253F99252E 2014-12-05 31595.84\n2          OT CENTRAL REGION       CR 8C7149B9EB32EEFC 2014-12-05 28679.06\n3          SR CENTRAL REGION       CR C35FEFF02B13E0E5 2014-12-05 29654.96\n4          BM CENTRAL REGION       CR 3775D82C5DDBEFBD 2014-12-05 26782.83\n5          BM CENTRAL REGION       CR 85D9ABEF0A40678F 2014-12-05 26201.96\n6          BM CENTRAL REGION       CR 9D286521EF5E3B59 2014-12-05 25358.82\n7          BM CENTRAL REGION       CR 7839A8577144EFE2 2014-12-05 27680.06\n8          SR CENTRAL REGION       CR 48661DC0FBA09F7A 2014-12-05 29253.21\n9          QT CENTRAL REGION       CR 1F721290C421BFAB 2014-12-05 22077.34\n10         QT CENTRAL REGION       CR 3580D2AFFBEE914C 2014-12-05 24168.31\n     Y_ADDR SHAPE_Leng SHAPE_Area                       geometry\n1  29220.19   5267.381  1630379.3 MULTIPOLYGON (((31495.56 30...\n2  29782.05   3506.107   559816.2 MULTIPOLYGON (((29092.28 30...\n3  29974.66   1740.926   160807.5 MULTIPOLYGON (((29932.33 29...\n4  29933.77   3313.625   595428.9 MULTIPOLYGON (((27131.28 30...\n5  30005.70   2825.594   387429.4 MULTIPOLYGON (((26451.03 30...\n6  29991.38   4428.913  1030378.8 MULTIPOLYGON (((25899.7 297...\n7  30230.86   3275.312   551732.0 MULTIPOLYGON (((27746.95 30...\n8  30222.86   2208.619   290184.7 MULTIPOLYGON (((29351.26 29...\n9  29893.78   6571.323  1084792.3 MULTIPOLYGON (((20996.49 30...\n10 30104.18   3454.239   631644.3 MULTIPOLYGON (((24472.11 29...\n\n\nNotice that only the first ten records will be displayed!"
-  },
-  {
-    "objectID": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#importing-attribute-data",
-    "href": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#importing-attribute-data",
-    "title": "Choropeth Mapping with R",
-    "section": "Importing Attribute Data",
-    "text": "Importing Attribute Data\nWe will import repopagesextod2011to2020.csv into RStudio and save the file into an R dataframe called popdata.\nThe task will be performed by using read_csv() from readr package as show below.\n\npopdata &lt;- read_csv(\"../../data/aspatial/respopagesextod2011to2020/respopagesextod2011to2020.csv\")"
-  },
-  {
-    "objectID": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#data-preparation",
-    "href": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#data-preparation",
-    "title": "Choropeth Mapping with R",
-    "section": "Data Preparation",
-    "text": "Data Preparation\nBefore a thematic map can be prepared, we must prepare a data table with year 2020 values. The data table should include the variables PA, SZ, YOUNG, ECONOMY ACTIVE, AGED, TOTAL, DEPENDENCY.\n\nYOUNG: age group 0 to 4 until age group 20 to 24\nECONOMY ACTIVE: age group 25-29 until age group 60-64\nAGED: age group 65 and above\nTOTAL: all age group\nDEPENDENCY: the ratio between young and aged against economy active group\n\n\nData Wrangling\nThe following data wrangling and transformation functions will be used:\n\npivot_wider() of tidyr package\nmutate(), filter(), group_by() and select() of dplyr package\n\n\npopdata2020 &lt;- popdata %&gt;%\n  filter(Time == 2020) %&gt;%\n  group_by(PA, SZ, AG) %&gt;%\n  summarise(`POP` = sum(`Pop`)) %&gt;%\n  ungroup()%&gt;%\n  pivot_wider(names_from=AG, \n              values_from=POP) %&gt;%\n  mutate(YOUNG = rowSums(.[3:6])\n         +rowSums(.[12])) %&gt;%\nmutate(`ECONOMY ACTIVE` = rowSums(.[7:11])+\nrowSums(.[13:15]))%&gt;%\nmutate(`AGED`=rowSums(.[16:21])) %&gt;%\nmutate(`TOTAL`=rowSums(.[3:21])) %&gt;%  \nmutate(`DEPENDENCY` = (`YOUNG` + `AGED`)\n/`ECONOMY ACTIVE`) %&gt;%\n  select(`PA`, `SZ`, `YOUNG`, \n       `ECONOMY ACTIVE`, `AGED`, \n       `TOTAL`, `DEPENDENCY`)\n\n\n\nJoining the Attribute data and Geospatial data\nBefore we can perform the georelational join, one extra step is required to convert the values in PA and SZ fields to uppercase. This is because the values of PA and SZ fields are made up of upper- and lowercase. On the other, hand the SUBZONE_N and PLN_AREA_N are in uppercase.\n\npopdata2020 &lt;- popdata2020 %&gt;%\n  mutate_at(.vars = vars(PA, SZ), \n          .funs = list(toupper)) %&gt;%\n  filter(`ECONOMY ACTIVE` &gt; 0)\n\nNext, left_join() of dplyr is used to join the geographical data and attribute table using planning subzone name e.g. SUBZONE_N and SZ as the common identifier.\n\nmpsz_pop2020 &lt;- left_join(mpsz, popdata2020,\n                          by = c(\"SUBZONE_N\" = \"SZ\"))\n\nThing to learn from the code chunk above:\n\nleft_join() of dplyr package is used with mpsz simple feature data frame as the left data table is to ensure that the output will be a simple features data frame.\n\n\nwrite_rds(mpsz_pop2020, \"../../data/rds/mpszpop2020.rds\")"
-  },
-  {
-    "objectID": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#plotting-a-choropleth-map-quickly-using-qtm",
-    "href": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#plotting-a-choropleth-map-quickly-using-qtm",
-    "title": "Choropeth Mapping with R",
-    "section": "Plotting a Choropleth map quickly using qtm()",
-    "text": "Plotting a Choropleth map quickly using qtm()\nThe easiest and quickest to draw a choropleth map using tmap is using qtm(). It is concise and provides a good default visualization in many cases.\nThe code below will draw a cartographic standard choropleth map as shown below.\n\ntmap_mode(\"plot\")\nqtm(mpsz_pop2020,\n    fill = \"DEPENDENCY\")\n\n\n\n\nThings to learn from the code chunk above:\n\ntmap_mode() with “plot” option is used to produce a static map. For interactive mode, “view” option should be used.\nfill argument is used to map the attribute (i.e. DEPENDENCY)"
-  },
-  {
-    "objectID": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#creating-a-choropleth-map-by-using-tmaps-elements",
-    "href": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#creating-a-choropleth-map-by-using-tmaps-elements",
-    "title": "Choropeth Mapping with R",
-    "section": "Creating a Choropleth map by using tmap’s elements",
-    "text": "Creating a Choropleth map by using tmap’s elements\nDespite its usefulness of drawing a choropleth map quickly and easily, the disadvantage of qtm() is that it makes aesthetics of individual layers harder to control. To draw a high quality cartographic choropleth map, tmap’s drawing elements should be used.\n\ntm_shape(mpsz_pop2020)+\n  tm_fill(\"DEPENDENCY\",\n          style = \"quantile\",\n          palette = \"Blues\",\n          title = \"Dependency ratio\") +\n  tm_layout(main.title = \"Distribution of Dependency Ratio by planning subzone\",\n            main.title.position = \"center\",\n            main.title.size = 1.2,\n            legend.height = 0.45,\n            legend.width = 0.35,\n            frame = TRUE) +\n  tm_borders(alpha = 0.5) + \n  tm_compass(type=\"8star\", size = 2) +\n  tm_scale_bar() +\n  tm_grid(alpha=0.2) +\n  tm_credits(\"Source: Planning Sub-zone boundary from Urban Redevelopment Authority (URA)\\n and Population data from Department of Statistics DOS\",\n             position = c(\"left\", \"bottom\"))\n\n\n\n\nIn the following sections, we will break down the process for plotting these elements.\n\nDrawing a base map\nThe basic building block of tmap is tm_shape() followed by one or more layer elements such as tm_fill() and tm_polygons().\nIn the code below,\n\ntm_shape() is used to define the input data (i.e. mpsz_pop2020) and\ntm_polygons() is used to draw the planning subzone polygons.\n\n\ntm_shape(mpsz_pop2020) +\n  tm_polygons()\n\n\n\n\n\n\nDrawing a choropleth map using tm_polygons()\nTo draw a choropleth map showing the geographical distribution of a selected variable by planning subzone, we just need to assign the target variable such as Dependency to tm_polygons().\n\ntm_shape(mpsz_pop2020) +\n  tm_polygons(\"DEPENDENCY\")\n\n\n\n\nThings to learn from tm_polygons():\n\nThe default interval binning used to draw the choropleth map is called “pretty”.\nThe default color scheme used is YlOrRd of ColorBrewer.\nBy default, missing values will be shaded in grey.\n\n\n\nDrawing a choropleth map using tm_fill() and tm_border()\nActually, tm_polygons() is a wrapper of tm_fill() and tm_border().\n\ntm_fill() shades the polygons by using the default color scheme\ntm_borders() adds the borders of the shapefile onto the choropleth map\n\nThe code below draws a choropleth map by using the tm_fill() alone.\n\ntm_shape(mpsz_pop2020) +\n  tm_fill(\"DEPENDENCY\")\n\n\n\n\nNotice that the planning subzones are shared according to the respective dependency values.\nTo add the boundary of the planning subzones, tm_borders() will be used in the code below.\n\ntm_shape(mpsz_pop2020) +\n  tm_fill(\"DEPENDENCY\") +\n  tm_borders(lwd = 0.1, alpha = 1)\n\n\n\n\nNotice that light-gray border lines have been added.\nThe alpha argument is used to define transparency number between 0 (transparent) and 1 (opaque). By default, the alpha value of the col is used (normally 1).\nBesides alpha argument, there are three other arguments for tm_borders(), they are:\n\ncol = border color.\nlwd = border line width. The default is 1.\nlty = border line type. The default is “solid”."
-  },
-  {
-    "objectID": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#data-classification-methods-of-tmap",
-    "href": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#data-classification-methods-of-tmap",
-    "title": "Choropeth Mapping with R",
-    "section": "Data Classification methods of tmap",
-    "text": "Data Classification methods of tmap\nMost choropleth maps employ some methods of data classification. The point of classification is to take a large number of observations and group them into data ranges or classes.\ntmap provides a total of 10 data classification methods: fixed, sd, equal, pretty (default), quantile, kmeans, hclust, bclust, fisher, and jenks.\nTo define a data classification method, the style argument of tm_fill() or tm_polygons() will be used.\n\nPlotting choropleth maps with built-in classification methods\nThe code below shows a quantile data classification that uses 5 classes.\n\ntm_shape(mpsz_pop2020) + \n  tm_fill(\"DEPENDENCY\",\n          n = 5,\n          style = \"quantile\") +\n  tm_borders(alpha = 0.5)\n\n\n\n\nIn the code below, equal data classification method is used.\n\ntm_shape(mpsz_pop2020) +\n  tm_fill(\"DEPENDENCY\",\n          n = 5,\n          style = \"equal\") + \n  tm_borders(alpha = 0.5)\n\n\n\n\nNotice that the distribution of quantile data classification method are more evenly distributed than equal data classification method.\n\n\n\n\n\n\nWarning: Maps Lie!\n\n\n\nDIY: Using what you had learned prepare choropleth maps by using different classification methods supported by tmap and compare their differences\nDIY: Preparing choropleth maps by using similar classification method but with different numbers of classes (i.e. 2, 6, 10, 20). Compare the output maps, what observation can you draw?\nSee the bottom of this page for the maps.\n\n\n\n\nPlotting choropleth map with custom break\nFor all the built-in styles, the category breaks are computed internally. In order to override these defaults, the breakpoints can be set explicitly by means of the breaks argument in tm_fill(). It is important to note that, in tmap, the breaks include a minimum and maximum. As a result, in order to end up with n categories, n+1 elements must be specified in the breaks option (the values must be in increasing order).\nBefore we get started, it is always a good practice to get some descriptive statistics on the variable before setting the break points. The code below will be used to compute and display the descriptive statistics of DEPENDENCY field.\n\nsummary(mpsz_pop2020$DEPENDENCY)\n\n   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's \n 0.1111  0.7147  0.7866  0.8585  0.8763 19.0000      92 \n\n\nWith reference to the results above, we set break point at 0.60, 0.70, 0.80, and 0.90. In addition, we also need to include a minimum and maximum, which we set at 0 and 100. Our breaks vector is thus c(0, 0.60, 0.70, 0.80, 0.90, 1.00)\nNow, we will plot the choropleth map using the code below.\n\ntm_shape(mpsz_pop2020)+\n  tm_fill(\"DEPENDENCY\",\n          breaks = c(0, 0.60, 0.70, 0.80, 0.90, 1.00)) +\n  tm_borders(alpha = 0.5)"
-  },
-  {
-    "objectID": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#colour-scheme",
-    "href": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#colour-scheme",
-    "title": "Choropeth Mapping with R",
-    "section": "Colour Scheme",
-    "text": "Colour Scheme\n\nUsing ColourBrewer palette\nTo change the colour, we assign the preferred colour to palette argument of tm_fill() as shown below.\n\ntm_shape(mpsz_pop2020) + \n  tm_fill(\"DEPENDENCY\",\n          n = 6,\n          style = \"quantile\",\n          palette = \"Blues\") +\n  tm_borders(alpha = 0.5)\n\n\n\n\nTo reverse the colour shading, add a “-” prefix.\n\ntm_shape(mpsz_pop2020) + \n  tm_fill(\"DEPENDENCY\",\n          n = 6,\n          style = \"quantile\",\n          palette = \"-Blues\") +\n  tm_borders(alpha = 0.5)"
-  },
-  {
-    "objectID": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#map-layouts",
-    "href": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#map-layouts",
-    "title": "Choropeth Mapping with R",
-    "section": "Map Layouts",
-    "text": "Map Layouts\nMap Layouts refers to the combination of all map elements into a cohesive map. Map elements include among others the objects to be mapped, the title, the scale bar, the compass, margins and aspect ratios. Colour settings and data classification methods covered in the previous section relate to the palette and break-points are used to affect how the map looks.\n\nMap Legend\nIn tmap, several legend options are provided to change the placement, format and appearance of the legend.\n\ntm_shape(mpsz_pop2020) + \n  tm_fill(\"DEPENDENCY\",\n          n = 6,\n          style = \"jenks\",\n          palette = \"Blues\",\n          legend.hist = TRUE,\n          legend.is.portrait = TRUE,\n          legend.hist.z = 0.1) +\n  tm_layout(main.title = \"Distribution of Dependency Ratio by planning subzone \\n(Jenks Classification)\",\n            main.title.position = \"center\",\n            main.title.size = 1,\n            legend.height = 0.45,\n            legend.width = 0.35,\n            legend.outside = FALSE,\n            legend.position = c(\"right\", \"bottom\"),\n            frame = FALSE) +\n  tm_borders(alpha = 0.5)\n\n\n\n\n\n\nMap Style\ntmap allows a wide variety of layout settings to be changed. They can be called by using tmap_style()\nThe code chunk below shows the classic style is used.\n\ntm_shape(mpsz_pop2020) + \n  tm_fill(\"DEPENDENCY\",\n          style = \"quantile\",\n          palette = \"-Greens\",) +\n  tm_borders(alpha = 0.5) +\n  tmap_style(\"classic\")\n\n\n\n\n\n\nCartographic Furniture\nBesides map style, tmap also provides arguments to draw other map furniture such as compass, scale bar and grid lines.\nIn the code chunk below, tm_compass(), tm_scale_bar() and tm_grid() are used to add compass, scale bar and grid lines onto the choropleth map.\n\ntm_shape(mpsz_pop2020) + \n  tm_fill(\"DEPENDENCY\",\n          style = \"quantile\",\n          palette = \"Blues\",\n          title = \"No. of persons\") +\n  tm_layout(main.title = \"Distribution of Dependency Ratio \\nby planning subzone\",\n            main.title.position = \"center\",\n            main.title.size = 1.2,\n            legend.height = 0.45,\n            legend.width = 0.35,\n            frame = TRUE) +\n  tm_borders(alpha = 0.5) +\n  tm_compass(type = \"8star\", size = 2) +\n  tm_scale_bar(width = 0.15) +\n  tm_grid(lwd = 0.1, alpha = 0.2) +\n  tm_credits(\"Source: Planning Sub-zone boundary from Urban Redevelopment Authority (URA)\\n and Population data from Department of Statistics DOS\",\n             position = c(\"left\", \"bottom\"))\n\n\n\n\nTo reset the default style, refer to the code below.\n\ntmap_style(\"white\")"
-  },
-  {
-    "objectID": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#drawing-small-multiple-choropleth-maps",
-    "href": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#drawing-small-multiple-choropleth-maps",
-    "title": "Choropeth Mapping with R",
-    "section": "Drawing Small Multiple Choropleth Maps",
-    "text": "Drawing Small Multiple Choropleth Maps\nSmall multiple maps, also referred to as facet maps, are composed of many maps arrange side-by-side, and sometimes stacked vertically. Small multiple maps enable the visualization of how spatial relationships change with respect to another variable, such as time.\nIn tmap, small multiple maps can be plotted in 3 ways:\n\nby assigning multiple values to at least one of the aesthetic arguments\nby defining a group-by variable in tm_facets()\nby creating multiple stand-alone maps with tmap_arrange()\n\n\nBy assigning multiple values to at least one of the aesthetic arguments\nIn this example, small multiple choropleth maps are created by defining ncols in tm_fill()\n\ntm_shape(mpsz_pop2020) +\n  tm_fill(c(\"YOUNG\", \"AGED\"),\n          style = \"equal\",\n          palette = \"Blues\") +\n  tm_layout(legend.position = c(\"right\", \"bottom\")) +\n  tm_borders(alpha = 0.5) +\n  tmap_style(\"white\")\n\n\n\n\nIn this example, small multiple choropleth maps are created by assigning multiple values to at least one of the aesthetic arguments\n\ntm_shape(mpsz_pop2020) + \n  tm_polygons(c(\"DEPENDENCY\",\"AGED\"),\n              style = c(\"equal\", \"quantile\"),\n              palette = list(\"Blues\",\"Greens\")) +\n  tm_layout(legend.position = c(\"right\", \"bottom\"))\n\n\n\n\n\n\nBy defining a group-by variable in tm_facets()\nIn this example, multiple small choropleth maps are created by using tm_facets()\n\ntm_shape(mpsz_pop2020) + \n  tm_fill(\"DEPENDENCY\",\n          style = \"quantile\",\n          palette = \"Blues\",\n          thres.poly = 0) +\n  tm_facets(by = \"REGION_N\",\n            free.coords = TRUE,\n            drop.shapes = TRUE) +\n  tm_layout(legend.show = FALSE,\n            title.position = c(\"center\", \"center\"),\n            title.size = 20) +\n  tm_borders(alpha = 0.5)\n\n\n\n\n\n\nBy creating multiple stand-alone maps with tmap_arrange()\nIn this example, multiple small choropleth maps are created by creating multiple stand-alone maps with tmap_arrange()\n\nyoungmap &lt;- tm_shape(mpsz_pop2020) +\n  tm_polygons(\"YOUNG\",\n              style = \"quantile\",\n              palette = \"Blues\")\n\nagedmap &lt;- tm_shape(mpsz_pop2020) +\n  tm_polygons(\"AGED\",\n              style = \"quantile\",\n              palette = \"Blues\")\n\ntmap_arrange(youngmap, agedmap, asp=1, ncol=2)"
-  },
-  {
-    "objectID": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#mapping-spatial-object-meeting-a-selection-criterion",
-    "href": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#mapping-spatial-object-meeting-a-selection-criterion",
-    "title": "Choropeth Mapping with R",
-    "section": "Mapping Spatial Object Meeting a Selection Criterion",
-    "text": "Mapping Spatial Object Meeting a Selection Criterion\nInstead of creating small multiple choropleth map, you can also use selection function to map spatial objects meeting the selection criterion.\n\ntm_shape(mpsz_pop2020[mpsz_pop2020$REGION_N==\"CENTRAL REGION\", ]) +\n  tm_fill(\"DEPENDENCY\",\n          style = \"quantile\",\n          palette = \"Blues\",\n          legend.hist = TRUE,\n          legend.is.portrait = TRUE,\n          legend.hist.z = 0.1) +\n  tm_layout(legend.outside = TRUE,\n            legend.height = 0.45,\n            legend.width = 5.0,\n            legend.position = c(\"right\", \"bottom\"),\n            frame = FALSE) +\n  tm_borders(alpha = 0.5)"
-  },
-  {
-    "objectID": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#all-about-tmap-package",
-    "href": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#all-about-tmap-package",
-    "title": "Choropeth Mapping with R",
-    "section": "All about tmap package",
-    "text": "All about tmap package\n\ntmap: Thematic Maps in R\ntmap\ntmap: get started!"
-  },
-  {
-    "objectID": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#the-data",
-    "href": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#the-data",
-    "title": "Choropeth Mapping with R",
-    "section": "The Data",
-    "text": "The Data\nTwo data set will be used to create the choropeth map.\n\nMaster Plan 2014 Subzone Boundary (Web) (i.e. MP14_SUBZONE_WEB_PL)\n\nESRI shapefile format (Geospatial data)\nDownloaded from data.gov.sg\nConsists of the geographical boundary of Singapore at the planning subzone level.\nThe data is based on URA Master Plan 2014\n\nSingapore Residents by Planning Area / Subzone, Age Group, Sex and Type of Dwelling, June 2011-2020 (i.e. respopagesextod2011to2020.csv)\n\nCSV format (Aspatial data)\nDownloaded from Department of Statistics, Singapore\nAlthough it does not contain any coordinate values, it’s PA and SZ fields can be used as unique identifiers to geocode to MP14_SUBZONE_WEB_PL shapefile."
-  },
-  {
-    "objectID": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#color-scheme",
-    "href": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#color-scheme",
-    "title": "Choropeth Mapping with R",
-    "section": "Color Scheme",
-    "text": "Color Scheme\ntmap supports color ramps either defined by the user or a set of predefined color ramps from the RColorBrewer package.\n\nUsing ColorBrewer palette\nTo change the color, we assign the preferred color to palette argument of tm_fill() as shown below.\n\ntm_shape(mpsz_pop2020) + \n  tm_fill(\"DEPENDENCY\",\n          n = 6,\n          style = \"quantile\",\n          palette = \"Blues\") +\n  tm_borders(alpha = 0.5)\n\n\n\n\nTo reverse the color shading, add a “-” prefix.\n\ntm_shape(mpsz_pop2020) + \n  tm_fill(\"DEPENDENCY\",\n          n = 6,\n          style = \"quantile\",\n          palette = \"-Blues\") +\n  tm_borders(alpha = 0.5)"
-  },
-  {
-    "objectID": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#geospatial-data-wrangling",
-    "href": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#geospatial-data-wrangling",
-    "title": "Choropeth Mapping with R",
-    "section": "Geospatial Data Wrangling",
-    "text": "Geospatial Data Wrangling\n\nsf: Simple Features for R\nSimple Features for R: Standardized Support for Spatial Vector Data\nReading, Writing and Converting Simple Features"
-  },
-  {
-    "objectID": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#data-wrangling-1",
-    "href": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html#data-wrangling-1",
-    "title": "Choropeth Mapping with R",
-    "section": "Data Wrangling",
-    "text": "Data Wrangling\n\ndplyr\nTidy data\ntidyr: Easily Tidy Data with 'spread()' and 'gather()' Functions"
-  },
-  {
     "objectID": "Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex03-1.html",
     "href": "Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex03-1.html",
     "title": "1st Order Spatial Point Patterns Analysis Methods",
@@ -224,59 +252,10 @@
     "text": "Importing the spatial data\nIn this section, st_read() of sf package will be used to import these three geospatial data sets into R."
   },
   {
-    "objectID": "In-class_Ex/In-class_Ex02/In-class_Ex02.html",
-    "href": "In-class_Ex/In-class_Ex02/In-class_Ex02.html",
-    "title": "R for Geospatial Data Science",
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "IS415-GAA",
     "section": "",
-    "text": "The following R packages will be used:\n\narrow\n\nTo handle cross-language development platform to handle databases and data conversion. (e.g. read Parquet files)\n\nlubridate\n\nTo work with date and time. Part of the tidyverse family, but needs to be installed independently.\n\ntidyverse\n\nA family of R packages commonly used for data science work\n\ntmap\nsf\n\n\n\nCode\npacman::p_load(arrow, lubridate, tidyverse, tmap, sf)"
-  },
-  {
-    "objectID": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01.html",
-    "href": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01.html",
-    "title": "Application of Spatial Point Patterns Analysis to discover the geographical distribution of Grab hailing services in Singapore",
-    "section": "",
-    "text": "Human mobility, the movement of human beings in space and time, reflects the spatial-temporal characteristics of human behavior. With the advancement of Information and Communication Technologies (ICT) especially smart phone, a large volume of data related to human mobility have been collected. By using appropriate GIS analysis methods, these data are potentially useful in supporting smart city planning and management."
-  },
-  {
-    "objectID": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01.html#aspatial-data",
-    "href": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01.html#aspatial-data",
-    "title": "Application of Spatial Point Patterns Analysis to discover the geographical distribution of Grab hailing services in Singapore",
-    "section": "Aspatial data",
-    "text": "Aspatial data\nFor the purpose of this assignment, Grab-Posisi of Singapore will be used"
-  },
-  {
-    "objectID": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01.html#geospatial-data",
-    "href": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01.html#geospatial-data",
-    "title": "Application of Spatial Point Patterns Analysis to discover the geographical distribution of Grab hailing services in Singapore",
-    "section": "Geospatial data",
-    "text": "Geospatial data\n\nRoad data set from OpenStreetMap of Geofabrik download server. The Malaysia, Singapore, and Brunei coverage should be downloaded.\nMaster Plan 2019 Subzone Boundary (No Sea) from Data.gov.sg"
-  },
-  {
-    "objectID": "In-class_Ex/In-class_Ex02/In-class_Ex02.html#extracting-trip-starting-locations",
-    "href": "In-class_Ex/In-class_Ex02/In-class_Ex02.html#extracting-trip-starting-locations",
-    "title": "R for Geospatial Data Science",
-    "section": "Extracting trip starting locations",
-    "text": "Extracting trip starting locations\n\nextracting trips’ origin locations\nderive three new columns (i.e. variables) for weekday, starting hour and day of the month\nname the output tibble data.frame origin_df\n\n\n\nCode\norigin_df &lt;- df %&gt;%\n  group_by(trj_id) %&gt;%\n  arrange(pingtimestamp) %&gt;% # from dplyr package\n  filter(row_number()==1) %&gt;%\n  mutate(weekday = wday(pingtimestamp, # functions from lubridate package\n                        label=TRUE,\n                        abbr=TRUE),\n         start_hr = factor(hour(pingtimestamp)), # With factor(), it makes it ordinal\n         day = factor(mday(pingtimestamp)))\nview(origin_df)"
-  },
-  {
-    "objectID": "In-class_Ex/In-class_Ex02/In-class_Ex02.html#extract-trip-ending-locations",
-    "href": "In-class_Ex/In-class_Ex02/In-class_Ex02.html#extract-trip-ending-locations",
-    "title": "R for Geospatial Data Science",
-    "section": "Extract trip ending locations",
-    "text": "Extract trip ending locations\n\nextracting trips’ ending locations\nderive three new columns for weekday, ending hour and day of the month\nname the output tibble data.frame destination_df\n\n\n\nCode\ndestination_df &lt;- df %&gt;%\n  group_by(trj_id) %&gt;%\n  arrange(desc(pingtimestamp)) %&gt;% # from dplyr package\n  filter(row_number()==1) %&gt;%\n  mutate(weekday = wday(pingtimestamp, # functions from lubridate package\n                        label=TRUE,\n                        abbr=TRUE),\n         end_hr = factor(hour(pingtimestamp)), # With factor(), it makes it ordinal\n         day = factor(mday(pingtimestamp)))\nview(destination_df)"
-  },
-  {
-    "objectID": "In-class_Ex/In-class_Ex02/In-class_Ex02.html#save-the-extracted-data",
-    "href": "In-class_Ex/In-class_Ex02/In-class_Ex02.html#save-the-extracted-data",
-    "title": "R for Geospatial Data Science",
-    "section": "Save the extracted data",
-    "text": "Save the extracted data\n\n\nCode\nwrite_rds(origin_df,\"../../data/rds/In-class_Ex/origin_df.rds\")\nwrite_rds(destination_df,\"../../data/rds/In-class_Ex/destination_df.rds\")"
-  },
-  {
-    "objectID": "In-class_Ex/In-class_Ex02/In-class_Ex02.html#import-saved-data",
-    "href": "In-class_Ex/In-class_Ex02/In-class_Ex02.html#import-saved-data",
-    "title": "R for Geospatial Data Science",
-    "section": "Import saved data",
-    "text": "Import saved data\n\n\nCode\norigin_df &lt;- read_rds(\"../../data/rds/In-class_Ex/origin_df.rds\")\ndestination_df &lt;- read_rds(\"../../data/rds/In-class_Ex/destination_df.rds\")\n\n\n\nVisualizing frequency distribution\n\n\nCode\n#ggplot(data = origin_df,\n#       weekday)"
+    "text": "Welcome to IS415 Geospatial Analytics and Applications\nThis is the course website of IS415 which I am studying this term.\nYou will find my course work on this website.\n\n\n\n Back to top"
   }
 ]
