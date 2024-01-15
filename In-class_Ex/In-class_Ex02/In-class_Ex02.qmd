@@ -40,9 +40,91 @@ pacman::p_load(arrow, lubridate, tidyverse, tmap, sf)
 
 # Importing Grab-Posisi Dataset
 
+Grab-Posisi dataset is in parquet file format, we will use the **arrow** package to import it.
+
 ```{r}
+#| eval: false
 df <- read_parquet("../../data/geospatial/GrabPosisi/part-00000-8bbff892-97d2-4011-9961-703e38972569.c000.snappy.parquet")
-df
+```
+
+Let's convert the pingtimestamp column from integer to a datetime format.
+
+```{r}
+#| eval: false
+df$pingtimestamp <- as_datetime(df$pingtimestamp)
+```
+
+Now, we will save the reformatted `df` into a new rds file called `part0.rds`. The output will be saved into a sub-folder called rds.
+
+```{r}
+#| eval: false
+write_rds(df,"../../data/rds/In-class_Ex/part0.rds")
+```
+
+rds is a R data file format. Saving it as so will keep the data's structure.
+
+## Extracting trip starting locations
+
+-   extracting trips' origin locations
+
+-   derive three new columns (i.e. variables) for weekday, starting hour and day of the month
+
+-   name the output tibble data.frame `origin_df`
+
+```{r}
+#| eval: false
+origin_df <- df %>%
+  group_by(trj_id) %>%
+  arrange(pingtimestamp) %>% # from dplyr package
+  filter(row_number()==1) %>%
+  mutate(weekday = wday(pingtimestamp, # functions from lubridate package
+                        label=TRUE,
+                        abbr=TRUE),
+         start_hr = factor(hour(pingtimestamp)), # With factor(), it makes it ordinal
+         day = factor(mday(pingtimestamp)))
+view(origin_df)
+```
+
+## Extract trip ending locations
+
+-   extracting trips' ending locations
+
+-   derive three new columns for weekday, ending hour and day of the month
+
+-   name the output tibble data.frame `destination_df`
+
+```{r}
+#| eval: false
+destination_df <- df %>%
+  group_by(trj_id) %>%
+  arrange(desc(pingtimestamp)) %>% # from dplyr package
+  filter(row_number()==1) %>%
+  mutate(weekday = wday(pingtimestamp, # functions from lubridate package
+                        label=TRUE,
+                        abbr=TRUE),
+         end_hr = factor(hour(pingtimestamp)), # With factor(), it makes it ordinal
+         day = factor(mday(pingtimestamp)))
+view(destination_df)
+```
+
+## Save the extracted data
+```{r}
+#| eval: false
+write_rds(origin_df,"../../data/rds/In-class_Ex/origin_df.rds")
+write_rds(destination_df,"../../data/rds/In-class_Ex/destination_df.rds")
+```
+
+## Import saved data
+```{r}
+origin_df <- read_rds("../../data/rds/In-class_Ex/origin_df.rds")
+destination_df <- read_rds("../../data/rds/In-class_Ex/destination_df.rds")
+```
+
+### Visualizing frequency distribution
+
+```{r}
+#ggplot(data = origin_df,
+#       weekday)
 ```
 
 # Converting into sf tibble data.frame

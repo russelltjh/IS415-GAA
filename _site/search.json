@@ -228,7 +228,7 @@
     "href": "In-class_Ex/In-class_Ex02/In-class_Ex02.html",
     "title": "R for Geospatial Data Science",
     "section": "",
-    "text": "Getting Started\nThe following R packages will be used:\n\narrow\n\nTo handle cross-language development platform to handle databases and data conversion. (e.g. read Parquet files)\n\nlubridate\n\nTo work with date and time. Part of the tidyverse family, but needs to be installed independently.\n\ntidyverse\n\nA family of R packages commonly used for data science work\n\ntmap\nsf\n\n\n\nCode\npacman::p_load(arrow, lubridate, tidyverse, tmap, sf)\n\n\n\n\nImporting Grab-Posisi Dataset\n\n\nCode\ndf &lt;- read_parquet(\"../../data/geospatial/GrabPosisi/part-00000-8bbff892-97d2-4011-9961-703e38972569.c000.snappy.parquet\")\ndf\n\n\n# A tibble: 3,034,553 × 9\n   trj_id driving_mode osname pingtimestamp rawlat rawlng speed bearing accuracy\n   &lt;chr&gt;  &lt;chr&gt;        &lt;chr&gt;          &lt;int&gt;  &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;   &lt;int&gt;    &lt;dbl&gt;\n 1 70014  car          andro…    1554943236   1.34   104. 18.9      248     3.9 \n 2 73573  car          andro…    1555582623   1.32   104. 17.7       44     4   \n 3 75567  car          andro…    1555141026   1.33   104. 14.0       34     3.9 \n 4 1410   car          andro…    1555731693   1.26   104. 13.0      181     4   \n 5 4354   car          andro…    1555584497   1.28   104. 14.8       93     3.9 \n 6 32630  car          andro…    1555395258   1.30   104. 23.2       73     3.9 \n 7 64631  car          andro…    1554768955   1.35   104.  0         82     3   \n 8 76484  car          andro…    1554783532   1.34   104.  3.98     321     3.65\n 9 65747  car          ios       1554898418   1.29   104.  4.68     324    50   \n10 60478  car          ios       1555593189   1.33   104. 16.5       31    16   \n# ℹ 3,034,543 more rows\n\n\n\n\nConverting into sf tibble data.frame\n\n\nCode\n#sfdf &lt;- st_as_sf(df)\n#sfdf\n\n\n\n\nVisualizing as Point Symbol Map\n\n\nImporting Master Plan 2019 Planning Subzone Boundary\n\n\n\n\n Back to top"
+    "text": "The following R packages will be used:\n\narrow\n\nTo handle cross-language development platform to handle databases and data conversion. (e.g. read Parquet files)\n\nlubridate\n\nTo work with date and time. Part of the tidyverse family, but needs to be installed independently.\n\ntidyverse\n\nA family of R packages commonly used for data science work\n\ntmap\nsf\n\n\n\nCode\npacman::p_load(arrow, lubridate, tidyverse, tmap, sf)"
   },
   {
     "objectID": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01.html",
@@ -250,5 +250,33 @@
     "title": "Application of Spatial Point Patterns Analysis to discover the geographical distribution of Grab hailing services in Singapore",
     "section": "Geospatial data",
     "text": "Geospatial data\n\nRoad data set from OpenStreetMap of Geofabrik download server. The Malaysia, Singapore, and Brunei coverage should be downloaded.\nMaster Plan 2019 Subzone Boundary (No Sea) from Data.gov.sg"
+  },
+  {
+    "objectID": "In-class_Ex/In-class_Ex02/In-class_Ex02.html#extracting-trip-starting-locations",
+    "href": "In-class_Ex/In-class_Ex02/In-class_Ex02.html#extracting-trip-starting-locations",
+    "title": "R for Geospatial Data Science",
+    "section": "Extracting trip starting locations",
+    "text": "Extracting trip starting locations\n\nextracting trips’ origin locations\nderive three new columns (i.e. variables) for weekday, starting hour and day of the month\nname the output tibble data.frame origin_df\n\n\n\nCode\norigin_df &lt;- df %&gt;%\n  group_by(trj_id) %&gt;%\n  arrange(pingtimestamp) %&gt;% # from dplyr package\n  filter(row_number()==1) %&gt;%\n  mutate(weekday = wday(pingtimestamp, # functions from lubridate package\n                        label=TRUE,\n                        abbr=TRUE),\n         start_hr = factor(hour(pingtimestamp)), # With factor(), it makes it ordinal\n         day = factor(mday(pingtimestamp)))\nview(origin_df)"
+  },
+  {
+    "objectID": "In-class_Ex/In-class_Ex02/In-class_Ex02.html#extract-trip-ending-locations",
+    "href": "In-class_Ex/In-class_Ex02/In-class_Ex02.html#extract-trip-ending-locations",
+    "title": "R for Geospatial Data Science",
+    "section": "Extract trip ending locations",
+    "text": "Extract trip ending locations\n\nextracting trips’ ending locations\nderive three new columns for weekday, ending hour and day of the month\nname the output tibble data.frame destination_df\n\n\n\nCode\ndestination_df &lt;- df %&gt;%\n  group_by(trj_id) %&gt;%\n  arrange(desc(pingtimestamp)) %&gt;% # from dplyr package\n  filter(row_number()==1) %&gt;%\n  mutate(weekday = wday(pingtimestamp, # functions from lubridate package\n                        label=TRUE,\n                        abbr=TRUE),\n         end_hr = factor(hour(pingtimestamp)), # With factor(), it makes it ordinal\n         day = factor(mday(pingtimestamp)))\nview(destination_df)"
+  },
+  {
+    "objectID": "In-class_Ex/In-class_Ex02/In-class_Ex02.html#save-the-extracted-data",
+    "href": "In-class_Ex/In-class_Ex02/In-class_Ex02.html#save-the-extracted-data",
+    "title": "R for Geospatial Data Science",
+    "section": "Save the extracted data",
+    "text": "Save the extracted data\n\n\nCode\nwrite_rds(origin_df,\"../../data/rds/In-class_Ex/origin_df.rds\")\nwrite_rds(destination_df,\"../../data/rds/In-class_Ex/destination_df.rds\")"
+  },
+  {
+    "objectID": "In-class_Ex/In-class_Ex02/In-class_Ex02.html#import-saved-data",
+    "href": "In-class_Ex/In-class_Ex02/In-class_Ex02.html#import-saved-data",
+    "title": "R for Geospatial Data Science",
+    "section": "Import saved data",
+    "text": "Import saved data\n\n\nCode\norigin_df &lt;- read_rds(\"../../data/rds/In-class_Ex/origin_df.rds\")\ndestination_df &lt;- read_rds(\"../../data/rds/In-class_Ex/destination_df.rds\")\n\n\n\nVisualizing frequency distribution\n\n\nCode\n#ggplot(data = origin_df,\n#       weekday)"
   }
 ]

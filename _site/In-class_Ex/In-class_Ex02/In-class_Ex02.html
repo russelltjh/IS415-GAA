@@ -188,7 +188,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
    
   <ul>
   <li><a href="#getting-started" id="toc-getting-started" class="nav-link active" data-scroll-target="#getting-started">Getting Started</a></li>
-  <li><a href="#importing-grab-posisi-dataset" id="toc-importing-grab-posisi-dataset" class="nav-link" data-scroll-target="#importing-grab-posisi-dataset">Importing Grab-Posisi Dataset</a></li>
+  <li><a href="#importing-grab-posisi-dataset" id="toc-importing-grab-posisi-dataset" class="nav-link" data-scroll-target="#importing-grab-posisi-dataset">Importing Grab-Posisi Dataset</a>
+  <ul class="collapse">
+  <li><a href="#extracting-trip-starting-locations" id="toc-extracting-trip-starting-locations" class="nav-link" data-scroll-target="#extracting-trip-starting-locations">Extracting trip starting locations</a></li>
+  <li><a href="#extract-trip-ending-locations" id="toc-extract-trip-ending-locations" class="nav-link" data-scroll-target="#extract-trip-ending-locations">Extract trip ending locations</a></li>
+  <li><a href="#save-the-extracted-data" id="toc-save-the-extracted-data" class="nav-link" data-scroll-target="#save-the-extracted-data">Save the extracted data</a></li>
+  <li><a href="#import-saved-data" id="toc-import-saved-data" class="nav-link" data-scroll-target="#import-saved-data">Import saved data</a>
+  <ul class="collapse">
+  <li><a href="#visualizing-frequency-distribution" id="toc-visualizing-frequency-distribution" class="nav-link" data-scroll-target="#visualizing-frequency-distribution">Visualizing frequency distribution</a></li>
+  </ul></li>
+  </ul></li>
   <li><a href="#converting-into-sf-tibble-data.frame" id="toc-converting-into-sf-tibble-data.frame" class="nav-link" data-scroll-target="#converting-into-sf-tibble-data.frame">Converting into sf tibble data.frame</a></li>
   <li><a href="#visualizing-as-point-symbol-map" id="toc-visualizing-as-point-symbol-map" class="nav-link" data-scroll-target="#visualizing-as-point-symbol-map">Visualizing as Point Symbol Map</a></li>
   <li><a href="#importing-master-plan-2019-planning-subzone-boundary" id="toc-importing-master-plan-2019-planning-subzone-boundary" class="nav-link" data-scroll-target="#importing-master-plan-2019-planning-subzone-boundary">Importing Master Plan 2019 Planning Subzone Boundary</a></li>
@@ -256,37 +265,112 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="importing-grab-posisi-dataset" class="level1">
 <h1>Importing Grab-Posisi Dataset</h1>
+<p>Grab-Posisi dataset is in parquet file format, we will use the <strong>arrow</strong> package to import it.</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">read_parquet</span>(<span class="st">"../../data/geospatial/GrabPosisi/part-00000-8bbff892-97d2-4011-9961-703e38972569.c000.snappy.parquet"</span>)</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">read_parquet</span>(<span class="st">"../../data/geospatial/GrabPosisi/part-00000-8bbff892-97d2-4011-9961-703e38972569.c000.snappy.parquet"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 3,034,553 × 9
-   trj_id driving_mode osname pingtimestamp rawlat rawlng speed bearing accuracy
-   &lt;chr&gt;  &lt;chr&gt;        &lt;chr&gt;          &lt;int&gt;  &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;   &lt;int&gt;    &lt;dbl&gt;
- 1 70014  car          andro…    1554943236   1.34   104. 18.9      248     3.9 
- 2 73573  car          andro…    1555582623   1.32   104. 17.7       44     4   
- 3 75567  car          andro…    1555141026   1.33   104. 14.0       34     3.9 
- 4 1410   car          andro…    1555731693   1.26   104. 13.0      181     4   
- 5 4354   car          andro…    1555584497   1.28   104. 14.8       93     3.9 
- 6 32630  car          andro…    1555395258   1.30   104. 23.2       73     3.9 
- 7 64631  car          andro…    1554768955   1.35   104.  0         82     3   
- 8 76484  car          andro…    1554783532   1.34   104.  3.98     321     3.65
- 9 65747  car          ios       1554898418   1.29   104.  4.68     324    50   
-10 60478  car          ios       1555593189   1.33   104. 16.5       31    16   
-# ℹ 3,034,543 more rows</code></pre>
 </div>
+<p>Let’s convert the pingtimestamp column from integer to a datetime format.</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>df<span class="sc">$</span>pingtimestamp <span class="ot">&lt;-</span> <span class="fu">as_datetime</span>(df<span class="sc">$</span>pingtimestamp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
+<p>Now, we will save the reformatted <code>df</code> into a new rds file called <code>part0.rds</code>. The output will be saved into a sub-folder called rds.</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">write_rds</span>(df,<span class="st">"../../data/rds/In-class_Ex/part0.rds"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>rds is a R data file format. Saving it as so will keep the data’s structure.</p>
+<section id="extracting-trip-starting-locations" class="level2">
+<h2 class="anchored" data-anchor-id="extracting-trip-starting-locations">Extracting trip starting locations</h2>
+<ul>
+<li><p>extracting trips’ origin locations</p></li>
+<li><p>derive three new columns (i.e.&nbsp;variables) for weekday, starting hour and day of the month</p></li>
+<li><p>name the output tibble data.frame <code>origin_df</code></p></li>
+</ul>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>origin_df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(trj_id) <span class="sc">%&gt;%</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(pingtimestamp) <span class="sc">%&gt;%</span> <span class="co"># from dplyr package</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">row_number</span>()<span class="sc">==</span><span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">weekday =</span> <span class="fu">wday</span>(pingtimestamp, <span class="co"># functions from lubridate package</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>                        <span class="at">label=</span><span class="cn">TRUE</span>,</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>                        <span class="at">abbr=</span><span class="cn">TRUE</span>),</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>         <span class="at">start_hr =</span> <span class="fu">factor</span>(<span class="fu">hour</span>(pingtimestamp)), <span class="co"># With factor(), it makes it ordinal</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>         <span class="at">day =</span> <span class="fu">factor</span>(<span class="fu">mday</span>(pingtimestamp)))</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="fu">view</span>(origin_df)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="extract-trip-ending-locations" class="level2">
+<h2 class="anchored" data-anchor-id="extract-trip-ending-locations">Extract trip ending locations</h2>
+<ul>
+<li><p>extracting trips’ ending locations</p></li>
+<li><p>derive three new columns for weekday, ending hour and day of the month</p></li>
+<li><p>name the output tibble data.frame <code>destination_df</code></p></li>
+</ul>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>destination_df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(trj_id) <span class="sc">%&gt;%</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(pingtimestamp)) <span class="sc">%&gt;%</span> <span class="co"># from dplyr package</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">row_number</span>()<span class="sc">==</span><span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">weekday =</span> <span class="fu">wday</span>(pingtimestamp, <span class="co"># functions from lubridate package</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>                        <span class="at">label=</span><span class="cn">TRUE</span>,</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>                        <span class="at">abbr=</span><span class="cn">TRUE</span>),</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>         <span class="at">end_hr =</span> <span class="fu">factor</span>(<span class="fu">hour</span>(pingtimestamp)), <span class="co"># With factor(), it makes it ordinal</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>         <span class="at">day =</span> <span class="fu">factor</span>(<span class="fu">mday</span>(pingtimestamp)))</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="fu">view</span>(destination_df)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="save-the-extracted-data" class="level2">
+<h2 class="anchored" data-anchor-id="save-the-extracted-data">Save the extracted data</h2>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">write_rds</span>(origin_df,<span class="st">"../../data/rds/In-class_Ex/origin_df.rds"</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">write_rds</span>(destination_df,<span class="st">"../../data/rds/In-class_Ex/destination_df.rds"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="import-saved-data" class="level2">
+<h2 class="anchored" data-anchor-id="import-saved-data">Import saved data</h2>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>origin_df <span class="ot">&lt;-</span> <span class="fu">read_rds</span>(<span class="st">"../../data/rds/In-class_Ex/origin_df.rds"</span>)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>destination_df <span class="ot">&lt;-</span> <span class="fu">read_rds</span>(<span class="st">"../../data/rds/In-class_Ex/destination_df.rds"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<section id="visualizing-frequency-distribution" class="level3">
+<h3 class="anchored" data-anchor-id="visualizing-frequency-distribution">Visualizing frequency distribution</h3>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co">#ggplot(data = origin_df,</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co">#       weekday)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+</section>
 </section>
 <section id="converting-into-sf-tibble-data.frame" class="level1">
 <h1>Converting into sf tibble data.frame</h1>
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">#sfdf &lt;- st_as_sf(df)</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co">#sfdf</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co">#sfdf &lt;- st_as_sf(df)</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="co">#sfdf</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 </section>
