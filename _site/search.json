@@ -53,7 +53,7 @@
     "href": "In-class_Ex/In-class_Ex02/In-class_Ex02.html#import-saved-data",
     "title": "R for Geospatial Data Science",
     "section": "Import saved data",
-    "text": "Import saved data\n\n\nCode\norigin_df &lt;- read_rds(\"../../data/rds/In-class_Ex/origin_df.rds\")\ndestination_df &lt;- read_rds(\"../../data/rds/In-class_Ex/destination_df.rds\")\n\n\n\nVisualizing frequency distribution\n\n\nCode\n#ggplot(data = origin_df,\n#       weekday)"
+    "text": "Import saved data\n\n\nCode\norigin_df &lt;- read_rds(\"../../data/rds/In-class_Ex/origin_df.rds\")\ndestination_df &lt;- read_rds(\"../../data/rds/In-class_Ex/destination_df.rds\")\n\n\n\nVisualizing frequency distribution"
   },
   {
     "objectID": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html",

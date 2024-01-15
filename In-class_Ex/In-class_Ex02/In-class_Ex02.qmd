@@ -122,17 +122,7 @@ destination_df <- read_rds("../../data/rds/In-class_Ex/destination_df.rds")
 
 ### Visualizing frequency distribution
 
-```{r}
-#ggplot(data = origin_df,
-#       weekday)
-```
-
 # Converting into sf tibble data.frame
-
-```{r}
-#sfdf <- st_as_sf(df)
-#sfdf
-```
 
 # Visualizing as Point Symbol Map
 
