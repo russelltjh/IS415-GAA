@@ -228,6 +228,27 @@
     "href": "In-class_Ex/In-class_Ex02/In-class_Ex02.html",
     "title": "R for Geospatial Data Science",
     "section": "",
-    "text": "Getting Started\nThe following R packages will be used:\n\narrow\nlubridate\ntidyverse\ntmap\nsf\n\n\npacman::p_load(sf, tmap, tidyverse)\n\n\n\n\n\n Back to top"
+    "text": "Getting Started\nThe following R packages will be used:\n\narrow\n\nTo handle cross-language development platform to handle databases and data conversion. (e.g. read Parquet files)\n\nlubridate\n\nTo work with date and time. Part of the tidyverse family, but needs to be installed independently.\n\ntidyverse\n\nA family of R packages commonly used for data science work\n\ntmap\nsf\n\n\n\nCode\npacman::p_load(arrow, lubridate, tidyverse, tmap, sf)\n\n\n\n\nImporting Grab-Posisi Dataset\n\n\nCode\ndf &lt;- read_parquet(\"../../data/geospatial/GrabPosisi/part-00000-8bbff892-97d2-4011-9961-703e38972569.c000.snappy.parquet\")\ndf\n\n\n# A tibble: 3,034,553 × 9\n   trj_id driving_mode osname pingtimestamp rawlat rawlng speed bearing accuracy\n   &lt;chr&gt;  &lt;chr&gt;        &lt;chr&gt;          &lt;int&gt;  &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;   &lt;int&gt;    &lt;dbl&gt;\n 1 70014  car          andro…    1554943236   1.34   104. 18.9      248     3.9 \n 2 73573  car          andro…    1555582623   1.32   104. 17.7       44     4   \n 3 75567  car          andro…    1555141026   1.33   104. 14.0       34     3.9 \n 4 1410   car          andro…    1555731693   1.26   104. 13.0      181     4   \n 5 4354   car          andro…    1555584497   1.28   104. 14.8       93     3.9 \n 6 32630  car          andro…    1555395258   1.30   104. 23.2       73     3.9 \n 7 64631  car          andro…    1554768955   1.35   104.  0         82     3   \n 8 76484  car          andro…    1554783532   1.34   104.  3.98     321     3.65\n 9 65747  car          ios       1554898418   1.29   104.  4.68     324    50   \n10 60478  car          ios       1555593189   1.33   104. 16.5       31    16   \n# ℹ 3,034,543 more rows\n\n\n\n\nConverting into sf tibble data.frame\n\n\nCode\n#sfdf &lt;- st_as_sf(df)\n#sfdf\n\n\n\n\nVisualizing as Point Symbol Map\n\n\nImporting Master Plan 2019 Planning Subzone Boundary\n\n\n\n\n Back to top"
+  },
+  {
+    "objectID": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01.html",
+    "href": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01.html",
+    "title": "Application of Spatial Point Patterns Analysis to discover the geographical distribution of Grab hailing services in Singapore",
+    "section": "",
+    "text": "Human mobility, the movement of human beings in space and time, reflects the spatial-temporal characteristics of human behavior. With the advancement of Information and Communication Technologies (ICT) especially smart phone, a large volume of data related to human mobility have been collected. By using appropriate GIS analysis methods, these data are potentially useful in supporting smart city planning and management."
+  },
+  {
+    "objectID": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01.html#aspatial-data",
+    "href": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01.html#aspatial-data",
+    "title": "Application of Spatial Point Patterns Analysis to discover the geographical distribution of Grab hailing services in Singapore",
+    "section": "Aspatial data",
+    "text": "Aspatial data\nFor the purpose of this assignment, Grab-Posisi of Singapore will be used"
+  },
+  {
+    "objectID": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01.html#geospatial-data",
+    "href": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01.html#geospatial-data",
+    "title": "Application of Spatial Point Patterns Analysis to discover the geographical distribution of Grab hailing services in Singapore",
+    "section": "Geospatial data",
+    "text": "Geospatial data\n\nRoad data set from OpenStreetMap of Geofabrik download server. The Malaysia, Singapore, and Brunei coverage should be downloaded.\nMaster Plan 2019 Subzone Boundary (No Sea) from Data.gov.sg"
   }
 ]

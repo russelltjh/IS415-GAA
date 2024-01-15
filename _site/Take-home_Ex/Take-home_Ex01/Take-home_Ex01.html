@@ -8,7 +8,7 @@
 
 <meta name="dcterms.date" content="2024-01-15">
 
-<title>IS415-GAA - R for Geospatial Data Science</title>
+<title>IS415-GAA - Application of Spatial Point Patterns Analysis to discover the geographical distribution of Grab hailing services in Singapore</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,40 +20,6 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
-}
-/* CSS for syntax highlighting */
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -187,11 +153,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#getting-started" id="toc-getting-started" class="nav-link active" data-scroll-target="#getting-started">Getting Started</a></li>
-  <li><a href="#importing-grab-posisi-dataset" id="toc-importing-grab-posisi-dataset" class="nav-link" data-scroll-target="#importing-grab-posisi-dataset">Importing Grab-Posisi Dataset</a></li>
-  <li><a href="#converting-into-sf-tibble-data.frame" id="toc-converting-into-sf-tibble-data.frame" class="nav-link" data-scroll-target="#converting-into-sf-tibble-data.frame">Converting into sf tibble data.frame</a></li>
-  <li><a href="#visualizing-as-point-symbol-map" id="toc-visualizing-as-point-symbol-map" class="nav-link" data-scroll-target="#visualizing-as-point-symbol-map">Visualizing as Point Symbol Map</a></li>
-  <li><a href="#importing-master-plan-2019-planning-subzone-boundary" id="toc-importing-master-plan-2019-planning-subzone-boundary" class="nav-link" data-scroll-target="#importing-master-plan-2019-planning-subzone-boundary">Importing Master Plan 2019 Planning Subzone Boundary</a></li>
+  <li><a href="#setting-the-scene" id="toc-setting-the-scene" class="nav-link active" data-scroll-target="#setting-the-scene">Setting the Scene</a></li>
+  <li><a href="#objectives" id="toc-objectives" class="nav-link" data-scroll-target="#objectives">Objectives</a></li>
+  <li><a href="#the-task" id="toc-the-task" class="nav-link" data-scroll-target="#the-task">The Task</a></li>
+  <li><a href="#the-data" id="toc-the-data" class="nav-link" data-scroll-target="#the-data">The Data</a>
+  <ul class="collapse">
+  <li><a href="#aspatial-data" id="toc-aspatial-data" class="nav-link" data-scroll-target="#aspatial-data">Aspatial data</a></li>
+  <li><a href="#geospatial-data" id="toc-geospatial-data" class="nav-link" data-scroll-target="#geospatial-data">Geospatial data</a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
@@ -200,8 +169,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">R for Geospatial Data Science</h1>
-<p class="subtitle lead">In-class Exercise 2</p>
+<h1 class="title">Application of Spatial Point Patterns Analysis to discover the geographical distribution of Grab hailing services in Singapore</h1>
+<p class="subtitle lead">Take-home_Ex01</p>
 </div>
 
 
@@ -228,75 +197,44 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 </header>
 
-<section id="getting-started" class="level1">
-<h1>Getting Started</h1>
-<p>The following R packages will be used:</p>
+<section id="setting-the-scene" class="level1">
+<h1>Setting the Scene</h1>
+<p>Human mobility, the movement of human beings in space and time, reflects the spatial-temporal characteristics of human behavior. With the advancement of Information and Communication Technologies (ICT) especially smart phone, a large volume of data related to human mobility have been collected. By using appropriate GIS analysis methods, these data are potentially useful in supporting smart city planning and management.</p>
+</section>
+<section id="objectives" class="level1">
+<h1>Objectives</h1>
+<p>Geospatial analytics hold tremendous potential to address complex problems facing society. In this study, you are tasked to apply appropriate spatial point patterns analysis methods to discover the geographical and spatio-temporal distribution of Grab hailing services locations in Singapore.</p>
+</section>
+<section id="the-task" class="level1">
+<h1>The Task</h1>
 <ul>
-<li><p>arrow</p>
+<li><p>Using appropriate function of <strong>sf</strong> and <strong>tidyverse</strong>, preparing the following geospatial data layer in sf tibble data.frames:</p>
 <ul>
-<li>To handle cross-language development platform to handle databases and data conversion. (e.g.&nbsp;read Parquet files)</li>
+<li><p>Grab taxi location points either by origins or destinations.</p></li>
+<li><p>Road layer within Singapore excluding outer islands.</p></li>
+<li><p>Singapore boundary layer excluding outer islands.</p></li>
 </ul></li>
-<li><p>lubridate</p>
-<ul>
-<li>To work with date and time. Part of the tidyverse family, but needs to be installed independently.</li>
-</ul></li>
-<li><p>tidyverse</p>
-<ul>
-<li>A family of R packages commonly used for data science work</li>
-</ul></li>
-<li><p>tmap</p></li>
-<li><p>sf</p></li>
+<li><p>Using the extracted data, derive traditional Kernel Density Estimation layers</p></li>
+<li><p>Using the extracted data, derive either Network Kernel Density Estimation (NKDE) or Temporal Network Kernel Density Estimation (TNKD)</p></li>
+<li><p>Using appropriate <strong>tmap</strong> function, display the kernel density layers on OpenStreetMap of Singapore</p></li>
+<li><p>Describe the spatial patterns revealed by the kernel density maps.</p></li>
 </ul>
-<div class="cell">
-<details>
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(arrow, lubridate, tidyverse, tmap, sf)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-</div>
 </section>
-<section id="importing-grab-posisi-dataset" class="level1">
-<h1>Importing Grab-Posisi Dataset</h1>
-<div class="cell">
-<details>
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">read_parquet</span>(<span class="st">"../../data/geospatial/GrabPosisi/part-00000-8bbff892-97d2-4011-9961-703e38972569.c000.snappy.parquet"</span>)</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 3,034,553 × 9
-   trj_id driving_mode osname pingtimestamp rawlat rawlng speed bearing accuracy
-   &lt;chr&gt;  &lt;chr&gt;        &lt;chr&gt;          &lt;int&gt;  &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;   &lt;int&gt;    &lt;dbl&gt;
- 1 70014  car          andro…    1554943236   1.34   104. 18.9      248     3.9 
- 2 73573  car          andro…    1555582623   1.32   104. 17.7       44     4   
- 3 75567  car          andro…    1555141026   1.33   104. 14.0       34     3.9 
- 4 1410   car          andro…    1555731693   1.26   104. 13.0      181     4   
- 5 4354   car          andro…    1555584497   1.28   104. 14.8       93     3.9 
- 6 32630  car          andro…    1555395258   1.30   104. 23.2       73     3.9 
- 7 64631  car          andro…    1554768955   1.35   104.  0         82     3   
- 8 76484  car          andro…    1554783532   1.34   104.  3.98     321     3.65
- 9 65747  car          ios       1554898418   1.29   104.  4.68     324    50   
-10 60478  car          ios       1555593189   1.33   104. 16.5       31    16   
-# ℹ 3,034,543 more rows</code></pre>
-</div>
-</div>
+<section id="the-data" class="level1">
+<h1>The Data</h1>
+<section id="aspatial-data" class="level2">
+<h2 class="anchored" data-anchor-id="aspatial-data">Aspatial data</h2>
+<p>For the purpose of this assignment, <a href="https://engineering.grab.com/grab-posisi">Grab-Posisi</a> of Singapore will be used</p>
 </section>
-<section id="converting-into-sf-tibble-data.frame" class="level1">
-<h1>Converting into sf tibble data.frame</h1>
-<div class="cell">
-<details>
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">#sfdf &lt;- st_as_sf(df)</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co">#sfdf</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-</div>
-</section>
-<section id="visualizing-as-point-symbol-map" class="level1">
-<h1>Visualizing as Point Symbol Map</h1>
-</section>
-<section id="importing-master-plan-2019-planning-subzone-boundary" class="level1">
-<h1>Importing Master Plan 2019 Planning Subzone Boundary</h1>
+<section id="geospatial-data" class="level2">
+<h2 class="anchored" data-anchor-id="geospatial-data">Geospatial data</h2>
+<ul>
+<li><p>Road data set from OpenStreetMap of <a href="https://download.geofabrik.de/">Geofabrik download server</a>. The Malaysia, Singapore, and Brunei coverage should be downloaded.</p></li>
+<li><p>Master Plan 2019 Subzone Boundary (No Sea) from Data.gov.sg</p></li>
+</ul>
 
 
+</section>
 </section>
 
 <a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Back to top</a></main> <!-- /main -->

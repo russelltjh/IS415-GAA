@@ -1,0 +1,53 @@
+---
+title: "Application of Spatial Point Patterns Analysis to discover the geographical distribution of Grab hailing services in Singapore"
+subtitle: "Take-home_Ex01"
+format:
+  html:
+    code-fold: true
+    code-summary: "Show the code"
+    toc: true # Table of Contents
+execute:
+  eval: true
+  echo: true
+  warning: False  # This turns off warning messages being displayed
+date: 15 January, 2024
+date-modified: "last-modified"
+---
+
+# Setting the Scene
+
+Human mobility, the movement of human beings in space and time, reflects the spatial-temporal characteristics of human behavior. With the advancement of Information and Communication Technologies (ICT) especially smart phone, a large volume of data related to human mobility have been collected. By using appropriate GIS analysis methods, these data are potentially useful in supporting smart city planning and management.
+
+# Objectives
+
+Geospatial analytics hold tremendous potential to address complex problems facing society. In this study, you are tasked to apply appropriate spatial point patterns analysis methods to discover the geographical and spatio-temporal distribution of Grab hailing services locations in Singapore.
+
+# The Task
+
+-   Using appropriate function of **sf** and **tidyverse**, preparing the following geospatial data layer in sf tibble data.frames:
+
+    -   Grab taxi location points either by origins or destinations.
+
+    -   Road layer within Singapore excluding outer islands.
+
+    -   Singapore boundary layer excluding outer islands.
+
+-   Using the extracted data, derive traditional Kernel Density Estimation layers
+
+-   Using the extracted data, derive either Network Kernel Density Estimation (NKDE) or Temporal Network Kernel Density Estimation (TNKD)
+
+-   Using appropriate **tmap** function, display the kernel density layers on OpenStreetMap of Singapore
+
+-   Describe the spatial patterns revealed by the kernel density maps.
+
+# The Data
+
+## Aspatial data
+
+For the purpose of this assignment, [Grab-Posisi](https://engineering.grab.com/grab-posisi) of Singapore will be used
+
+## Geospatial data
+
+-   Road data set from OpenStreetMap of [Geofabrik download server](https://download.geofabrik.de/). The Malaysia, Singapore, and Brunei coverage should be downloaded.
+
+-   Master Plan 2019 Subzone Boundary (No Sea) from Data.gov.sg
