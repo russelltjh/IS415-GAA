@@ -208,5 +208,19 @@
     "title": "Choropeth Mapping with R",
     "section": "Data Wrangling",
     "text": "Data Wrangling\n\ndplyr\nTidy data\ntidyr: Easily Tidy Data with 'spread()' and 'gather()' Functions"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex03-1.html",
+    "href": "Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex03-1.html",
+    "title": "1st Order Spatial Point Patterns Analysis Methods",
+    "section": "",
+    "text": "Spatial Point Pattern Analysis is the evaluation of the pattern or distribution, of a set of points on a surface. The point can be a location of:\n\nevents such as crime, traffic accident and disease onset\nbusiness services (coffee and fast-food outlets) or facilities such as childcare and elder-care\n\nUsing appropriate functions of spatstat, this hands-on exercise aims to discover the spatial point processes of childcare centers in Singapore.\nThe specific questions we would like to answer are as follows:\n\nAre childcare centers in Singapore randomly distributed throughout the country?\nIf the answer is not, then the next logical question is where are the locations with higher concentration of childcare centers?"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex03-1.html#importing-the-spatial-data",
+    "href": "Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex03-1.html#importing-the-spatial-data",
+    "title": "1st Order Spatial Point Patterns Analysis Methods",
+    "section": "Importing the spatial data",
+    "text": "Importing the spatial data\nIn this section, st_read() of sf package will be used to import these three geospatial data sets into R."
   }
 ]
