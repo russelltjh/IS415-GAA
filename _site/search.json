@@ -375,13 +375,13 @@
     "href": "Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex03-1.html#clark-and-evans-test-choa-chu-kang-planning-area",
     "title": "1st Order Spatial Point Patterns Analysis Methods",
     "section": "Clark and Evans Test: Choa Chu Kang planning area",
-    "text": "Clark and Evans Test: Choa Chu Kang planning area\nIn the code chunk below, clarkevans.test() of spatstat is used to performs Clark-Evans test of aggregation for childcare centre in Choa Chu Kang planning area.\n\nclarkevans.test(childcare_ck_ppp,\n                correction=\"none\",\n                clipregion=NULL,\n                alternative=c(\"two.sided\"),\n                nsim=999)\n\n\n    Clark-Evans test\n    No edge correction\n    Z-test\n\ndata:  childcare_ck_ppp\nR = 0.85277, p-value = 0.0154\nalternative hypothesis: two-sided"
+    "text": "Clark and Evans Test: Choa Chu Kang planning area\nIn the code chunk below, clarkevans.test() of spatstat is used to performs Clark-Evans test of aggregation for childcare centre in Choa Chu Kang planning area.\n\nclarkevans.test(childcare_ck_ppp,\n                correction=\"none\",\n                clipregion=NULL,\n                alternative=c(\"two.sided\"),\n                nsim=999)\n\n\n    Clark-Evans test\n    No edge correction\n    Z-test\n\ndata:  childcare_ck_ppp\nR = 0.88257, p-value = 0.05329\nalternative hypothesis: two-sided"
   },
   {
     "objectID": "Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex03-1.html#clark-and-evans-test-tampines-planning-area",
     "href": "Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex03-1.html#clark-and-evans-test-tampines-planning-area",
     "title": "1st Order Spatial Point Patterns Analysis Methods",
     "section": "Clark and Evans Test: Tampines planning area",
-    "text": "Clark and Evans Test: Tampines planning area\nIn the code chunk below, the similar test is used to analyse the spatial point patterns of childcare centre in Tampines planning area.\n\nclarkevans.test(childcare_tm_ppp,\n                correction=\"none\",\n                clipregion=NULL,\n                alternative=c(\"two.sided\"),\n                nsim=999)\n\n\n    Clark-Evans test\n    No edge correction\n    Z-test\n\ndata:  childcare_tm_ppp\nR = 0.69845, p-value = 4.377e-10\nalternative hypothesis: two-sided"
+    "text": "Clark and Evans Test: Tampines planning area\nIn the code chunk below, the similar test is used to analyse the spatial point patterns of childcare centre in Tampines planning area.\n\nclarkevans.test(childcare_tm_ppp,\n                correction=\"none\",\n                clipregion=NULL,\n                alternative=c(\"two.sided\"),\n                nsim=999)\n\n\n    Clark-Evans test\n    No edge correction\n    Z-test\n\ndata:  childcare_tm_ppp\nR = 0.6982, p-value = 4.234e-10\nalternative hypothesis: two-sided"
   }
 ]
