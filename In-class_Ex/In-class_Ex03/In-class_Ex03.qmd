@@ -1,5 +1,5 @@
 ---
-title: "R for Geospatial Data Science"
+title: "Kernel Density Estimation"
 subtitle: "In-class Exercise 3"
 format:
   html:
