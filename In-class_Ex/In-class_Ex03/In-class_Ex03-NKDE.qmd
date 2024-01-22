@@ -1,0 +1,93 @@
+---
+title: "Network Constrained Kernel Density Estimation (NetKDE)"
+subtitle: "In-class Exercise 3"
+format:
+  html:
+    code-fold: false
+    code-summary: "Show the code"
+    toc: true # Table of Contents
+execute:
+  eval: true
+  echo: true
+  warning: False  # This turns off warning messages being displayed
+date: 22 January, 2024
+date-modified: "last-modified"
+---
+
+```{r}
+pacman::p_load(sf, spNetwork, tmap, classInt, viridis, tidyverse)
+```
+
+# Data Import and Preparation
+
+The code chunk below uses `st_read()` of **sf** packages.
+
+```{r}
+network <- st_read(dsn="data/geospatial",
+                   layer="Punggol_St")
+childcare <- st_read(dsn="data/geospatial",
+                     layer="Punggol_CC")
+```
+
+We can examine the structure of the output SpatialDataFrame in RStudio. Alternatively, the code below can be used to print the content of network SpatialLineDataFrame and ...
+
+```{r}
+tmap_mode('view')
+tm_shape(childcare) +
+  tm_dots() +
+  tm_shape(network) + 
+  tm_lines()
+tmap_mode('plot')
+```
+
+# Network Constrained KDE (NetKDE) Analysis
+
+```{r}
+lixels <- lixelize_lines(network,
+                         750,
+                         mindist = 375)
+# 750 is the bandwidth
+# mindist is half of the bandwidth, the middle of the kernel
+```
+
+### Generating line center points
+
+```{r}
+samples <- lines_center(lixels)
+```
+
+```{r}
+densities <- nkde(network,
+                  events = childcare,
+                  w = rep(1,nrow(childcare)),
+                  samples = samples, 
+                  kernel_name = "quartic", # Take note (kernel function)
+                  bw = 300, # Take note (bandwidth)
+                  div = "bw",
+                  method = "simple",
+                  digits = 1,
+                  tol = 1,
+                  grid_shape = c(1,1),
+                  max_depth = 8,
+                  agg = 5, # we aggregate events within a 5m radius (faster calculation)
+                  sparse = TRUE,
+                  verbose = FALSE)
+```
+
+```{r}
+samples$density <- densities
+lixels$density <- densities
+
+# rescaling to help the mapping
+samples$density <- samples$density*1000
+lixels$density <- lixels$density*1000
+```
+
+```{r}
+tmap_mode('view')
+tm_shape(lixels)+
+  tm_lines(col="density")+
+tm_shape(childcare)+
+  tm_dots()
+tmap_mode('plot')
+```
