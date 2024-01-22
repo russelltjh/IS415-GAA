@@ -3,7 +3,7 @@ title: "R for Geospatial Data Science"
 subtitle: "In-class Exercise 2"
 format:
   html:
-    code-fold: true
+    code-fold: false
     code-summary: "Show the code"
     toc: true # Table of Contents
 execute:
@@ -108,6 +108,7 @@ view(destination_df)
 ```
 
 ## Save the extracted data
+
 ```{r}
 #| eval: false
 write_rds(origin_df,"../../data/rds/In-class_Ex/origin_df.rds")
@@ -115,6 +116,7 @@ write_rds(destination_df,"../../data/rds/In-class_Ex/destination_df.rds")
 ```
 
 ## Import saved data
+
 ```{r}
 origin_df <- read_rds("../../data/rds/In-class_Ex/origin_df.rds")
 destination_df <- read_rds("../../data/rds/In-class_Ex/destination_df.rds")

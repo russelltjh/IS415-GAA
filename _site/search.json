@@ -25,35 +25,35 @@
     "href": "In-class_Ex/In-class_Ex02/In-class_Ex02.html",
     "title": "R for Geospatial Data Science",
     "section": "",
-    "text": "The following R packages will be used:\n\narrow\n\nTo handle cross-language development platform to handle databases and data conversion. (e.g. read Parquet files)\n\nlubridate\n\nTo work with date and time. Part of the tidyverse family, but needs to be installed independently.\n\ntidyverse\n\nA family of R packages commonly used for data science work\n\ntmap\nsf\n\n\n\nCode\npacman::p_load(arrow, lubridate, tidyverse, tmap, sf)"
+    "text": "The following R packages will be used:\n\narrow\n\nTo handle cross-language development platform to handle databases and data conversion. (e.g. read Parquet files)\n\nlubridate\n\nTo work with date and time. Part of the tidyverse family, but needs to be installed independently.\n\ntidyverse\n\nA family of R packages commonly used for data science work\n\ntmap\nsf\n\n\npacman::p_load(arrow, lubridate, tidyverse, tmap, sf)"
   },
   {
     "objectID": "In-class_Ex/In-class_Ex02/In-class_Ex02.html#extracting-trip-starting-locations",
     "href": "In-class_Ex/In-class_Ex02/In-class_Ex02.html#extracting-trip-starting-locations",
     "title": "R for Geospatial Data Science",
     "section": "Extracting trip starting locations",
-    "text": "Extracting trip starting locations\n\nextracting trips’ origin locations\nderive three new columns (i.e. variables) for weekday, starting hour and day of the month\nname the output tibble data.frame origin_df\n\n\n\nCode\norigin_df &lt;- df %&gt;%\n  group_by(trj_id) %&gt;%\n  arrange(pingtimestamp) %&gt;% # from dplyr package\n  filter(row_number()==1) %&gt;%\n  mutate(weekday = wday(pingtimestamp, # functions from lubridate package\n                        label=TRUE,\n                        abbr=TRUE),\n         start_hr = factor(hour(pingtimestamp)), # With factor(), it makes it ordinal\n         day = factor(mday(pingtimestamp)))\nview(origin_df)"
+    "text": "Extracting trip starting locations\n\nextracting trips’ origin locations\nderive three new columns (i.e. variables) for weekday, starting hour and day of the month\nname the output tibble data.frame origin_df\n\n\norigin_df &lt;- df %&gt;%\n  group_by(trj_id) %&gt;%\n  arrange(pingtimestamp) %&gt;% # from dplyr package\n  filter(row_number()==1) %&gt;%\n  mutate(weekday = wday(pingtimestamp, # functions from lubridate package\n                        label=TRUE,\n                        abbr=TRUE),\n         start_hr = factor(hour(pingtimestamp)), # With factor(), it makes it ordinal\n         day = factor(mday(pingtimestamp)))\nview(origin_df)"
   },
   {
     "objectID": "In-class_Ex/In-class_Ex02/In-class_Ex02.html#extract-trip-ending-locations",
     "href": "In-class_Ex/In-class_Ex02/In-class_Ex02.html#extract-trip-ending-locations",
     "title": "R for Geospatial Data Science",
     "section": "Extract trip ending locations",
-    "text": "Extract trip ending locations\n\nextracting trips’ ending locations\nderive three new columns for weekday, ending hour and day of the month\nname the output tibble data.frame destination_df\n\n\n\nCode\ndestination_df &lt;- df %&gt;%\n  group_by(trj_id) %&gt;%\n  arrange(desc(pingtimestamp)) %&gt;% # from dplyr package\n  filter(row_number()==1) %&gt;%\n  mutate(weekday = wday(pingtimestamp, # functions from lubridate package\n                        label=TRUE,\n                        abbr=TRUE),\n         end_hr = factor(hour(pingtimestamp)), # With factor(), it makes it ordinal\n         day = factor(mday(pingtimestamp)))\nview(destination_df)"
+    "text": "Extract trip ending locations\n\nextracting trips’ ending locations\nderive three new columns for weekday, ending hour and day of the month\nname the output tibble data.frame destination_df\n\n\ndestination_df &lt;- df %&gt;%\n  group_by(trj_id) %&gt;%\n  arrange(desc(pingtimestamp)) %&gt;% # from dplyr package\n  filter(row_number()==1) %&gt;%\n  mutate(weekday = wday(pingtimestamp, # functions from lubridate package\n                        label=TRUE,\n                        abbr=TRUE),\n         end_hr = factor(hour(pingtimestamp)), # With factor(), it makes it ordinal\n         day = factor(mday(pingtimestamp)))\nview(destination_df)"
   },
   {
     "objectID": "In-class_Ex/In-class_Ex02/In-class_Ex02.html#save-the-extracted-data",
     "href": "In-class_Ex/In-class_Ex02/In-class_Ex02.html#save-the-extracted-data",
     "title": "R for Geospatial Data Science",
     "section": "Save the extracted data",
-    "text": "Save the extracted data\n\n\nCode\nwrite_rds(origin_df,\"../../data/rds/In-class_Ex/origin_df.rds\")\nwrite_rds(destination_df,\"../../data/rds/In-class_Ex/destination_df.rds\")"
+    "text": "Save the extracted data\n\nwrite_rds(origin_df,\"../../data/rds/In-class_Ex/origin_df.rds\")\nwrite_rds(destination_df,\"../../data/rds/In-class_Ex/destination_df.rds\")"
   },
   {
     "objectID": "In-class_Ex/In-class_Ex02/In-class_Ex02.html#import-saved-data",
     "href": "In-class_Ex/In-class_Ex02/In-class_Ex02.html#import-saved-data",
     "title": "R for Geospatial Data Science",
     "section": "Import saved data",
-    "text": "Import saved data\n\n\nCode\norigin_df &lt;- read_rds(\"../../data/rds/In-class_Ex/origin_df.rds\")\ndestination_df &lt;- read_rds(\"../../data/rds/In-class_Ex/destination_df.rds\")\n\n\n\nVisualizing frequency distribution"
+    "text": "Import saved data\n\norigin_df &lt;- read_rds(\"../../data/rds/In-class_Ex/origin_df.rds\")\ndestination_df &lt;- read_rds(\"../../data/rds/In-class_Ex/destination_df.rds\")\n\n\nVisualizing frequency distribution"
   },
   {
     "objectID": "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html",
@@ -523,5 +523,33 @@
     "title": "2nd Order Spatial Point Patterns Analysis Methods",
     "section": "Tampines planning area",
     "text": "Tampines planning area\n\nComputing L-function estimate\n\nL_tm = Lest(childcare_tm_ppp, correction = \"Ripley\")\nplot(L_tm, . -r ~ r, \n     ylab= \"L(d)-r\", xlab = \"d(m)\", \n     xlim=c(0,1000))\n\n\n\n\n\n\nPerforming Complete Spatial Randomness Test\nTo confirm the observed spatial patterns above, a hypothesis test will be conducted. The hypothesis and test are as follows:\nHo = The distribution of childcare services at Tampines are randomly distributed.\nH1= The distribution of childcare services at Tampines are not randomly distributed.\nThe null hypothesis will be rejected if p-value is smaller than alpha value of 0.001.\nThe code chunk below will be used to perform the hypothesis testing.\n\nL_tm.csr &lt;- envelope(childcare_tm_ppp, Lest, nsim = 99, rank = 1, glocal=TRUE)\n\nGenerating 99 simulations of CSR  ...\n1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,\n21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40,\n41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60,\n61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80,\n81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, \n99.\n\nDone.\n\n\nThen, plot the model output by using the code below.\n\nplot(L_tm.csr, . - r ~ r, \n     xlab=\"d\", ylab=\"L(d)-r\", xlim=c(0,500))"
+  },
+  {
+    "objectID": "In-class_Ex/In-class_Ex03/In-class_Ex03.html",
+    "href": "In-class_Ex/In-class_Ex03/In-class_Ex03.html",
+    "title": "R for Geospatial Data Science",
+    "section": "",
+    "text": "install.packages(\"maptools\",repos = \"https://packagemanager.posit.co/cran/2023-10-13\")\n\n\npacman::p_load(maptools, sf, raster, spatstat, tmap, tidyverse)"
+  },
+  {
+    "objectID": "In-class_Ex/In-class_Ex03/In-class_Ex03.html#installing-maptools",
+    "href": "In-class_Ex/In-class_Ex03/In-class_Ex03.html#installing-maptools",
+    "title": "R for Geospatial Data Science",
+    "section": "",
+    "text": "install.packages(\"maptools\",repos = \"https://packagemanager.posit.co/cran/2023-10-13\")\n\n\npacman::p_load(maptools, sf, raster, spatstat, tmap, tidyverse)"
+  },
+  {
+    "objectID": "In-class_Ex/In-class_Ex03/In-class_Ex03.html#spatial-data-wrangling",
+    "href": "In-class_Ex/In-class_Ex03/In-class_Ex03.html#spatial-data-wrangling",
+    "title": "R for Geospatial Data Science",
+    "section": "Spatial Data Wrangling",
+    "text": "Spatial Data Wrangling\n\nImporting the spatial data\nIn this section, st_read() of sf package will be used to import these three geospatial data sets into R.\n\nchildcare_sf &lt;- st_read(\"../../data/geospatial/ChildCareServices/ChildCareServices.geojson\") %&gt;% \n  st_transform(crs = 3414) # Data is originally in WGS84, need to convert\n\nReading layer `ChildCareServices' from data source \n  `C:\\russelltjh\\IS415-GAA\\data\\geospatial\\ChildCareServices\\ChildCareServices.geojson' \n  using driver `GeoJSON'\nSimple feature collection with 1925 features and 2 fields\nGeometry type: POINT\nDimension:     XYZ\nBounding box:  xmin: 103.6878 ymin: 1.247759 xmax: 103.9897 ymax: 1.462134\nz_range:       zmin: 0 zmax: 0\nGeodetic CRS:  WGS 84\n\n#sg_sf &lt;- st_read(dsn = \"data\", layer=\"CoastalOutline\")\nmpsz_sf &lt;- st_read(dsn =\"../../data/geospatial/MP14_SUBZONE_WEB_PL\", layer = \"MP14_SUBZONE_WEB_PL\")\n\nReading layer `MP14_SUBZONE_WEB_PL' from data source \n  `C:\\russelltjh\\IS415-GAA\\data\\geospatial\\MP14_SUBZONE_WEB_PL' \n  using driver `ESRI Shapefile'\nSimple feature collection with 323 features and 15 fields\nGeometry type: MULTIPOLYGON\nDimension:     XY\nBounding box:  xmin: 2667.538 ymin: 15748.72 xmax: 56396.44 ymax: 50256.33\nProjected CRS: SVY21\n\n\n\nplot(mpsz_sf)\n\n\n\n\n\nsg_sf &lt;- st_union(mpsz_sf)\nplot(sg_sf)"
+  },
+  {
+    "objectID": "In-class_Ex/In-class_Ex03/In-class_Ex03.html#geospatial-data-wrangling",
+    "href": "In-class_Ex/In-class_Ex03/In-class_Ex03.html#geospatial-data-wrangling",
+    "title": "R for Geospatial Data Science",
+    "section": "Geospatial Data Wrangling",
+    "text": "Geospatial Data Wrangling\n\nCreating ppp objects: sf method\n\nchildcare_ppp &lt;- as.ppp(childcare_sf)\n\nas.ppp() specifically takes care of sf layer, allowing you to skip the 2 steps that we learnt in hands-on exercise.\n\nsummary(childcare_ppp)\n\nMarked planar point pattern:  1925 points\nAverage intensity 2.417323e-06 points per square unit\n\nCoordinates are given to 3 decimal places\ni.e. rounded to the nearest multiple of 0.001 units\n\nmarks are of type 'character'\nSummary:\n   Length     Class      Mode \n     1925 character character \n\nWindow: rectangle = [11810.03, 45404.24] x [25596.33, 49300.88] units\n                    (33590 x 23700 units)\nWindow area = 796335000 square units\n\n\n\n\nHandling duplicated points\nWe can check the duplication in a ppp object by using the code chnk below.\n\nany(duplicated(childcare_ppp))\n\n[1] FALSE\n\n\nTo count the number of co-indecence point, we will use the multiplicity() function as shown in the code chunk below.\n\n\nCreating owin object: sf method\n\nsg_owin &lt;- as.owin(sg_sf)\n\n\npg &lt;- mpsz_sf %&gt;% \n  filter(PLN_AREA_N == \"PUNGGOL\")\ntm &lt;- mpsz_sf %&gt;% \n  filter(PLN_AREA_N == \"TAMPINES\")\nck &lt;- mpsz_sf %&gt;%\n  filter(PLN_AREA_N == \"CHOA CHU KANG\")\njw &lt;- mpsz_sf %&gt;%\n  filter(PLN_AREA_N == \"JURONG WEST\")\n\nPlotting target planning areas\n\npar(mfrow=c(2,2))\nplot(pg, main = \"Punggol\")\n\n\n\nplot(tm, main = \"Tampines\")\n\n\n\nplot(ck, main = \"Choa Chu Kang\")\n\n\n\nplot(jw, main = \"Jurong West\")"
   }
 ]

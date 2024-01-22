@@ -6,7 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="dcterms.date" content="2024-01-15">
+<meta name="dcterms.date" content="2024-01-22">
 
 <title>IS415-GAA - R for Geospatial Data Science</title>
 <style>
@@ -191,20 +191,17 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#getting-started" id="toc-getting-started" class="nav-link active" data-scroll-target="#getting-started">Getting Started</a></li>
-  <li><a href="#importing-grab-posisi-dataset" id="toc-importing-grab-posisi-dataset" class="nav-link" data-scroll-target="#importing-grab-posisi-dataset">Importing Grab-Posisi Dataset</a>
+  <li><a href="#installing-maptools" id="toc-installing-maptools" class="nav-link active" data-scroll-target="#installing-maptools">Installing maptools</a></li>
+  <li><a href="#spatial-data-wrangling" id="toc-spatial-data-wrangling" class="nav-link" data-scroll-target="#spatial-data-wrangling">Spatial Data Wrangling</a>
   <ul class="collapse">
-  <li><a href="#extracting-trip-starting-locations" id="toc-extracting-trip-starting-locations" class="nav-link" data-scroll-target="#extracting-trip-starting-locations">Extracting trip starting locations</a></li>
-  <li><a href="#extract-trip-ending-locations" id="toc-extract-trip-ending-locations" class="nav-link" data-scroll-target="#extract-trip-ending-locations">Extract trip ending locations</a></li>
-  <li><a href="#save-the-extracted-data" id="toc-save-the-extracted-data" class="nav-link" data-scroll-target="#save-the-extracted-data">Save the extracted data</a></li>
-  <li><a href="#import-saved-data" id="toc-import-saved-data" class="nav-link" data-scroll-target="#import-saved-data">Import saved data</a>
+  <li><a href="#importing-the-spatial-data" id="toc-importing-the-spatial-data" class="nav-link" data-scroll-target="#importing-the-spatial-data">Importing the spatial data</a></li>
+  </ul></li>
+  <li><a href="#geospatial-data-wrangling" id="toc-geospatial-data-wrangling" class="nav-link" data-scroll-target="#geospatial-data-wrangling">Geospatial Data Wrangling</a>
   <ul class="collapse">
-  <li><a href="#visualizing-frequency-distribution" id="toc-visualizing-frequency-distribution" class="nav-link" data-scroll-target="#visualizing-frequency-distribution">Visualizing frequency distribution</a></li>
+  <li><a href="#creating-ppp-objects-sf-method" id="toc-creating-ppp-objects-sf-method" class="nav-link" data-scroll-target="#creating-ppp-objects-sf-method">Creating ppp objects: sf method</a></li>
+  <li><a href="#handling-duplicated-points" id="toc-handling-duplicated-points" class="nav-link" data-scroll-target="#handling-duplicated-points">Handling duplicated points</a></li>
+  <li><a href="#creating-owin-object-sf-method" id="toc-creating-owin-object-sf-method" class="nav-link" data-scroll-target="#creating-owin-object-sf-method">Creating <strong><em>owin</em></strong> object: sf method</a></li>
   </ul></li>
-  </ul></li>
-  <li><a href="#converting-into-sf-tibble-data.frame" id="toc-converting-into-sf-tibble-data.frame" class="nav-link" data-scroll-target="#converting-into-sf-tibble-data.frame">Converting into sf tibble data.frame</a></li>
-  <li><a href="#visualizing-as-point-symbol-map" id="toc-visualizing-as-point-symbol-map" class="nav-link" data-scroll-target="#visualizing-as-point-symbol-map">Visualizing as Point Symbol Map</a></li>
-  <li><a href="#importing-master-plan-2019-planning-subzone-boundary" id="toc-importing-master-plan-2019-planning-subzone-boundary" class="nav-link" data-scroll-target="#importing-master-plan-2019-planning-subzone-boundary">Importing Master Plan 2019 Planning Subzone Boundary</a></li>
   </ul>
 </nav>
     </div>
@@ -214,7 +211,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
 <h1 class="title">R for Geospatial Data Science</h1>
-<p class="subtitle lead">In-class Exercise 2</p>
+<p class="subtitle lead">In-class Exercise 3</p>
 </div>
 
 
@@ -225,7 +222,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">January 15, 2024</p>
+      <p class="date">January 22, 2024</p>
     </div>
   </div>
   
@@ -241,112 +238,139 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 </header>
 
-<section id="getting-started" class="level1">
-<h1>Getting Started</h1>
-<p>The following R packages will be used:</p>
-<ul>
-<li><p>arrow</p>
-<ul>
-<li>To handle cross-language development platform to handle databases and data conversion. (e.g.&nbsp;read Parquet files)</li>
-</ul></li>
-<li><p>lubridate</p>
-<ul>
-<li>To work with date and time. Part of the tidyverse family, but needs to be installed independently.</li>
-</ul></li>
-<li><p>tidyverse</p>
-<ul>
-<li>A family of R packages commonly used for data science work</li>
-</ul></li>
-<li><p>tmap</p></li>
-<li><p>sf</p></li>
-</ul>
+<section id="installing-maptools" class="level2">
+<h2 class="anchored" data-anchor-id="installing-maptools">Installing maptools</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(arrow, lubridate, tidyverse, tmap, sf)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"maptools"</span>,<span class="at">repos =</span> <span class="st">"https://packagemanager.posit.co/cran/2023-10-13"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(maptools, sf, raster, spatstat, tmap, tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="importing-grab-posisi-dataset" class="level1">
-<h1>Importing Grab-Posisi Dataset</h1>
-<p>Grab-Posisi dataset is in parquet file format, we will use the <strong>arrow</strong> package to import it.</p>
+<section id="spatial-data-wrangling" class="level2">
+<h2 class="anchored" data-anchor-id="spatial-data-wrangling">Spatial Data Wrangling</h2>
+<section id="importing-the-spatial-data" class="level3">
+<h3 class="anchored" data-anchor-id="importing-the-spatial-data">Importing the spatial data</h3>
+<p>In this section, <code>st_read()</code> of <strong>sf</strong> package will be used to import these three geospatial data sets into R.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">read_parquet</span>(<span class="st">"../../data/geospatial/GrabPosisi/part-00000-8bbff892-97d2-4011-9961-703e38972569.c000.snappy.parquet"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>childcare_sf <span class="ot">&lt;-</span> <span class="fu">st_read</span>(<span class="st">"../../data/geospatial/ChildCareServices/ChildCareServices.geojson"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_transform</span>(<span class="at">crs =</span> <span class="dv">3414</span>) <span class="co"># Data is originally in WGS84, need to convert</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Reading layer `ChildCareServices' from data source 
+  `C:\russelltjh\IS415-GAA\data\geospatial\ChildCareServices\ChildCareServices.geojson' 
+  using driver `GeoJSON'
+Simple feature collection with 1925 features and 2 fields
+Geometry type: POINT
+Dimension:     XYZ
+Bounding box:  xmin: 103.6878 ymin: 1.247759 xmax: 103.9897 ymax: 1.462134
+z_range:       zmin: 0 zmax: 0
+Geodetic CRS:  WGS 84</code></pre>
 </div>
-<p>Let’s convert the pingtimestamp column from integer to a datetime format.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>df<span class="sc">$</span>pingtimestamp <span class="ot">&lt;-</span> <span class="fu">as_datetime</span>(df<span class="sc">$</span>pingtimestamp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">#sg_sf &lt;- st_read(dsn = "data", layer="CoastalOutline")</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>mpsz_sf <span class="ot">&lt;-</span> <span class="fu">st_read</span>(<span class="at">dsn =</span><span class="st">"../../data/geospatial/MP14_SUBZONE_WEB_PL"</span>, <span class="at">layer =</span> <span class="st">"MP14_SUBZONE_WEB_PL"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Reading layer `MP14_SUBZONE_WEB_PL' from data source 
+  `C:\russelltjh\IS415-GAA\data\geospatial\MP14_SUBZONE_WEB_PL' 
+  using driver `ESRI Shapefile'
+Simple feature collection with 323 features and 15 fields
+Geometry type: MULTIPOLYGON
+Dimension:     XY
+Bounding box:  xmin: 2667.538 ymin: 15748.72 xmax: 56396.44 ymax: 50256.33
+Projected CRS: SVY21</code></pre>
 </div>
-<p>Now, we will save the reformatted <code>df</code> into a new rds file called <code>part0.rds</code>. The output will be saved into a sub-folder called rds.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">write_rds</span>(df,<span class="st">"../../data/rds/In-class_Ex/part0.rds"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>rds is a R data file format. Saving it as so will keep the data’s structure.</p>
-<section id="extracting-trip-starting-locations" class="level2">
-<h2 class="anchored" data-anchor-id="extracting-trip-starting-locations">Extracting trip starting locations</h2>
-<ul>
-<li><p>extracting trips’ origin locations</p></li>
-<li><p>derive three new columns (i.e.&nbsp;variables) for weekday, starting hour and day of the month</p></li>
-<li><p>name the output tibble data.frame <code>origin_df</code></p></li>
-</ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>origin_df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(trj_id) <span class="sc">%&gt;%</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(pingtimestamp) <span class="sc">%&gt;%</span> <span class="co"># from dplyr package</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">row_number</span>()<span class="sc">==</span><span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">weekday =</span> <span class="fu">wday</span>(pingtimestamp, <span class="co"># functions from lubridate package</span></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>                        <span class="at">label=</span><span class="cn">TRUE</span>,</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>                        <span class="at">abbr=</span><span class="cn">TRUE</span>),</span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>         <span class="at">start_hr =</span> <span class="fu">factor</span>(<span class="fu">hour</span>(pingtimestamp)), <span class="co"># With factor(), it makes it ordinal</span></span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>         <span class="at">day =</span> <span class="fu">factor</span>(<span class="fu">mday</span>(pingtimestamp)))</span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="fu">view</span>(origin_df)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(mpsz_sf)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="In-class_Ex03_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid" width="672"></p>
 </div>
-</section>
-<section id="extract-trip-ending-locations" class="level2">
-<h2 class="anchored" data-anchor-id="extract-trip-ending-locations">Extract trip ending locations</h2>
-<ul>
-<li><p>extracting trips’ ending locations</p></li>
-<li><p>derive three new columns for weekday, ending hour and day of the month</p></li>
-<li><p>name the output tibble data.frame <code>destination_df</code></p></li>
-</ul>
+</div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>destination_df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(trj_id) <span class="sc">%&gt;%</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(pingtimestamp)) <span class="sc">%&gt;%</span> <span class="co"># from dplyr package</span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">row_number</span>()<span class="sc">==</span><span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">weekday =</span> <span class="fu">wday</span>(pingtimestamp, <span class="co"># functions from lubridate package</span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>                        <span class="at">label=</span><span class="cn">TRUE</span>,</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>                        <span class="at">abbr=</span><span class="cn">TRUE</span>),</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>         <span class="at">end_hr =</span> <span class="fu">factor</span>(<span class="fu">hour</span>(pingtimestamp)), <span class="co"># With factor(), it makes it ordinal</span></span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>         <span class="at">day =</span> <span class="fu">factor</span>(<span class="fu">mday</span>(pingtimestamp)))</span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="fu">view</span>(destination_df)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>sg_sf <span class="ot">&lt;-</span> <span class="fu">st_union</span>(mpsz_sf)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(sg_sf)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="In-class_Ex03_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid" width="672"></p>
+</div>
 </div>
 </section>
-<section id="save-the-extracted-data" class="level2">
-<h2 class="anchored" data-anchor-id="save-the-extracted-data">Save the extracted data</h2>
+</section>
+<section id="geospatial-data-wrangling" class="level2">
+<h2 class="anchored" data-anchor-id="geospatial-data-wrangling">Geospatial Data Wrangling</h2>
+<section id="creating-ppp-objects-sf-method" class="level3">
+<h3 class="anchored" data-anchor-id="creating-ppp-objects-sf-method">Creating ppp objects: sf method</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">write_rds</span>(origin_df,<span class="st">"../../data/rds/In-class_Ex/origin_df.rds"</span>)</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">write_rds</span>(destination_df,<span class="st">"../../data/rds/In-class_Ex/destination_df.rds"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>childcare_ppp <span class="ot">&lt;-</span> <span class="fu">as.ppp</span>(childcare_sf)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>as.ppp() specifically takes care of sf layer, allowing you to skip the 2 steps that we learnt in hands-on exercise.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(childcare_ppp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Marked planar point pattern:  1925 points
+Average intensity 2.417323e-06 points per square unit
+
+Coordinates are given to 3 decimal places
+i.e. rounded to the nearest multiple of 0.001 units
+
+marks are of type 'character'
+Summary:
+   Length     Class      Mode 
+     1925 character character 
+
+Window: rectangle = [11810.03, 45404.24] x [25596.33, 49300.88] units
+                    (33590 x 23700 units)
+Window area = 796335000 square units</code></pre>
+</div>
 </div>
 </section>
-<section id="import-saved-data" class="level2">
-<h2 class="anchored" data-anchor-id="import-saved-data">Import saved data</h2>
+<section id="handling-duplicated-points" class="level3">
+<h3 class="anchored" data-anchor-id="handling-duplicated-points">Handling duplicated points</h3>
+<p>We can check the duplication in a <strong><em>ppp</em></strong> object by using the code chnk below.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>origin_df <span class="ot">&lt;-</span> <span class="fu">read_rds</span>(<span class="st">"../../data/rds/In-class_Ex/origin_df.rds"</span>)</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>destination_df <span class="ot">&lt;-</span> <span class="fu">read_rds</span>(<span class="st">"../../data/rds/In-class_Ex/destination_df.rds"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">any</span>(<span class="fu">duplicated</span>(childcare_ppp))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] FALSE</code></pre>
 </div>
-<section id="visualizing-frequency-distribution" class="level3">
-<h3 class="anchored" data-anchor-id="visualizing-frequency-distribution">Visualizing frequency distribution</h3>
+</div>
+<p>To count the number of co-indecence point, we will use the <em>multiplicity()</em> function as shown in the code chunk below.</p>
 </section>
-</section>
-</section>
-<section id="converting-into-sf-tibble-data.frame" class="level1">
-<h1>Converting into sf tibble data.frame</h1>
-</section>
-<section id="visualizing-as-point-symbol-map" class="level1">
-<h1>Visualizing as Point Symbol Map</h1>
-</section>
-<section id="importing-master-plan-2019-planning-subzone-boundary" class="level1">
-<h1>Importing Master Plan 2019 Planning Subzone Boundary</h1>
+<section id="creating-owin-object-sf-method" class="level3">
+<h3 class="anchored" data-anchor-id="creating-owin-object-sf-method">Creating <strong><em>owin</em></strong> object: sf method</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>sg_owin <span class="ot">&lt;-</span> <span class="fu">as.owin</span>(sg_sf)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>pg <span class="ot">&lt;-</span> mpsz_sf <span class="sc">%&gt;%</span> </span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(PLN_AREA_N <span class="sc">==</span> <span class="st">"PUNGGOL"</span>)</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>tm <span class="ot">&lt;-</span> mpsz_sf <span class="sc">%&gt;%</span> </span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(PLN_AREA_N <span class="sc">==</span> <span class="st">"TAMPINES"</span>)</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>ck <span class="ot">&lt;-</span> mpsz_sf <span class="sc">%&gt;%</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(PLN_AREA_N <span class="sc">==</span> <span class="st">"CHOA CHU KANG"</span>)</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>jw <span class="ot">&lt;-</span> mpsz_sf <span class="sc">%&gt;%</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(PLN_AREA_N <span class="sc">==</span> <span class="st">"JURONG WEST"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Plotting target planning areas</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">2</span>))</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(pg, <span class="at">main =</span> <span class="st">"Punggol"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="In-class_Ex03_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid" width="1536"></p>
+</div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(tm, <span class="at">main =</span> <span class="st">"Tampines"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="In-class_Ex03_files/figure-html/unnamed-chunk-12-2.png" class="img-fluid" width="1536"></p>
+</div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(ck, <span class="at">main =</span> <span class="st">"Choa Chu Kang"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="In-class_Ex03_files/figure-html/unnamed-chunk-12-3.png" class="img-fluid" width="1536"></p>
+</div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(jw, <span class="at">main =</span> <span class="st">"Jurong West"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="In-class_Ex03_files/figure-html/unnamed-chunk-12-4.png" class="img-fluid" width="1536"></p>
+</div>
+</div>
 
 
+</section>
 </section>
 
 <a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Back to top</a></main> <!-- /main -->
