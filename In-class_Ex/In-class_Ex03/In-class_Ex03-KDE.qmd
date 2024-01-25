@@ -1,5 +1,5 @@
 ---
-title: "Kernel Density Estimation"
+title: "Kernel Density Estimation (KDE)"
 subtitle: "In-class Exercise 3"
 format:
   html:
