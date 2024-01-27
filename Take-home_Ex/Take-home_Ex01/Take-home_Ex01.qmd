@@ -172,10 +172,6 @@ write_rds(sg_roads, "../../data/rds/Take-home_Ex01/sg_roads.rds")
 ```
 
 ```{r}
-sg_roads <- read_rds("../../data/rds/sg_roads.rds")
-```
-
-```{r}
 ggplot(data = sg_roads) +
   geom_sf() +
   theme_minimal() +
