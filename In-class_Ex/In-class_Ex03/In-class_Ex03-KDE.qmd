@@ -37,6 +37,7 @@ childcare_sf <- st_read("../../data/geospatial/ChildCareServices/ChildCareServic
 #sg_sf <- st_read(dsn = "data", layer="CoastalOutline")
 mpsz_sf <- st_read(dsn ="../../data/geospatial/MP14_SUBZONE_WEB_PL", layer = "MP14_SUBZONE_WEB_PL")
 ```
+
 ```{r}
 plot(mpsz_sf)
 ```
