@@ -1,0 +1,385 @@
+---
+title: "Application of Spatial Point Patterns Analysis to discover the geographical distribution of Grab hailing services in Singapore"
+subtitle: "Take-home_Ex01"
+format:
+  html:
+    code-fold: false
+    code-summary: "Show the code"
+    toc: true # Table of Contents
+execute:
+  eval: true
+  echo: true
+  warning: False  # This turns off warning messages being displayed
+date: 15 January, 2024
+date-modified: "last-modified"
+---
+
+# Setting the Scene
+
+Human mobility, the movement of human beings in space and time, reflects the spatial-temporal characteristics of human behavior. With the advancement of Information and Communication Technologies (ICT) especially smart phone, a large volume of data related to human mobility have been collected. By using appropriate GIS analysis methods, these data are potentially useful in supporting smart city planning and management.
+
+In Singapore, one of the important source of data related to human mobility is from [Land Transport Authority (LTA) DataMall](https://datamall.lta.gov.sg/content/datamall/en.html). Two data sets related to human mobility are provided by the portal, they are: Passenger Volume by Origin Destination Train Stations and Passenger Volume by Origin Destination Bus Stops. One of the limitation of these data sets is that their location are biased to either bus stops or MRT/LRT stations. In 2020, another very interesting human mobility data set called [Grab Posisi](https://engineering.grab.com/grab-posisi) was released by GRAB, one of the largest shared taxi operator in South-east Asia. There are two data sets been released and one of them is for Singapore.
+
+# Objectives
+
+Geospatial analytics hold tremendous potential to address complex problems facing society. In this study, you are tasked to apply appropriate spatial point patterns analysis methods to discover the geographical and spatio-temporal distribution of Grab hailing services locations in Singapore.
+
+# The Task
+
+-   Using appropriate function of **sf** and **tidyverse**, preparing the following geospatial data layer in sf tibble data.frames:
+
+    -   Grab taxi location points either by origins or destinations.
+
+    -   Road layer within Singapore excluding outer islands.
+
+    -   Singapore boundary layer excluding outer islands.
+
+-   Using the extracted data, derive traditional Kernel Density Estimation layers
+
+-   Using the extracted data, derive either Network Kernel Density Estimation (NKDE) or Temporal Network Kernel Density Estimation (TNKD)
+
+-   Using appropriate **tmap** function, display the kernel density layers on OpenStreetMap of Singapore
+
+-   Describe the spatial patterns revealed by the kernel density maps.
+
+# The Data
+
+## Aspatial data
+
+For the purpose of this assignment, [Grab-Posisi](https://engineering.grab.com/grab-posisi) of Singapore will be used
+
+## Geospatial data
+
+-   Road data set from OpenStreetMap of [Geofabrik download server](https://download.geofabrik.de/). The Malaysia, Singapore, and Brunei coverage should be downloaded.
+
+-   Master Plan 2019 Subzone Boundary (No Sea) from Data.gov.sg
+
+# Installing and Loading the R packages
+
+```{r}
+pacman::p_load(maptools, sf, raster, spatstat, tmap, tidyverse, arrow)
+```
+
+# Spatial Data Wrangling
+
+## Importing Grab-Posisi Dataset
+
+Since the dataset is stored as .parquet file format, we need to use the arrow package
+
+```{r}
+#| eval: false
+grab_data <- arrow::open_dataset("../../data/aspatial/GrabPosisi") %>%
+  collect()
+```
+
+Let's convert the pingtimestamp column from integer to a datetime format
+
+```{r}
+#| eval: false
+grab_data$pingtimestamp <- as_datetime(grab_data$pingtimestamp)
+```
+
+## Extracting trip starting locations
+
+```{r}
+#| eval: false
+origin_df <- grab_data %>%
+  group_by(trj_id) %>%
+  arrange(pingtimestamp) %>% # from dplyr package
+  filter(row_number()==1) %>%
+  mutate(weekday = wday(pingtimestamp, # functions from lubridate package
+                        label=TRUE,
+                        abbr=TRUE),
+         start_hr = factor(hour(pingtimestamp)), # With factor(), it makes it ordinal
+         day = factor(mday(pingtimestamp)))
+view(origin_df)
+```
+
+## Extracting trip destination locations
+
+```{r}
+#| eval: false
+destination_df <- grab_data %>%
+  group_by(trj_id) %>%
+  arrange(desc(pingtimestamp)) %>% # from dplyr package
+  filter(row_number()==1) %>%
+  mutate(weekday = wday(pingtimestamp, # functions from lubridate package
+                        label=TRUE,
+                        abbr=TRUE),
+         end_hr = factor(hour(pingtimestamp)), # With factor(), it makes it ordinal
+         day = factor(mday(pingtimestamp)))
+view(destination_df)
+```
+
+## Converting into sf tibble dataframe
+
+Let's convert it into a sf tibble dataframe. According to the data source, our data is in Geodetic CRS: WGS84, so we need to convert it to SVY21 too.
+
+```{r}
+#| eval: false
+origin_sf <- st_as_sf(origin_df, coords = c("rawlng", "rawlat"), crs = 4326) %>%
+  st_transform(crs=3414)
+
+destination_sf <- st_as_sf(destination_df, coords = c("rawlng", "rawlat"), crs = 4326) %>%
+  st_transform(crs=3414)
+```
+
+```{r}
+#| eval: false
+st_geometry(origin_sf)
+st_geometry(destination_sf)
+```
+
+```{r}
+#| eval: false
+write_rds(origin_sf,"../../data/rds/Take-home_Ex01/origin_sf.rds")
+write_rds(destination_sf,"../../data/rds/Take-home_Ex01/destination_sf.rds")
+```
+
+```{r}
+origin_sf <- read_rds("../../data/rds/Take-home_Ex01/origin_sf.rds")
+destination_sf <- read_rds("../../data/rds/Take-home_Ex01/destination_sf.rds")
+```
+
+## Importing the Geospatial data
+
+### Importing the Boundary of Singapore
+
+```{r}
+mpsz_sf <- st_read(dsn ="../../data/geospatial/MP14_SUBZONE_WEB_PL", layer = "MP14_SUBZONE_WEB_PL") %>%
+  st_transform(crs = 3414)
+
+sg_sf <- st_union(mpsz_sf)
+
+plot(sg_sf)
+```
+
+```{r}
+st_geometry(sg_sf)
+```
+
+### Extracting Study Areas from Singapore Boundary
+
+```{r}
+bedok <- mpsz_sf %>%
+  filter(PLN_AREA_N == "BEDOK")
+tamp <- mpsz_sf %>%
+  filter(PLN_AREA_N == "TAMPINES")
+clementi <- mpsz_sf %>%
+  filter(PLN_AREA_N == "CLEMENTI")
+jurongwest <- mpsz_sf %>%
+  filter(PLN_AREA_N == "JURONG WEST")
+```
+
+### Importing Road data from OpenStreetMap
+
+We have the ESRI files downloaded, so let's check what layers we can choose from this dataset.
+
+```{r}
+file_path = "../../data/geospatial/malaysia-singapore-brunei.shp"
+layers <- st_layers(file_path)
+print(layers)
+```
+
+We only want the data for roads, so let's pick the `gis_osm_roads_free_1` layer.
+
+```{r}
+#| eval: false
+MySgBr_Roads <- st_read(dsn ="../../data/geospatial/malaysia-singapore-brunei.shp", layer = "gis_osm_roads_free_1")
+```
+
+We notice that the **`MySgBr_Roads`** data is in Geodetic CRS: WGS 84 format, let's convert it to SVY21.
+
+```{r}
+#| eval: false
+MySgBr_Roads_SVY21 <- st_transform(MySgBr_Roads, crs = 3414)
+```
+
+Now that the data is in SVY21 format, let's extract only the roads in Singapore using the Singapore boundary data.
+
+```{r}
+#| eval: false
+indices <- st_intersects(sg_sf, MySgBr_Roads_SVY21)
+sg_roads <- MySgBr_Roads_SVY21[unlist(indices), ]
+```
+
+```{r}
+#| eval: false
+write_rds(sg_roads, "../../data/rds/Take-home_Ex01/sg_roads.rds")
+```
+
+```{r}
+sg_roads <- read_rds("../../data/rds/Take-home_Ex01/sg_roads.rds")
+```
+
+```{r}
+#| eval: false
+ggplot(data = sg_roads) +
+  geom_sf() +
+  theme_minimal() +
+  labs(title = "Roads in Singapore", 
+       x = "Longitude", 
+       y = "Latitude")
+```
+
+```{r}
+#| eval: false
+# Set tmap mode to view for interactive maps
+tmap_mode("view")
+
+# Create interactive map
+tm <- tm_shape(sg_roads) +
+      tm_lines(col = "blue") +
+      tm_basemap(server = "OpenStreetMap") +
+      tm_layout(title = "Interactive Map of Roads in Singapore")
+
+# Render the map
+tm
+```
+
+# Geospatial Data Wrangling
+
+## Creating `ppp` object
+
+**spatstat** requires the analytical data in `ppp` object form. Let's convert our grab_sf into a `ppp` object.
+
+```{r}
+origin_ppp <- as.ppp(origin_sf)
+destination_ppp <- as.ppp(destination_sf)
+```
+
+Now, we will display the properties of our new `ppp` object.
+
+```{r}
+summary(origin_ppp)
+summary(destination_ppp)
+```
+
+```{r}
+write_rds(origin_ppp, "../../data/rds/Take-home_Ex01/origin_ppp.rds")
+write_rds(destination_ppp, "../../data/rds/Take-home_Ex01/destination_ppp.rds")
+```
+
+## Creating `owin` object
+
+It is good practice to confine the analysis within a geographical area like Singapore's boundaries. In **spatstat**, we can use the `owin` object to represent this polygonal region.
+
+```{r}
+sg_owin <- as.owin(sg_sf)
+bedok_owin <- as.owin(bedok)
+tamp_owin <- as.owin(tamp)
+clementi_owin <- as.owin(clementi)
+jurongwest_owin <- as.owin(jurongwest)
+```
+
+```{r}
+summary(sg_owin)
+summary(bedok_owin)
+summary(tamp_owin)
+summary(clementi_owin)
+summary(jurongwest_owin)
+```
+
+## Combining point events object and `owin` object
+
+```{r}
+originSG_ppp = origin_ppp[sg_owin]
+originBedok_ppp = origin_ppp[bedok_owin]
+originTamp_ppp = origin_ppp[tamp_owin]
+originClementi_ppp = origin_ppp[clementi_owin]
+originJurongWest_ppp = origin_ppp[jurongwest_owin]
+
+destinationSG_ppp = destination_ppp[sg_owin]
+destinationBedok_ppp = destination_ppp[bedok_owin]
+destinationTamp_ppp = destination_ppp[tamp_owin]
+destinationClementi_ppp = destination_ppp[clementi_owin]
+destinationJurongWest_ppp = destination_ppp[jurongwest_owin]
+```
+
+```{r}
+summary(originSG_ppp)
+summary(destinationSG_ppp)
+```
+
+# First Order Spatial Point Patterns Analysis
+
+## Kernel Density Estimation
+
+```{r}
+kde_originSG_bw <- density(originSG_ppp,
+                           sigma=bw.diggle,
+                           edge=TRUE,
+                           kernel="gaussian")
+
+plot(kde_originSG_bw)
+
+bw <- bw.diggle(originSG_ppp)
+bw
+```
+
+```{r}
+kde_destinationSG_bw <- density(destinationSG_ppp,
+                                sigma=bw.diggle,
+                                edge=TRUE,
+                                kernel="gaussian")
+plot(kde_destinationSG_bw)
+
+bw <- bw.diggle(destinationSG_ppp)
+bw
+```
+
+```{r}
+kde_destinationSG_bw <- density(destinationSG_ppp,
+                                sigma=0.5,
+                                edge=TRUE,
+                                kernel="gaussian")
+plot(kde_destinationSG_bw)
+
+bw <- bw.diggle(destinationSG_ppp)
+bw
+```
+
+```{r}
+#| eval: false
+# KDE for destination
+kde_originBedok_bw <- density(originBedok_ppp,
+                           sigma=bw.diggle,
+                           edge=TRUE,
+                           kernel="gaussian")
+plot(kde_originBedok_bw)
+bw <- bw.diggle(originBedok_ppp)
+bw
+```
+
+## Re-scalling KDE Values
+
+In the code below, we will re-scale the unit of measurement from meter to kilometer
+
+```{r}
+originSG_ppp.km <- rescale(originSG_ppp, 1000, 'km')
+destinationSG_ppp.km <- rescale(destinationSG_ppp, 1000, 'km')
+```
+
+```{r}
+kde_originSG.bw <- density(originSG_ppp.km,
+                           sigma=bw.diggle,
+                           edge=TRUE,
+                           kernel="quartic")
+plot(kde_originSG.bw)
+
+kde_destinationSG.bw <- density(destinationSG_ppp.km,
+                                sigma=bw.diggle,
+                                edge=TRUE,
+                                kernel="gaussian")
+plot(kde_destinationSG.bw)
+```
+
+```{r}
+#| eval: false
+originBedok_ppp.km <- rescale(originBedok_ppp,1000,'km')
+kde_originBedok.bw <- density(originBedok_ppp.km,
+                              sigma=bw.diggle,
+                              edge=TRUE,
+                              kernel="quartic")
+plot(kde_originBedok.bw)
+```

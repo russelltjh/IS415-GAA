@@ -21,6 +21,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -103,6 +137,10 @@ ul.task-list li input[type="checkbox"] {
     <a class="dropdown-item" href="../../Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex03-2.html" rel="" target="">
  <span class="dropdown-text">Hands-on Exercise 3-2</span></a>
   </li>  
+        <li>
+    <a class="dropdown-item" href="../../Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex04.html" rel="" target="">
+ <span class="dropdown-text">Hands-on Exercise 4</span></a>
+  </li>  
     </ul>
   </li>
   <li class="nav-item dropdown ">
@@ -113,6 +151,18 @@ ul.task-list li input[type="checkbox"] {
         <li>
     <a class="dropdown-item" href="../../In-class_Ex/In-class_Ex02/In-class_Ex02.html" rel="" target="">
  <span class="dropdown-text">In-class Exercise 2</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../In-class_Ex/In-class_Ex03/In-class_Ex03-KDE.html" rel="" target="">
+ <span class="dropdown-text">In-class Exercise 3 KDE</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../In-class_Ex/In-class_Ex03/In-class_Ex03-NKDE.html" rel="" target="">
+ <span class="dropdown-text">In-class Exercise 3 NKDE</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex04.html" rel="" target="">
+ <span class="dropdown-text">In-class Exercise 4</span></a>
   </li>  
     </ul>
   </li>
@@ -161,6 +211,31 @@ ul.task-list li input[type="checkbox"] {
   <li><a href="#aspatial-data" id="toc-aspatial-data" class="nav-link" data-scroll-target="#aspatial-data">Aspatial data</a></li>
   <li><a href="#geospatial-data" id="toc-geospatial-data" class="nav-link" data-scroll-target="#geospatial-data">Geospatial data</a></li>
   </ul></li>
+  <li><a href="#installing-and-loading-the-r-packages" id="toc-installing-and-loading-the-r-packages" class="nav-link" data-scroll-target="#installing-and-loading-the-r-packages">Installing and Loading the R packages</a></li>
+  <li><a href="#spatial-data-wrangling" id="toc-spatial-data-wrangling" class="nav-link" data-scroll-target="#spatial-data-wrangling">Spatial Data Wrangling</a>
+  <ul class="collapse">
+  <li><a href="#importing-grab-posisi-dataset" id="toc-importing-grab-posisi-dataset" class="nav-link" data-scroll-target="#importing-grab-posisi-dataset">Importing Grab-Posisi Dataset</a></li>
+  <li><a href="#extracting-trip-starting-locations" id="toc-extracting-trip-starting-locations" class="nav-link" data-scroll-target="#extracting-trip-starting-locations">Extracting trip starting locations</a></li>
+  <li><a href="#extracting-trip-destination-locations" id="toc-extracting-trip-destination-locations" class="nav-link" data-scroll-target="#extracting-trip-destination-locations">Extracting trip destination locations</a></li>
+  <li><a href="#converting-into-sf-tibble-dataframe" id="toc-converting-into-sf-tibble-dataframe" class="nav-link" data-scroll-target="#converting-into-sf-tibble-dataframe">Converting into sf tibble dataframe</a></li>
+  <li><a href="#importing-the-geospatial-data" id="toc-importing-the-geospatial-data" class="nav-link" data-scroll-target="#importing-the-geospatial-data">Importing the Geospatial data</a>
+  <ul class="collapse">
+  <li><a href="#importing-the-boundary-of-singapore" id="toc-importing-the-boundary-of-singapore" class="nav-link" data-scroll-target="#importing-the-boundary-of-singapore">Importing the Boundary of Singapore</a></li>
+  <li><a href="#extracting-study-areas-from-singapore-boundary" id="toc-extracting-study-areas-from-singapore-boundary" class="nav-link" data-scroll-target="#extracting-study-areas-from-singapore-boundary">Extracting Study Areas from Singapore Boundary</a></li>
+  <li><a href="#importing-road-data-from-openstreetmap" id="toc-importing-road-data-from-openstreetmap" class="nav-link" data-scroll-target="#importing-road-data-from-openstreetmap">Importing Road data from OpenStreetMap</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#geospatial-data-wrangling" id="toc-geospatial-data-wrangling" class="nav-link" data-scroll-target="#geospatial-data-wrangling">Geospatial Data Wrangling</a>
+  <ul class="collapse">
+  <li><a href="#creating-ppp-object" id="toc-creating-ppp-object" class="nav-link" data-scroll-target="#creating-ppp-object">Creating <code>ppp</code> object</a></li>
+  <li><a href="#creating-owin-object" id="toc-creating-owin-object" class="nav-link" data-scroll-target="#creating-owin-object">Creating <code>owin</code> object</a></li>
+  <li><a href="#combining-point-events-object-and-owin-object" id="toc-combining-point-events-object-and-owin-object" class="nav-link" data-scroll-target="#combining-point-events-object-and-owin-object">Combining point events object and <code>owin</code> object</a></li>
+  </ul></li>
+  <li><a href="#first-order-spatial-point-patterns-analysis" id="toc-first-order-spatial-point-patterns-analysis" class="nav-link" data-scroll-target="#first-order-spatial-point-patterns-analysis">First Order Spatial Point Patterns Analysis</a>
+  <ul class="collapse">
+  <li><a href="#kernel-density-estimation" id="toc-kernel-density-estimation" class="nav-link" data-scroll-target="#kernel-density-estimation">Kernel Density Estimation</a></li>
+  <li><a href="#re-scalling-kde-values" id="toc-re-scalling-kde-values" class="nav-link" data-scroll-target="#re-scalling-kde-values">Re-scalling KDE Values</a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
@@ -188,7 +263,7 @@ ul.task-list li input[type="checkbox"] {
     <div>
     <div class="quarto-title-meta-heading">Modified</div>
     <div class="quarto-title-meta-contents">
-      <p class="date-modified">January 15, 2024</p>
+      <p class="date-modified">February 3, 2024</p>
     </div>
   </div>
     
@@ -200,6 +275,7 @@ ul.task-list li input[type="checkbox"] {
 <section id="setting-the-scene" class="level1">
 <h1>Setting the Scene</h1>
 <p>Human mobility, the movement of human beings in space and time, reflects the spatial-temporal characteristics of human behavior. With the advancement of Information and Communication Technologies (ICT) especially smart phone, a large volume of data related to human mobility have been collected. By using appropriate GIS analysis methods, these data are potentially useful in supporting smart city planning and management.</p>
+<p>In Singapore, one of the important source of data related to human mobility is from <a href="https://datamall.lta.gov.sg/content/datamall/en.html">Land Transport Authority (LTA) DataMall</a>. Two data sets related to human mobility are provided by the portal, they are: Passenger Volume by Origin Destination Train Stations and Passenger Volume by Origin Destination Bus Stops. One of the limitation of these data sets is that their location are biased to either bus stops or MRT/LRT stations. In 2020, another very interesting human mobility data set called <a href="https://engineering.grab.com/grab-posisi">Grab Posisi</a> was released by GRAB, one of the largest shared taxi operator in South-east Asia. There are two data sets been released and one of them is for Singapore.</p>
 </section>
 <section id="objectives" class="level1">
 <h1>Objectives</h1>
@@ -232,6 +308,719 @@ ul.task-list li input[type="checkbox"] {
 <li><p>Road data set from OpenStreetMap of <a href="https://download.geofabrik.de/">Geofabrik download server</a>. The Malaysia, Singapore, and Brunei coverage should be downloaded.</p></li>
 <li><p>Master Plan 2019 Subzone Boundary (No Sea) from Data.gov.sg</p></li>
 </ul>
+</section>
+</section>
+<section id="installing-and-loading-the-r-packages" class="level1">
+<h1>Installing and Loading the R packages</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(maptools, sf, raster, spatstat, tmap, tidyverse, arrow)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="spatial-data-wrangling" class="level1">
+<h1>Spatial Data Wrangling</h1>
+<section id="importing-grab-posisi-dataset" class="level2">
+<h2 class="anchored" data-anchor-id="importing-grab-posisi-dataset">Importing Grab-Posisi Dataset</h2>
+<p>Since the dataset is stored as .parquet file format, we need to use the arrow package</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>grab_data <span class="ot">&lt;-</span> arrow<span class="sc">::</span><span class="fu">open_dataset</span>(<span class="st">"../../data/aspatial/GrabPosisi"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Let’s convert the pingtimestamp column from integer to a datetime format</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>grab_data<span class="sc">$</span>pingtimestamp <span class="ot">&lt;-</span> <span class="fu">as_datetime</span>(grab_data<span class="sc">$</span>pingtimestamp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="extracting-trip-starting-locations" class="level2">
+<h2 class="anchored" data-anchor-id="extracting-trip-starting-locations">Extracting trip starting locations</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>origin_df <span class="ot">&lt;-</span> grab_data <span class="sc">%&gt;%</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(trj_id) <span class="sc">%&gt;%</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(pingtimestamp) <span class="sc">%&gt;%</span> <span class="co"># from dplyr package</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">row_number</span>()<span class="sc">==</span><span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">weekday =</span> <span class="fu">wday</span>(pingtimestamp, <span class="co"># functions from lubridate package</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>                        <span class="at">label=</span><span class="cn">TRUE</span>,</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>                        <span class="at">abbr=</span><span class="cn">TRUE</span>),</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>         <span class="at">start_hr =</span> <span class="fu">factor</span>(<span class="fu">hour</span>(pingtimestamp)), <span class="co"># With factor(), it makes it ordinal</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>         <span class="at">day =</span> <span class="fu">factor</span>(<span class="fu">mday</span>(pingtimestamp)))</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="fu">view</span>(origin_df)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="extracting-trip-destination-locations" class="level2">
+<h2 class="anchored" data-anchor-id="extracting-trip-destination-locations">Extracting trip destination locations</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>destination_df <span class="ot">&lt;-</span> grab_data <span class="sc">%&gt;%</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(trj_id) <span class="sc">%&gt;%</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(pingtimestamp)) <span class="sc">%&gt;%</span> <span class="co"># from dplyr package</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">row_number</span>()<span class="sc">==</span><span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">weekday =</span> <span class="fu">wday</span>(pingtimestamp, <span class="co"># functions from lubridate package</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>                        <span class="at">label=</span><span class="cn">TRUE</span>,</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>                        <span class="at">abbr=</span><span class="cn">TRUE</span>),</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>         <span class="at">end_hr =</span> <span class="fu">factor</span>(<span class="fu">hour</span>(pingtimestamp)), <span class="co"># With factor(), it makes it ordinal</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>         <span class="at">day =</span> <span class="fu">factor</span>(<span class="fu">mday</span>(pingtimestamp)))</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="fu">view</span>(destination_df)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="converting-into-sf-tibble-dataframe" class="level2">
+<h2 class="anchored" data-anchor-id="converting-into-sf-tibble-dataframe">Converting into sf tibble dataframe</h2>
+<p>Let’s convert it into a sf tibble dataframe. According to the data source, our data is in Geodetic CRS: WGS84, so we need to convert it to SVY21 too.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>origin_sf <span class="ot">&lt;-</span> <span class="fu">st_as_sf</span>(origin_df, <span class="at">coords =</span> <span class="fu">c</span>(<span class="st">"rawlng"</span>, <span class="st">"rawlat"</span>), <span class="at">crs =</span> <span class="dv">4326</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_transform</span>(<span class="at">crs=</span><span class="dv">3414</span>)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>destination_sf <span class="ot">&lt;-</span> <span class="fu">st_as_sf</span>(destination_df, <span class="at">coords =</span> <span class="fu">c</span>(<span class="st">"rawlng"</span>, <span class="st">"rawlat"</span>), <span class="at">crs =</span> <span class="dv">4326</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_transform</span>(<span class="at">crs=</span><span class="dv">3414</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">st_geometry</span>(origin_sf)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">st_geometry</span>(destination_sf)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">write_rds</span>(origin_sf,<span class="st">"../../data/rds/Take-home_Ex01/origin_sf.rds"</span>)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">write_rds</span>(destination_sf,<span class="st">"../../data/rds/Take-home_Ex01/destination_sf.rds"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>origin_sf <span class="ot">&lt;-</span> <span class="fu">read_rds</span>(<span class="st">"../../data/rds/Take-home_Ex01/origin_sf.rds"</span>)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>destination_sf <span class="ot">&lt;-</span> <span class="fu">read_rds</span>(<span class="st">"../../data/rds/Take-home_Ex01/destination_sf.rds"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="importing-the-geospatial-data" class="level2">
+<h2 class="anchored" data-anchor-id="importing-the-geospatial-data">Importing the Geospatial data</h2>
+<section id="importing-the-boundary-of-singapore" class="level3">
+<h3 class="anchored" data-anchor-id="importing-the-boundary-of-singapore">Importing the Boundary of Singapore</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>mpsz_sf <span class="ot">&lt;-</span> <span class="fu">st_read</span>(<span class="at">dsn =</span><span class="st">"../../data/geospatial/MP14_SUBZONE_WEB_PL"</span>, <span class="at">layer =</span> <span class="st">"MP14_SUBZONE_WEB_PL"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_transform</span>(<span class="at">crs =</span> <span class="dv">3414</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Reading layer `MP14_SUBZONE_WEB_PL' from data source 
+  `C:\russelltjh\IS415-GAA\data\geospatial\MP14_SUBZONE_WEB_PL' 
+  using driver `ESRI Shapefile'
+Simple feature collection with 323 features and 15 fields
+Geometry type: MULTIPOLYGON
+Dimension:     XY
+Bounding box:  xmin: 2667.538 ymin: 15748.72 xmax: 56396.44 ymax: 50256.33
+Projected CRS: SVY21</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>sg_sf <span class="ot">&lt;-</span> <span class="fu">st_union</span>(mpsz_sf)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(sg_sf)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Take-home_Ex01_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">st_geometry</span>(sg_sf)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Geometry set for 1 feature 
+Geometry type: MULTIPOLYGON
+Dimension:     XY
+Bounding box:  xmin: 2667.538 ymin: 15748.72 xmax: 56396.44 ymax: 50256.33
+Projected CRS: SVY21 / Singapore TM</code></pre>
+</div>
+</div>
+</section>
+<section id="extracting-study-areas-from-singapore-boundary" class="level3">
+<h3 class="anchored" data-anchor-id="extracting-study-areas-from-singapore-boundary">Extracting Study Areas from Singapore Boundary</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>bedok <span class="ot">&lt;-</span> mpsz_sf <span class="sc">%&gt;%</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(PLN_AREA_N <span class="sc">==</span> <span class="st">"BEDOK"</span>)</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>tamp <span class="ot">&lt;-</span> mpsz_sf <span class="sc">%&gt;%</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(PLN_AREA_N <span class="sc">==</span> <span class="st">"TAMPINES"</span>)</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>clementi <span class="ot">&lt;-</span> mpsz_sf <span class="sc">%&gt;%</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(PLN_AREA_N <span class="sc">==</span> <span class="st">"CLEMENTI"</span>)</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>jurongwest <span class="ot">&lt;-</span> mpsz_sf <span class="sc">%&gt;%</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(PLN_AREA_N <span class="sc">==</span> <span class="st">"JURONG WEST"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="importing-road-data-from-openstreetmap" class="level3">
+<h3 class="anchored" data-anchor-id="importing-road-data-from-openstreetmap">Importing Road data from OpenStreetMap</h3>
+<p>We have the ESRI files downloaded, so let’s check what layers we can choose from this dataset.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>file_path <span class="ot">=</span> <span class="st">"../../data/geospatial/malaysia-singapore-brunei.shp"</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>layers <span class="ot">&lt;-</span> <span class="fu">st_layers</span>(file_path)</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(layers)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Driver: ESRI Shapefile 
+Available layers:
+                   layer_name geometry_type features fields crs_name
+1  gis_osm_buildings_a_free_1       Polygon  1275019      5   WGS 84
+2    gis_osm_landuse_a_free_1       Polygon    61509      4   WGS 84
+3    gis_osm_natural_a_free_1       Polygon      665      4   WGS 84
+4      gis_osm_natural_free_1         Point    45725      4   WGS 84
+5     gis_osm_places_a_free_1       Polygon     1081      5   WGS 84
+6       gis_osm_places_free_1         Point     6920      5   WGS 84
+7       gis_osm_pofw_a_free_1       Polygon     5992      4   WGS 84
+8         gis_osm_pofw_free_1         Point     2369      4   WGS 84
+9       gis_osm_pois_a_free_1       Polygon    54173      4   WGS 84
+10        gis_osm_pois_free_1         Point    80301      4   WGS 84
+11    gis_osm_railways_free_1   Line String     5252      7   WGS 84
+12       gis_osm_roads_free_1   Line String  1766163     10   WGS 84
+13   gis_osm_traffic_a_free_1       Polygon    17502      4   WGS 84
+14     gis_osm_traffic_free_1         Point    74074      4   WGS 84
+15 gis_osm_transport_a_free_1       Polygon     1320      4   WGS 84
+16   gis_osm_transport_free_1         Point    16991      4   WGS 84
+17   gis_osm_waterways_free_1   Line String    34559      5   WGS 84
+18     gis_osm_water_a_free_1       Polygon    19682      4   WGS 84</code></pre>
+</div>
+</div>
+<p>We only want the data for roads, so let’s pick the <code>gis_osm_roads_free_1</code> layer.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>MySgBr_Roads <span class="ot">&lt;-</span> <span class="fu">st_read</span>(<span class="at">dsn =</span><span class="st">"../../data/geospatial/malaysia-singapore-brunei.shp"</span>, <span class="at">layer =</span> <span class="st">"gis_osm_roads_free_1"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We notice that the <strong><code>MySgBr_Roads</code></strong> data is in Geodetic CRS: WGS 84 format, let’s convert it to SVY21.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>MySgBr_Roads_SVY21 <span class="ot">&lt;-</span> <span class="fu">st_transform</span>(MySgBr_Roads, <span class="at">crs =</span> <span class="dv">3414</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now that the data is in SVY21 format, let’s extract only the roads in Singapore using the Singapore boundary data.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>indices <span class="ot">&lt;-</span> <span class="fu">st_intersects</span>(sg_sf, MySgBr_Roads_SVY21)</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>sg_roads <span class="ot">&lt;-</span> MySgBr_Roads_SVY21[<span class="fu">unlist</span>(indices), ]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">write_rds</span>(sg_roads, <span class="st">"../../data/rds/Take-home_Ex01/sg_roads.rds"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>sg_roads <span class="ot">&lt;-</span> <span class="fu">read_rds</span>(<span class="st">"../../data/rds/Take-home_Ex01/sg_roads.rds"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> sg_roads) <span class="sc">+</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>() <span class="sc">+</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Roads in Singapore"</span>, </span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Longitude"</span>, </span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Latitude"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Set tmap mode to view for interactive maps</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="fu">tmap_mode</span>(<span class="st">"view"</span>)</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Create interactive map</span></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>tm <span class="ot">&lt;-</span> <span class="fu">tm_shape</span>(sg_roads) <span class="sc">+</span></span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>      <span class="fu">tm_lines</span>(<span class="at">col =</span> <span class="st">"blue"</span>) <span class="sc">+</span></span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>      <span class="fu">tm_basemap</span>(<span class="at">server =</span> <span class="st">"OpenStreetMap"</span>) <span class="sc">+</span></span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>      <span class="fu">tm_layout</span>(<span class="at">title =</span> <span class="st">"Interactive Map of Roads in Singapore"</span>)</span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Render the map</span></span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>tm</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+</section>
+<section id="geospatial-data-wrangling" class="level1">
+<h1>Geospatial Data Wrangling</h1>
+<section id="creating-ppp-object" class="level2">
+<h2 class="anchored" data-anchor-id="creating-ppp-object">Creating <code>ppp</code> object</h2>
+<p><strong>spatstat</strong> requires the analytical data in <code>ppp</code> object form. Let’s convert our grab_sf into a <code>ppp</code> object.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>origin_ppp <span class="ot">&lt;-</span> <span class="fu">as.ppp</span>(origin_sf)</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>destination_ppp <span class="ot">&lt;-</span> <span class="fu">as.ppp</span>(destination_sf)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now, we will display the properties of our new <code>ppp</code> object.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(origin_ppp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Marked planar point pattern:  28000 points
+Average intensity 2.473666e-05 points per square unit
+
+Coordinates are given to 3 decimal places
+i.e. rounded to the nearest multiple of 0.001 units
+
+marks are of type 'character'
+Summary:
+   Length     Class      Mode 
+    28000 character character 
+
+Window: rectangle = [3628.24, 49845.23] x [25198.14, 49689.64] units
+                    (46220 x 24490 units)
+Window area = 1131920000 square units</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(destination_ppp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Marked planar point pattern:  28000 points
+Average intensity 2.493661e-05 points per square unit
+
+Coordinates are given to 3 decimal places
+i.e. rounded to the nearest multiple of 0.001 units
+
+marks are of type 'character'
+Summary:
+   Length     Class      Mode 
+    28000 character character 
+
+Window: rectangle = [3637.21, 49870.63] x [25221.3, 49507.79] units
+                    (46230 x 24290 units)
+Window area = 1122850000 square units</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">write_rds</span>(origin_ppp, <span class="st">"../../data/rds/Take-home_Ex01/origin_ppp.rds"</span>)</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="fu">write_rds</span>(destination_ppp, <span class="st">"../../data/rds/Take-home_Ex01/destination_ppp.rds"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="creating-owin-object" class="level2">
+<h2 class="anchored" data-anchor-id="creating-owin-object">Creating <code>owin</code> object</h2>
+<p>It is good practice to confine the analysis within a geographical area like Singapore’s boundaries. In <strong>spatstat</strong>, we can use the <code>owin</code> object to represent this polygonal region.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>sg_owin <span class="ot">&lt;-</span> <span class="fu">as.owin</span>(sg_sf)</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>bedok_owin <span class="ot">&lt;-</span> <span class="fu">as.owin</span>(bedok)</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>tamp_owin <span class="ot">&lt;-</span> <span class="fu">as.owin</span>(tamp)</span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>clementi_owin <span class="ot">&lt;-</span> <span class="fu">as.owin</span>(clementi)</span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>jurongwest_owin <span class="ot">&lt;-</span> <span class="fu">as.owin</span>(jurongwest)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(sg_owin)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Window: polygonal boundary
+80 separate polygons (35 holes)
+                  vertices         area relative.area
+polygon 1            14650  6.97996e+08      8.93e-01
+polygon 2 (hole)         3 -2.21090e+00     -2.83e-09
+polygon 3              285  1.61128e+06      2.06e-03
+polygon 4 (hole)         3 -2.05920e-03     -2.63e-12
+polygon 5 (hole)         3 -8.83647e-03     -1.13e-11
+polygon 6              668  5.40368e+07      6.91e-02
+polygon 7               44  2.26577e+03      2.90e-06
+polygon 8               27  1.50315e+04      1.92e-05
+polygon 9              711  1.28815e+07      1.65e-02
+polygon 10 (hole)       36 -4.01660e+04     -5.14e-05
+polygon 11 (hole)      317 -5.11280e+04     -6.54e-05
+polygon 12 (hole)        3 -3.41405e-01     -4.37e-10
+polygon 13 (hole)        3 -2.89050e-05     -3.70e-14
+polygon 14              77  3.29939e+05      4.22e-04
+polygon 15              30  2.80002e+04      3.58e-05
+polygon 16 (hole)        3 -2.83151e-01     -3.62e-10
+polygon 17              71  8.18750e+03      1.05e-05
+polygon 18 (hole)        3 -1.68316e-04     -2.15e-13
+polygon 19 (hole)       36 -7.79904e+03     -9.97e-06
+polygon 20 (hole)        4 -2.05611e-02     -2.63e-11
+polygon 21 (hole)        3 -2.18000e-06     -2.79e-15
+polygon 22 (hole)        3 -3.65501e-03     -4.67e-12
+polygon 23 (hole)        3 -4.95057e-02     -6.33e-11
+polygon 24 (hole)        3 -3.99521e-02     -5.11e-11
+polygon 25 (hole)        3 -6.62377e-01     -8.47e-10
+polygon 26 (hole)        3 -2.09065e-03     -2.67e-12
+polygon 27              91  1.49663e+04      1.91e-05
+polygon 28 (hole)       26 -1.25665e+03     -1.61e-06
+polygon 29 (hole)      349 -1.21433e+03     -1.55e-06
+polygon 30 (hole)       20 -4.39069e+00     -5.62e-09
+polygon 31 (hole)       48 -1.38338e+02     -1.77e-07
+polygon 32 (hole)       28 -1.99862e+01     -2.56e-08
+polygon 33              40  1.38607e+04      1.77e-05
+polygon 34 (hole)       40 -6.00381e+03     -7.68e-06
+polygon 35 (hole)        7 -1.40545e-01     -1.80e-10
+polygon 36 (hole)       12 -8.36709e+01     -1.07e-07
+polygon 37              45  2.51218e+03      3.21e-06
+polygon 38             142  3.22293e+03      4.12e-06
+polygon 39             148  3.10395e+03      3.97e-06
+polygon 40              75  1.73526e+04      2.22e-05
+polygon 41              83  5.28920e+03      6.76e-06
+polygon 42             211  4.70521e+05      6.02e-04
+polygon 43             106  3.04104e+03      3.89e-06
+polygon 44             266  1.50631e+06      1.93e-03
+polygon 45              71  5.63061e+03      7.20e-06
+polygon 46              10  1.99717e+02      2.55e-07
+polygon 47             478  2.06120e+06      2.64e-03
+polygon 48             155  2.67502e+05      3.42e-04
+polygon 49            1027  1.27782e+06      1.63e-03
+polygon 50 (hole)        3 -1.16959e-03     -1.50e-12
+polygon 51              65  8.42861e+04      1.08e-04
+polygon 52              47  3.82087e+04      4.89e-05
+polygon 53               6  4.50259e+02      5.76e-07
+polygon 54             132  9.53357e+04      1.22e-04
+polygon 55 (hole)        3 -3.23310e-04     -4.13e-13
+polygon 56               4  2.69313e+02      3.44e-07
+polygon 57 (hole)        3 -1.46474e-03     -1.87e-12
+polygon 58            1045  4.44510e+06      5.68e-03
+polygon 59              22  6.74651e+03      8.63e-06
+polygon 60              64  3.43149e+04      4.39e-05
+polygon 61 (hole)        3 -1.98390e-03     -2.54e-12
+polygon 62 (hole)        4 -1.13774e-02     -1.46e-11
+polygon 63              14  5.86546e+03      7.50e-06
+polygon 64              95  5.96187e+04      7.62e-05
+polygon 65 (hole)        4 -1.86410e-02     -2.38e-11
+polygon 66 (hole)        3 -5.12482e-03     -6.55e-12
+polygon 67 (hole)        3 -1.96410e-03     -2.51e-12
+polygon 68 (hole)        3 -5.55856e-03     -7.11e-12
+polygon 69             234  2.08755e+06      2.67e-03
+polygon 70              10  4.90942e+02      6.28e-07
+polygon 71             234  4.72886e+05      6.05e-04
+polygon 72 (hole)       13 -3.91907e+02     -5.01e-07
+polygon 73              15  4.03300e+04      5.16e-05
+polygon 74             227  1.10308e+06      1.41e-03
+polygon 75              10  6.60195e+03      8.44e-06
+polygon 76              19  3.09221e+04      3.95e-05
+polygon 77             145  9.61782e+05      1.23e-03
+polygon 78              30  4.28933e+03      5.49e-06
+polygon 79              37  1.29481e+04      1.66e-05
+polygon 80               4  9.47108e+01      1.21e-07
+enclosing rectangle: [2667.54, 56396.44] x [15748.72, 50256.33] units
+                     (53730 x 34510 units)
+Window area = 781945000 square units
+Fraction of frame area: 0.422</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(bedok_owin)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Window: polygonal boundary
+single connected closed polygon with 739 vertices
+enclosing rectangle: [34995.38, 42502.87] x [31574.68, 36745.39] units
+                     (7507 x 5171 units)
+Window area = 21733200 square units
+Fraction of frame area: 0.56</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(tamp_owin)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Window: polygonal boundary
+single connected closed polygon with 562 vertices
+enclosing rectangle: [38199.84, 44860.41] x [32933.55, 39752.73] units
+                     (6661 x 6819 units)
+Window area = 20970800 square units
+Fraction of frame area: 0.462</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(clementi_owin)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Window: polygonal boundary
+single connected closed polygon with 310 vertices
+enclosing rectangle: [18445.486, 21581.519] x [30449.66, 35936.17] units
+                     (3136 x 5487 units)
+Window area = 9516230 square units
+Fraction of frame area: 0.553</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(jurongwest_owin)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Window: polygonal boundary
+single connected closed polygon with 350 vertices
+enclosing rectangle: [10373.179, 16297.184] x [33981.5, 38488.61] units
+                     (5924 x 4507 units)
+Window area = 14680500 square units
+Fraction of frame area: 0.55</code></pre>
+</div>
+</div>
+</section>
+<section id="combining-point-events-object-and-owin-object" class="level2">
+<h2 class="anchored" data-anchor-id="combining-point-events-object-and-owin-object">Combining point events object and <code>owin</code> object</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>originSG_ppp <span class="ot">=</span> origin_ppp[sg_owin]</span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>originBedok_ppp <span class="ot">=</span> origin_ppp[bedok_owin]</span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>originTamp_ppp <span class="ot">=</span> origin_ppp[tamp_owin]</span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>originClementi_ppp <span class="ot">=</span> origin_ppp[clementi_owin]</span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>originJurongWest_ppp <span class="ot">=</span> origin_ppp[jurongwest_owin]</span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a>destinationSG_ppp <span class="ot">=</span> destination_ppp[sg_owin]</span>
+<span id="cb42-8"><a href="#cb42-8" aria-hidden="true" tabindex="-1"></a>destinationBedok_ppp <span class="ot">=</span> destination_ppp[bedok_owin]</span>
+<span id="cb42-9"><a href="#cb42-9" aria-hidden="true" tabindex="-1"></a>destinationTamp_ppp <span class="ot">=</span> destination_ppp[tamp_owin]</span>
+<span id="cb42-10"><a href="#cb42-10" aria-hidden="true" tabindex="-1"></a>destinationClementi_ppp <span class="ot">=</span> destination_ppp[clementi_owin]</span>
+<span id="cb42-11"><a href="#cb42-11" aria-hidden="true" tabindex="-1"></a>destinationJurongWest_ppp <span class="ot">=</span> destination_ppp[jurongwest_owin]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(originSG_ppp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Marked planar point pattern:  28000 points
+Average intensity 3.580815e-05 points per square unit
+
+Coordinates are given to 3 decimal places
+i.e. rounded to the nearest multiple of 0.001 units
+
+marks are of type 'character'
+Summary:
+   Length     Class      Mode 
+    28000 character character 
+
+Window: polygonal boundary
+80 separate polygons (35 holes)
+                  vertices         area relative.area
+polygon 1            14650  6.97996e+08      8.93e-01
+polygon 2 (hole)         3 -2.21090e+00     -2.83e-09
+polygon 3              285  1.61128e+06      2.06e-03
+polygon 4 (hole)         3 -2.05920e-03     -2.63e-12
+polygon 5 (hole)         3 -8.83647e-03     -1.13e-11
+polygon 6              668  5.40368e+07      6.91e-02
+polygon 7               44  2.26577e+03      2.90e-06
+polygon 8               27  1.50315e+04      1.92e-05
+polygon 9              711  1.28815e+07      1.65e-02
+polygon 10 (hole)       36 -4.01660e+04     -5.14e-05
+polygon 11 (hole)      317 -5.11280e+04     -6.54e-05
+polygon 12 (hole)        3 -3.41405e-01     -4.37e-10
+polygon 13 (hole)        3 -2.89050e-05     -3.70e-14
+polygon 14              77  3.29939e+05      4.22e-04
+polygon 15              30  2.80002e+04      3.58e-05
+polygon 16 (hole)        3 -2.83151e-01     -3.62e-10
+polygon 17              71  8.18750e+03      1.05e-05
+polygon 18 (hole)        3 -1.68316e-04     -2.15e-13
+polygon 19 (hole)       36 -7.79904e+03     -9.97e-06
+polygon 20 (hole)        4 -2.05611e-02     -2.63e-11
+polygon 21 (hole)        3 -2.18000e-06     -2.79e-15
+polygon 22 (hole)        3 -3.65501e-03     -4.67e-12
+polygon 23 (hole)        3 -4.95057e-02     -6.33e-11
+polygon 24 (hole)        3 -3.99521e-02     -5.11e-11
+polygon 25 (hole)        3 -6.62377e-01     -8.47e-10
+polygon 26 (hole)        3 -2.09065e-03     -2.67e-12
+polygon 27              91  1.49663e+04      1.91e-05
+polygon 28 (hole)       26 -1.25665e+03     -1.61e-06
+polygon 29 (hole)      349 -1.21433e+03     -1.55e-06
+polygon 30 (hole)       20 -4.39069e+00     -5.62e-09
+polygon 31 (hole)       48 -1.38338e+02     -1.77e-07
+polygon 32 (hole)       28 -1.99862e+01     -2.56e-08
+polygon 33              40  1.38607e+04      1.77e-05
+polygon 34 (hole)       40 -6.00381e+03     -7.68e-06
+polygon 35 (hole)        7 -1.40545e-01     -1.80e-10
+polygon 36 (hole)       12 -8.36709e+01     -1.07e-07
+polygon 37              45  2.51218e+03      3.21e-06
+polygon 38             142  3.22293e+03      4.12e-06
+polygon 39             148  3.10395e+03      3.97e-06
+polygon 40              75  1.73526e+04      2.22e-05
+polygon 41              83  5.28920e+03      6.76e-06
+polygon 42             211  4.70521e+05      6.02e-04
+polygon 43             106  3.04104e+03      3.89e-06
+polygon 44             266  1.50631e+06      1.93e-03
+polygon 45              71  5.63061e+03      7.20e-06
+polygon 46              10  1.99717e+02      2.55e-07
+polygon 47             478  2.06120e+06      2.64e-03
+polygon 48             155  2.67502e+05      3.42e-04
+polygon 49            1027  1.27782e+06      1.63e-03
+polygon 50 (hole)        3 -1.16959e-03     -1.50e-12
+polygon 51              65  8.42861e+04      1.08e-04
+polygon 52              47  3.82087e+04      4.89e-05
+polygon 53               6  4.50259e+02      5.76e-07
+polygon 54             132  9.53357e+04      1.22e-04
+polygon 55 (hole)        3 -3.23310e-04     -4.13e-13
+polygon 56               4  2.69313e+02      3.44e-07
+polygon 57 (hole)        3 -1.46474e-03     -1.87e-12
+polygon 58            1045  4.44510e+06      5.68e-03
+polygon 59              22  6.74651e+03      8.63e-06
+polygon 60              64  3.43149e+04      4.39e-05
+polygon 61 (hole)        3 -1.98390e-03     -2.54e-12
+polygon 62 (hole)        4 -1.13774e-02     -1.46e-11
+polygon 63              14  5.86546e+03      7.50e-06
+polygon 64              95  5.96187e+04      7.62e-05
+polygon 65 (hole)        4 -1.86410e-02     -2.38e-11
+polygon 66 (hole)        3 -5.12482e-03     -6.55e-12
+polygon 67 (hole)        3 -1.96410e-03     -2.51e-12
+polygon 68 (hole)        3 -5.55856e-03     -7.11e-12
+polygon 69             234  2.08755e+06      2.67e-03
+polygon 70              10  4.90942e+02      6.28e-07
+polygon 71             234  4.72886e+05      6.05e-04
+polygon 72 (hole)       13 -3.91907e+02     -5.01e-07
+polygon 73              15  4.03300e+04      5.16e-05
+polygon 74             227  1.10308e+06      1.41e-03
+polygon 75              10  6.60195e+03      8.44e-06
+polygon 76              19  3.09221e+04      3.95e-05
+polygon 77             145  9.61782e+05      1.23e-03
+polygon 78              30  4.28933e+03      5.49e-06
+polygon 79              37  1.29481e+04      1.66e-05
+polygon 80               4  9.47108e+01      1.21e-07
+enclosing rectangle: [2667.54, 56396.44] x [15748.72, 50256.33] units
+                     (53730 x 34510 units)
+Window area = 781945000 square units
+Fraction of frame area: 0.422</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(destinationSG_ppp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Marked planar point pattern:  27997 points
+Average intensity 3.580432e-05 points per square unit
+
+Coordinates are given to 3 decimal places
+i.e. rounded to the nearest multiple of 0.001 units
+
+marks are of type 'character'
+Summary:
+   Length     Class      Mode 
+    27997 character character 
+
+Window: polygonal boundary
+80 separate polygons (35 holes)
+                  vertices         area relative.area
+polygon 1            14650  6.97996e+08      8.93e-01
+polygon 2 (hole)         3 -2.21090e+00     -2.83e-09
+polygon 3              285  1.61128e+06      2.06e-03
+polygon 4 (hole)         3 -2.05920e-03     -2.63e-12
+polygon 5 (hole)         3 -8.83647e-03     -1.13e-11
+polygon 6              668  5.40368e+07      6.91e-02
+polygon 7               44  2.26577e+03      2.90e-06
+polygon 8               27  1.50315e+04      1.92e-05
+polygon 9              711  1.28815e+07      1.65e-02
+polygon 10 (hole)       36 -4.01660e+04     -5.14e-05
+polygon 11 (hole)      317 -5.11280e+04     -6.54e-05
+polygon 12 (hole)        3 -3.41405e-01     -4.37e-10
+polygon 13 (hole)        3 -2.89050e-05     -3.70e-14
+polygon 14              77  3.29939e+05      4.22e-04
+polygon 15              30  2.80002e+04      3.58e-05
+polygon 16 (hole)        3 -2.83151e-01     -3.62e-10
+polygon 17              71  8.18750e+03      1.05e-05
+polygon 18 (hole)        3 -1.68316e-04     -2.15e-13
+polygon 19 (hole)       36 -7.79904e+03     -9.97e-06
+polygon 20 (hole)        4 -2.05611e-02     -2.63e-11
+polygon 21 (hole)        3 -2.18000e-06     -2.79e-15
+polygon 22 (hole)        3 -3.65501e-03     -4.67e-12
+polygon 23 (hole)        3 -4.95057e-02     -6.33e-11
+polygon 24 (hole)        3 -3.99521e-02     -5.11e-11
+polygon 25 (hole)        3 -6.62377e-01     -8.47e-10
+polygon 26 (hole)        3 -2.09065e-03     -2.67e-12
+polygon 27              91  1.49663e+04      1.91e-05
+polygon 28 (hole)       26 -1.25665e+03     -1.61e-06
+polygon 29 (hole)      349 -1.21433e+03     -1.55e-06
+polygon 30 (hole)       20 -4.39069e+00     -5.62e-09
+polygon 31 (hole)       48 -1.38338e+02     -1.77e-07
+polygon 32 (hole)       28 -1.99862e+01     -2.56e-08
+polygon 33              40  1.38607e+04      1.77e-05
+polygon 34 (hole)       40 -6.00381e+03     -7.68e-06
+polygon 35 (hole)        7 -1.40545e-01     -1.80e-10
+polygon 36 (hole)       12 -8.36709e+01     -1.07e-07
+polygon 37              45  2.51218e+03      3.21e-06
+polygon 38             142  3.22293e+03      4.12e-06
+polygon 39             148  3.10395e+03      3.97e-06
+polygon 40              75  1.73526e+04      2.22e-05
+polygon 41              83  5.28920e+03      6.76e-06
+polygon 42             211  4.70521e+05      6.02e-04
+polygon 43             106  3.04104e+03      3.89e-06
+polygon 44             266  1.50631e+06      1.93e-03
+polygon 45              71  5.63061e+03      7.20e-06
+polygon 46              10  1.99717e+02      2.55e-07
+polygon 47             478  2.06120e+06      2.64e-03
+polygon 48             155  2.67502e+05      3.42e-04
+polygon 49            1027  1.27782e+06      1.63e-03
+polygon 50 (hole)        3 -1.16959e-03     -1.50e-12
+polygon 51              65  8.42861e+04      1.08e-04
+polygon 52              47  3.82087e+04      4.89e-05
+polygon 53               6  4.50259e+02      5.76e-07
+polygon 54             132  9.53357e+04      1.22e-04
+polygon 55 (hole)        3 -3.23310e-04     -4.13e-13
+polygon 56               4  2.69313e+02      3.44e-07
+polygon 57 (hole)        3 -1.46474e-03     -1.87e-12
+polygon 58            1045  4.44510e+06      5.68e-03
+polygon 59              22  6.74651e+03      8.63e-06
+polygon 60              64  3.43149e+04      4.39e-05
+polygon 61 (hole)        3 -1.98390e-03     -2.54e-12
+polygon 62 (hole)        4 -1.13774e-02     -1.46e-11
+polygon 63              14  5.86546e+03      7.50e-06
+polygon 64              95  5.96187e+04      7.62e-05
+polygon 65 (hole)        4 -1.86410e-02     -2.38e-11
+polygon 66 (hole)        3 -5.12482e-03     -6.55e-12
+polygon 67 (hole)        3 -1.96410e-03     -2.51e-12
+polygon 68 (hole)        3 -5.55856e-03     -7.11e-12
+polygon 69             234  2.08755e+06      2.67e-03
+polygon 70              10  4.90942e+02      6.28e-07
+polygon 71             234  4.72886e+05      6.05e-04
+polygon 72 (hole)       13 -3.91907e+02     -5.01e-07
+polygon 73              15  4.03300e+04      5.16e-05
+polygon 74             227  1.10308e+06      1.41e-03
+polygon 75              10  6.60195e+03      8.44e-06
+polygon 76              19  3.09221e+04      3.95e-05
+polygon 77             145  9.61782e+05      1.23e-03
+polygon 78              30  4.28933e+03      5.49e-06
+polygon 79              37  1.29481e+04      1.66e-05
+polygon 80               4  9.47108e+01      1.21e-07
+enclosing rectangle: [2667.54, 56396.44] x [15748.72, 50256.33] units
+                     (53730 x 34510 units)
+Window area = 781945000 square units
+Fraction of frame area: 0.422</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="first-order-spatial-point-patterns-analysis" class="level1">
+<h1>First Order Spatial Point Patterns Analysis</h1>
+<section id="kernel-density-estimation" class="level2">
+<h2 class="anchored" data-anchor-id="kernel-density-estimation">Kernel Density Estimation</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>kde_originSG_bw <span class="ot">&lt;-</span> <span class="fu">density</span>(originSG_ppp,</span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>                           <span class="at">sigma=</span>bw.diggle,</span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>                           <span class="at">edge=</span><span class="cn">TRUE</span>,</span>
+<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a>                           <span class="at">kernel=</span><span class="st">"gaussian"</span>)</span>
+<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(kde_originSG_bw)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Take-home_Ex01_files/figure-html/unnamed-chunk-28-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>bw <span class="ot">&lt;-</span> <span class="fu">bw.diggle</span>(originSG_ppp)</span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>bw</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   sigma 
+8.751942 </code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>kde_destinationSG_bw <span class="ot">&lt;-</span> <span class="fu">density</span>(destinationSG_ppp,</span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>                                <span class="at">sigma=</span>bw.diggle,</span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>                                <span class="at">edge=</span><span class="cn">TRUE</span>,</span>
+<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a>                                <span class="at">kernel=</span><span class="st">"gaussian"</span>)</span>
+<span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(kde_destinationSG_bw)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Take-home_Ex01_files/figure-html/unnamed-chunk-29-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>bw <span class="ot">&lt;-</span> <span class="fu">bw.diggle</span>(destinationSG_ppp)</span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>bw</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   sigma 
+8.752411 </code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a>kde_destinationSG_bw <span class="ot">&lt;-</span> <span class="fu">density</span>(destinationSG_ppp,</span>
+<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>                                <span class="at">sigma=</span><span class="fl">0.5</span>,</span>
+<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a>                                <span class="at">edge=</span><span class="cn">TRUE</span>,</span>
+<span id="cb53-4"><a href="#cb53-4" aria-hidden="true" tabindex="-1"></a>                                <span class="at">kernel=</span><span class="st">"gaussian"</span>)</span>
+<span id="cb53-5"><a href="#cb53-5" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(kde_destinationSG_bw)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Take-home_Ex01_files/figure-html/unnamed-chunk-30-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a>bw <span class="ot">&lt;-</span> <span class="fu">bw.diggle</span>(destinationSG_ppp)</span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>bw</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   sigma 
+8.752411 </code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="co"># KDE for destination</span></span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>kde_originBedok_bw <span class="ot">&lt;-</span> <span class="fu">density</span>(originBedok_ppp,</span>
+<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a>                           <span class="at">sigma=</span>bw.diggle,</span>
+<span id="cb56-4"><a href="#cb56-4" aria-hidden="true" tabindex="-1"></a>                           <span class="at">edge=</span><span class="cn">TRUE</span>,</span>
+<span id="cb56-5"><a href="#cb56-5" aria-hidden="true" tabindex="-1"></a>                           <span class="at">kernel=</span><span class="st">"gaussian"</span>)</span>
+<span id="cb56-6"><a href="#cb56-6" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(kde_originBedok_bw)</span>
+<span id="cb56-7"><a href="#cb56-7" aria-hidden="true" tabindex="-1"></a>bw <span class="ot">&lt;-</span> <span class="fu">bw.diggle</span>(originBedok_ppp)</span>
+<span id="cb56-8"><a href="#cb56-8" aria-hidden="true" tabindex="-1"></a>bw</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="re-scalling-kde-values" class="level2">
+<h2 class="anchored" data-anchor-id="re-scalling-kde-values">Re-scalling KDE Values</h2>
+<p>In the code below, we will re-scale the unit of measurement from meter to kilometer</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a>originSG_ppp.km <span class="ot">&lt;-</span> <span class="fu">rescale</span>(originSG_ppp, <span class="dv">1000</span>, <span class="st">'km'</span>)</span>
+<span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a>destinationSG_ppp.km <span class="ot">&lt;-</span> <span class="fu">rescale</span>(destinationSG_ppp, <span class="dv">1000</span>, <span class="st">'km'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a>kde_originSG.bw <span class="ot">&lt;-</span> <span class="fu">density</span>(originSG_ppp.km,</span>
+<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a>                           <span class="at">sigma=</span>bw.diggle,</span>
+<span id="cb58-3"><a href="#cb58-3" aria-hidden="true" tabindex="-1"></a>                           <span class="at">edge=</span><span class="cn">TRUE</span>,</span>
+<span id="cb58-4"><a href="#cb58-4" aria-hidden="true" tabindex="-1"></a>                           <span class="at">kernel=</span><span class="st">"quartic"</span>)</span>
+<span id="cb58-5"><a href="#cb58-5" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(kde_originSG.bw)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Take-home_Ex01_files/figure-html/unnamed-chunk-33-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a>kde_destinationSG.bw <span class="ot">&lt;-</span> <span class="fu">density</span>(destinationSG_ppp.km,</span>
+<span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a>                                <span class="at">sigma=</span>bw.diggle,</span>
+<span id="cb59-3"><a href="#cb59-3" aria-hidden="true" tabindex="-1"></a>                                <span class="at">edge=</span><span class="cn">TRUE</span>,</span>
+<span id="cb59-4"><a href="#cb59-4" aria-hidden="true" tabindex="-1"></a>                                <span class="at">kernel=</span><span class="st">"gaussian"</span>)</span>
+<span id="cb59-5"><a href="#cb59-5" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(kde_destinationSG.bw)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Take-home_Ex01_files/figure-html/unnamed-chunk-33-2.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a>kde_destinationSG.bw <span class="ot">&lt;-</span> <span class="fu">density</span>(destinationSG_ppp.km,</span>
+<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a>                                <span class="at">sigma=</span><span class="fl">0.5</span>,</span>
+<span id="cb60-3"><a href="#cb60-3" aria-hidden="true" tabindex="-1"></a>                                <span class="at">edge=</span><span class="cn">TRUE</span>,</span>
+<span id="cb60-4"><a href="#cb60-4" aria-hidden="true" tabindex="-1"></a>                                <span class="at">kernel=</span><span class="st">"gaussian"</span>)</span>
+<span id="cb60-5"><a href="#cb60-5" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(kde_destinationSG.bw)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Take-home_Ex01_files/figure-html/unnamed-chunk-33-3.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb61"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a>originBedok_ppp.km <span class="ot">&lt;-</span> <span class="fu">rescale</span>(originBedok_ppp,<span class="dv">1000</span>,<span class="st">'km'</span>)</span>
+<span id="cb61-2"><a href="#cb61-2" aria-hidden="true" tabindex="-1"></a>kde_originBedok.bw <span class="ot">&lt;-</span> <span class="fu">density</span>(originBedok_ppp.km,</span>
+<span id="cb61-3"><a href="#cb61-3" aria-hidden="true" tabindex="-1"></a>                              <span class="at">sigma=</span>bw.diggle,</span>
+<span id="cb61-4"><a href="#cb61-4" aria-hidden="true" tabindex="-1"></a>                              <span class="at">edge=</span><span class="cn">TRUE</span>,</span>
+<span id="cb61-5"><a href="#cb61-5" aria-hidden="true" tabindex="-1"></a>                              <span class="at">kernel=</span><span class="st">"quartic"</span>)</span>
+<span id="cb61-6"><a href="#cb61-6" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(kde_originBedok.bw)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 
 
 </section>
