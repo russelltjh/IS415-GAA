@@ -218,7 +218,7 @@ abline(v=0,
        col="red") 
 ```
 
-## Global Spatial Autocorrelation: Geary's 
+## Global Spatial Autocorrelation: Geary's
 
 In this section, you will learn how to perform Geary’s c statistics testing by using appropriate functions of **spdep** package.
 
@@ -286,7 +286,7 @@ By plotting the output might not allow us to provide complete interpretation. Th
 print(MI_corr)
 ```
 
-## Compute Geary's C correlogram and plot 
+## Compute Geary's C correlogram and plot
 
 In the code chunk below, *sp.correlogram()* of **spdep** package is used to compute a 6-lag spatial correlogram of GDPPC. The global spatial autocorrelation used in Geary’s C. The **plot()** of base Graph is then used to plot the output.
 
@@ -305,7 +305,7 @@ Similar to the previous step, we will print out the analysis report by using the
 print(GC_corr)
 ```
 
-# Cluster and Outlier Analysis 
+# Cluster and Outlier Analysis
 
 Local Indicators of Spatial Association or LISA are statistics that evaluate the existence of clusters in the spatial arrangement of a given variable. For instance if we are studying cancer rates among census tracts in a given city local clusters in the rates mean that there are areas that have higher or lower rates than is to be expected by chance alone; that is, the values occurring are above or below those of a random distribution in space.
 
@@ -344,7 +344,7 @@ printCoefmat(data.frame(
   check.names=FALSE)
 ```
 
-### Mapping the local Moran's I 
+### Mapping the local Moran's I
 
 Before mapping the local Moran’s I map, it is wise to append the local Moran’s I dataframe (i.e. localMI) onto hunan SpatialPolygonDataFrame. The code chunks below can be used to perform the task. The out SpatialPolygonDataFrame is called *hunan.localMI*.
 
@@ -644,7 +644,7 @@ summary(knn_lw)
 
 # Computing Gi statistics
 
-## Gi statistics using fixed distance 
+## Gi statistics using fixed distance
 
 ```{r}
 fips <- order(hunan$County)
@@ -665,7 +665,7 @@ hunan.gi <- cbind(hunan, as.matrix(gi.fixed)) %>%
 
 In fact, the code chunk above performs three tasks. First, it convert the output vector (i.e. *gi.fixed*) into r matrix object by using *as.matrix()*. Next, *cbind()* is used to join hunan\@data and *gi.fixed* matrix to produce a new SpatialPolygonDataFrame called *hunan.gi*. Lastly, the field name of the gi values is renamed to *gstat_fixed* by using *rename()*.
 
-## Mapping Gi values with fixed distance weights 
+## Mapping Gi values with fixed distance weights
 
 The code chunk below shows the functions used to map the Gi values derived using fixed distance weight matrix.
 
