@@ -57,7 +57,7 @@ For the purpose of this assignment, [Grab-Posisi](https://engineering.grab.com/g
 # Installing and Loading the R packages
 
 ```{r}
-pacman::p_load(maptools, sf, raster, spatstat, tmap, tidyverse, arrow)
+pacman::p_load(maptools, sf, raster, spatstat, tmap, tidyverse, arrow, spNetwork, classInt, viridis)
 ```
 
 # Spatial Data Wrangling
@@ -205,11 +205,23 @@ sg_roads <- MySgBr_Roads_SVY21[unlist(indices), ]
 
 ```{r}
 #| eval: false
+indices <- st_intersects(bedok, sg_roads)
+bedok_roads <- sg_roads[unlist(indices), ]
+```
+
+```{r}
+#| eval: false
 write_rds(sg_roads, "../../data/rds/Take-home_Ex01/sg_roads.rds")
 ```
 
 ```{r}
+#| eval: false
+write_rds(bedok_roads, "../../data/rds/Take-home_Ex01/bedok_roads.rds")
+```
+
+```{r}
 sg_roads <- read_rds("../../data/rds/Take-home_Ex01/sg_roads.rds")
+bedok_roads <- read_rds("../../data/rds/Take-home_Ex01/bedok_roads.rds")
 ```
 
 ```{r}
@@ -351,7 +363,7 @@ bw <- bw.diggle(originBedok_ppp)
 bw
 ```
 
-## Re-scalling KDE Values
+## Re-scaling KDE Values
 
 In the code below, we will re-scale the unit of measurement from meter to kilometer
 
@@ -383,3 +395,55 @@ kde_originBedok.bw <- density(originBedok_ppp.km,
                               kernel="quartic")
 plot(kde_originBedok.bw)
 ```
+
+## Network Constrained Kernel Density Estimation (NKDE)
+
+{r}
+lixels <- lixelize_lines(bedok_roads,
+                         750,
+                         mindist = 375)
+# 750 is the bandwidth
+# mindist is half of the bandwidth, the middle of the kernel
+
+
+Generating Line Center Points
+
+{r}
+samples <- lines_center(lixels)
+
+
+{r}
+densities <- nkde(bedok_roads,
+                  events = origin_sf,
+                  w = rep(1,nrow(origin_sf)),
+                  samples = samples, 
+                  kernel_name = "quartic", # Take note (kernel function)
+                  bw = 300, # Take note (bandwidth)
+                  div = "bw",
+                  method = "simple",
+                  digits = 1,
+                  tol = 1,
+                  grid_shape = c(1,1),
+                  max_depth = 8,
+                  agg = 5, # we aggregate events within a 5m radius (faster calculation)
+                  sparse = TRUE,
+                  verbose = FALSE)
+
+
+{r}
+samples$density <- densities
+lixels$density <- densities
+
+# rescaling to help the mapping
+samples$density <- samples$density*1000
+lixels$density <- lixels$density*1000
+
+
+{r}
+tmap_mode('view')
+tm_shape(lixels)+
+  tm_lines(col="density")+
+tm_shape(origin_sf)+
+  tm_dots()
+tmap_mode('plot')
+
