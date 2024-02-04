@@ -378,9 +378,7 @@ summary(originSG_ppp)
 summary(destinationSG_ppp)
 ```
 
-# First Order Spatial Point Patterns Analysis
-
-## Kernel Density Estimation
+# Kernel Density Estimation
 
 ```{r}
 kde_originSG_bw <- density(originSG_ppp,
@@ -456,7 +454,7 @@ tm_shape(kde_raster) +
   tm_layout(main.title = "KDE Overlay on OpenStreetMap")
 ```
 
-### Customizing Viridis Palette
+## Customizing Viridis Palette
 
 The customization involves specifying the number of colors (viridis(100, ...)) and potentially adjusting the portion of the color map used (begin, end, and direction parameters). These adjustments allow for finer control over the visual representation of your data:
 
@@ -497,13 +495,14 @@ kde_originBedok.bw <- density(originBedok_ppp.km,
 plot(kde_originBedok.bw)
 ```
 
-## Network Constrained Kernel Density Estimation (NKDE)
+# Network Constrained Kernel Density Estimation (NKDE)
 
-First, let's filter the origin points that are within the Clementi area only.
+## Clementi Area
+
+First, let's filter the origin and destination points that are within the Clementi area only.
 
 ```{r}
-# Filter points to those within the Clementi Study Area
-# This returns a logical vector suitable for direct subsetting
+# Filter origin points in Clementi
 intersects_index <- st_intersects(origin_sf, clementi, sparse = FALSE)
 
 # Assuming `intersects_index` is a logical matrix from st_intersects
@@ -514,14 +513,26 @@ origin_sf_filtered <- origin_sf[intersects_vector, ]
 ```
 
 ```{r}
+# Filter destination points in Clementi
+intersects_index <- st_intersects(destination_sf, clementi, sparse = FALSE)
+
+# Assuming `intersects_index` is a logical matrix from st_intersects
+intersects_vector <- apply(intersects_index, 1, any)
+
+# Use this logical vector to subset origin_sf
+destination_sf_filtered <- destination_sf[intersects_vector, ]
+```
+
+
+```{r}
 # Lixelize the Roads Network
-lixels <- lixelize_lines(clementi_roads, 750, mindist = 375)
+origin_lixels <- lixelize_lines(clementi_roads, 750, mindist = 375)
 
 # Generate Line Center Points
-samples <- lines_center(lixels)
+origin_samples <- lines_center(origin_lixels)
 
 # Conduct Network Constrained KDE 
-densities <- nkde(clementi_roads,
+origin_densities <- nkde(clementi_roads,
                   events = origin_sf_filtered,
                   w = rep(1, nrow(origin_sf_filtered)),
                   samples = samples,
@@ -538,12 +549,12 @@ densities <- nkde(clementi_roads,
                   verbose = FALSE)
 
 # Assign Densities and Rescale
-samples$density <- densities * 1000
-lixels$density <- densities * 1000
+origin_samples$density <- origin_densities * 1000
+origin_lixels$density <- origin_densities * 1000
 
 # Visualize with tmap
 tmap_mode("view")
-tm_shape(lixels) +
+tm_shape(origin_lixels) +
   tm_lines(col = "density") +
 tm_shape(origin_sf_filtered) +
   tm_dots()
@@ -552,12 +563,49 @@ tmap_mode('plot')
 ```
 
 ```{r}
+# Lixelize the Roads Network
+destination_lixels <- lixelize_lines(clementi_roads, 750, mindist = 375)
+
+# Generate Line Center Points
+destination_samples <- lines_center(destination_lixels)
+
+# Conduct Network Constrained KDE 
+destination_densities <- nkde(clementi_roads,
+                  events = destination_sf_filtered,
+                  w = rep(1, nrow(destination_sf_filtered)),
+                  samples = samples,
+                  kernel_name = "quartic",
+                  bw = 300, # Confirm this bandwidth is appropriate for your data
+                  div = "bw",
+                  method = "simple",
+                  digits = 1,
+                  tol = 1,
+                  grid_shape = c(1, 1),
+                  max_depth = 8,
+                  agg = 5, # Aggregates events within a 5m radius
+                  sparse = TRUE,
+                  verbose = FALSE)
+
+# Assign Densities and Rescale
+destination_samples$density <- destination_densities * 1000
+destination_lixels$density <- destination_densities * 1000
+
 # Visualize with tmap
 tmap_mode("view")
-tm_shape(lixels) +
+tm_shape(destination_lixels) +
+  tm_lines(col = "density") +
+tm_shape(destination_sf_filtered) +
+  tm_dots()
+
+tmap_mode('plot')
+```
+### Visualizing Origin
+
+```{r}
+# Visualize with tmap
+tmap_mode("view")
+tm_shape(origin_lixels) +
   tm_lines(col = "density", scale = 2) + 
-  # tm_shape(origin_sf_filtered) +
-  # tm_dots(alpha = 0.1, size=0.01, shape=19) + 
   tm_basemap("OpenStreetMap") +
   tm_layout(main.title = "NKDE: Grab Pick Up Locations in Clementi Area")
 
@@ -573,3 +621,16 @@ The map above shows that the popular locations for grab pick ups are concentrate
 -   "Clementi Avenue 6", along Clementi View, Clementi Ridges and Nan Hua Primary School.
 
 The common trait that all these areas have is that they are residential areas. 
+
+### Visualizing Destination
+
+```{r}
+# Visualize with tmap
+tmap_mode("view")
+tm_shape(destination_lixels) +
+  tm_lines(col = "density", scale = 2) + 
+  tm_basemap("OpenStreetMap") +
+  tm_layout(main.title = "NKDE: Grab Pick Up Locations in Clementi Area")
+
+tmap_mode('plot')
+```
