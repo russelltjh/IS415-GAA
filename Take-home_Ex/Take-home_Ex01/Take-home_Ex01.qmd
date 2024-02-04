@@ -60,7 +60,7 @@ For the purpose of this assignment, [Grab-Posisi](https://engineering.grab.com/g
 pacman::p_load(maptools, sf, raster, spatstat, tmap, tidyverse, arrow, spNetwork, classInt, viridis)
 ```
 
-# Spatial Data Wrangling
+# Data Wrangling
 
 ## Importing Grab-Posisi Dataset
 
@@ -79,7 +79,7 @@ Let's convert the pingtimestamp column from integer to a datetime format
 grab_data$pingtimestamp <- as_datetime(grab_data$pingtimestamp)
 ```
 
-## Extracting trip starting locations
+### Extracting trip starting locations
 
 ```{r}
 #| eval: false
@@ -95,7 +95,7 @@ origin_df <- grab_data %>%
 view(origin_df)
 ```
 
-## Extracting trip destination locations
+### Extracting trip destination locations
 
 ```{r}
 #| eval: false
@@ -111,7 +111,7 @@ destination_df <- grab_data %>%
 view(destination_df)
 ```
 
-## Converting into sf tibble dataframe
+### Converting into sf tibble dataframe
 
 Let's convert it into a sf tibble dataframe. According to the data source, our data is in Geodetic CRS: WGS84, so we need to convert it to SVY21 too.
 
@@ -141,9 +141,11 @@ origin_sf <- read_rds("../../data/rds/Take-home_Ex01/origin_sf.rds")
 destination_sf <- read_rds("../../data/rds/Take-home_Ex01/destination_sf.rds")
 ```
 
-## Importing the Geospatial data
+```{r}
+head(origin_sf)
+```
 
-### Importing the Boundary of Singapore
+## Importing the Boundary of Singapore
 
 ```{r}
 mpsz_sf <- st_read(dsn ="../../data/geospatial/MP14_SUBZONE_WEB_PL", layer = "MP14_SUBZONE_WEB_PL") %>%
@@ -171,7 +173,7 @@ jurongwest <- mpsz_sf %>%
   filter(PLN_AREA_N == "JURONG WEST")
 ```
 
-### Importing Road data from OpenStreetMap
+## Importing Road data from OpenStreetMap
 
 We have the ESRI files downloaded, so let's check what layers we can choose from this dataset.
 
@@ -205,31 +207,85 @@ sg_roads <- MySgBr_Roads_SVY21[unlist(indices), ]
 
 ```{r}
 #| eval: false
-indices <- st_intersects(bedok, sg_roads)
-bedok_roads <- sg_roads[unlist(indices), ]
+write_rds(sg_roads, "../../data/rds/Take-home_Ex01/sg_roads.rds")
 ```
 
 ```{r}
-#| eval: false
-write_rds(sg_roads, "../../data/rds/Take-home_Ex01/sg_roads.rds")
+sg_roads <- read_rds("../../data/rds/Take-home_Ex01/sg_roads.rds")
+```
+
+```{r}
+print(sg_roads)
+```
+
+```{r}
+# Assuming sg_roads is your dataset
+unique_road_types <- sg_roads %>% 
+  distinct(fclass) %>% 
+  arrange(fclass) # Optional: to sort the road types alphabetically
+
+# Print the unique road types
+print(unique_road_types)
+```
+
+### Filtering Road types
+
+We can see that the classes contains road types that does not allows car to be driven on, such as footway, cycleway, pedestrian and etc. We will make some assumptions on which classes do not allow cars and filter them out.
+
+```{r}
+# Filter out road types not meant for cars
+sg_car_roads <- sg_roads %>% 
+  filter(!fclass %in% c("bridleway", "cycleway", "footway", "path", "pedestrian", 
+                        "steps", "track", "track_grade1", "track_grade2", 
+                        "track_grade3", "track_grade4", "track_grade5")) 
+
+# View the filtered dataset
+print(sg_car_roads)
+```
+
+### Extracting the Roads of Study Areas
+
+```{r}
+indices <- st_intersects(bedok, sg_car_roads)
+bedok_roads <- sg_car_roads[unlist(indices), ]
+
+indices <- st_intersects(tamp, sg_car_roads)
+tamp_roads <- sg_car_roads[unlist(indices), ]
+
+indices <- st_intersects(clementi, sg_car_roads)
+clementi_roads <- sg_car_roads[unlist(indices), ]
+
+indices <- st_intersects(jurongwest, sg_car_roads)
+jurongwest_roads <- sg_car_roads[unlist(indices), ]
 ```
 
 ```{r}
 #| eval: false
 write_rds(bedok_roads, "../../data/rds/Take-home_Ex01/bedok_roads.rds")
+write_rds(tamp_roads, "../../data/rds/Take-home_Ex01/tamp_roads.rds")
+write_rds(clementi_roads, "../../data/rds/Take-home_Ex01/clementi_roads.rds")
+write_rds(jurongwest_roads, "../../data/rds/Take-home_Ex01/jurongwest_roads.rds")
 ```
 
 ```{r}
-sg_roads <- read_rds("../../data/rds/Take-home_Ex01/sg_roads.rds")
 bedok_roads <- read_rds("../../data/rds/Take-home_Ex01/bedok_roads.rds")
+tamp_roads <- read_rds("../../data/rds/Take-home_Ex01/tamp_roads.rds")
+clementi_roads <- read_rds("../../data/rds/Take-home_Ex01/clementi_roads.rds")
+jurongwest_roads <- read_rds("../../data/rds/Take-home_Ex01/jurongwest_roads.rds")
 ```
+
+```{r}
+print(bedok_roads)
+```
+
+### Displaying Road Study Area
 
 ```{r}
 #| eval: false
-ggplot(data = sg_roads) +
+ggplot(data = clementi_roads) +
   geom_sf() +
   theme_minimal() +
-  labs(title = "Roads in Singapore", 
+  labs(title = "Roads in Clementi", 
        x = "Longitude", 
        y = "Latitude")
 ```
@@ -240,16 +296,16 @@ ggplot(data = sg_roads) +
 tmap_mode("view")
 
 # Create interactive map
-tm <- tm_shape(sg_roads) +
+tm <- tm_shape(clementi_roads) +
       tm_lines(col = "blue") +
       tm_basemap(server = "OpenStreetMap") +
-      tm_layout(title = "Interactive Map of Roads in Singapore")
+      tm_layout(title = "Interactive Map of Roads in Clementi")
 
 # Render the map
 tm
 ```
 
-# Geospatial Data Wrangling
+# Data Preparation
 
 ## Creating `ppp` object
 
@@ -352,16 +408,51 @@ bw
 ```
 
 ```{r}
-#| eval: false
 # KDE for destination
-kde_originBedok_bw <- density(originBedok_ppp,
+kde_originClementi_bw <- density(originClementi_ppp,
                            sigma=bw.diggle,
                            edge=TRUE,
                            kernel="gaussian")
-plot(kde_originBedok_bw)
-bw <- bw.diggle(originBedok_ppp)
+plot(kde_originClementi_bw)
+bw <- bw.diggle(originClementi_ppp)
 bw
 ```
+
+```{r}
+# Check the class of the KDE result
+print(class(kde_originClementi_bw))
+
+# Print a summary of the KDE result
+print(summary(kde_originClementi_bw))
+```
+
+```{r}
+# Convert 'im' object to a RasterLayer
+kde_raster <- raster(kde_originClementi_bw)
+
+# Set the CRS for the raster using EPSG code for SVY21/Singapore TM
+crs(kde_raster) <- CRS("EPSG:3414")
+
+# Create a base viridis palette
+palette <- viridis(100, begin = 0, end = 1, direction = -1) # A smooth gradient
+# Generating a palette with 100 colors, with Beginning, Ending and Direction
+
+tmap_mode("view")
+
+# Plotting with tmap using the revised approach
+tm_shape(kde_raster) +
+  tm_raster(alpha = 0.75, style = "cont", palette = palette, n = 5) +
+  tm_basemap("OpenStreetMap") +
+  tm_layout(main.title = "KDE Overlay on OpenStreetMap")
+```
+
+### Customizing Viridis Palette
+
+The customization involves specifying the number of colors (viridis(100, ...)) and potentially adjusting the portion of the color map used (begin, end, and direction parameters). These adjustments allow for finer control over the visual representation of your data:
+
+-   Number of Colors: By generating a palette with 100 colors, you create a more granular color transition in the overlay. This can help in distinguishing subtle differences in the KDE values across the map.
+
+-   Begin, End, and Direction: These parameters offer control over which portion of the viridis color map is utilized and the direction of the color gradient. While not demonstrated explicitly in the simplified example, adjusting these parameters can tailor the visual impact of the overlay, emphasizing specific ranges of data values more effectively.
 
 ## Re-scaling KDE Values
 
@@ -398,52 +489,18 @@ plot(kde_originBedok.bw)
 
 ## Network Constrained Kernel Density Estimation (NKDE)
 
-{r}
-lixels <- lixelize_lines(bedok_roads,
-                         750,
-                         mindist = 375)
-# 750 is the bandwidth
-# mindist is half of the bandwidth, the middle of the kernel
-
+{r} lixels \<- lixelize_lines(bedok_roads, 750, mindist = 375) \# 750 is the bandwidth \# mindist is half of the bandwidth, the middle of the kernel
 
 Generating Line Center Points
 
-{r}
-samples <- lines_center(lixels)
+{r} samples \<- lines_center(lixels)
 
+{r} densities \<- nkde(bedok_roads, events = origin_sf, w = rep(1,nrow(origin_sf)), samples = samples, kernel_name = "quartic", \# Take note (kernel function) bw = 300, \# Take note (bandwidth) div = "bw", method = "simple", digits = 1, tol = 1, grid_shape = c(1,1), max_depth = 8, agg = 5, \# we aggregate events within a 5m radius (faster calculation) sparse = TRUE, verbose = FALSE)
 
-{r}
-densities <- nkde(bedok_roads,
-                  events = origin_sf,
-                  w = rep(1,nrow(origin_sf)),
-                  samples = samples, 
-                  kernel_name = "quartic", # Take note (kernel function)
-                  bw = 300, # Take note (bandwidth)
-                  div = "bw",
-                  method = "simple",
-                  digits = 1,
-                  tol = 1,
-                  grid_shape = c(1,1),
-                  max_depth = 8,
-                  agg = 5, # we aggregate events within a 5m radius (faster calculation)
-                  sparse = TRUE,
-                  verbose = FALSE)
-
-
-{r}
-samples$density <- densities
-lixels$density <- densities
+{r} samples$density <- densities lixels$density \<- densities
 
 # rescaling to help the mapping
-samples$density <- samples$density*1000
-lixels$density <- lixels$density*1000
 
+samples$density <- samples$density*1000 lixels*$density <- lixels$density1000
 
-{r}
-tmap_mode('view')
-tm_shape(lixels)+
-  tm_lines(col="density")+
-tm_shape(origin_sf)+
-  tm_dots()
-tmap_mode('plot')
-
+{r} tmap_mode('view') tm_shape(lixels)+ tm_lines(col="density")+ tm_shape(origin_sf)+ tm_dots() tmap_mode('plot')
