@@ -243,6 +243,15 @@ sg_car_roads <- sg_roads %>%
 print(sg_car_roads)
 ```
 
+```{r}
+#| eval: false
+write_rds(sg_car_roads, "../../data/rds/Take-home_Ex01/sg_car_roads.rds")
+```
+
+```{r}
+sg_car_roads <- read_rds("../../data/rds/Take-home_Ex01/sg_car_roads.rds")
+```
+
 ### Extracting the Roads of Study Areas
 
 ```{r}
@@ -408,12 +417,13 @@ bw
 ```
 
 ```{r}
-# KDE for destination
 kde_originClementi_bw <- density(originClementi_ppp,
                            sigma=bw.diggle,
                            edge=TRUE,
                            kernel="gaussian")
+
 plot(kde_originClementi_bw)
+
 bw <- bw.diggle(originClementi_ppp)
 bw
 ```
@@ -489,18 +499,77 @@ plot(kde_originBedok.bw)
 
 ## Network Constrained Kernel Density Estimation (NKDE)
 
-{r} lixels \<- lixelize_lines(bedok_roads, 750, mindist = 375) \# 750 is the bandwidth \# mindist is half of the bandwidth, the middle of the kernel
+First, let's filter the origin points that are within the Clementi area only.
 
-Generating Line Center Points
+```{r}
+# Filter points to those within the Clementi Study Area
+# This returns a logical vector suitable for direct subsetting
+intersects_index <- st_intersects(origin_sf, clementi, sparse = FALSE)
 
-{r} samples \<- lines_center(lixels)
+# Assuming `intersects_index` is a logical matrix from st_intersects
+intersects_vector <- apply(intersects_index, 1, any)
 
-{r} densities \<- nkde(bedok_roads, events = origin_sf, w = rep(1,nrow(origin_sf)), samples = samples, kernel_name = "quartic", \# Take note (kernel function) bw = 300, \# Take note (bandwidth) div = "bw", method = "simple", digits = 1, tol = 1, grid_shape = c(1,1), max_depth = 8, agg = 5, \# we aggregate events within a 5m radius (faster calculation) sparse = TRUE, verbose = FALSE)
+# Use this logical vector to subset origin_sf
+origin_sf_filtered <- origin_sf[intersects_vector, ]
+```
 
-{r} samples$density <- densities lixels$density \<- densities
+```{r}
+# Lixelize the Roads Network
+lixels <- lixelize_lines(clementi_roads, 750, mindist = 375)
 
-# rescaling to help the mapping
+# Generate Line Center Points
+samples <- lines_center(lixels)
 
-samples$density <- samples$density*1000 lixels*$density <- lixels$density1000
+# Conduct Network Constrained KDE 
+densities <- nkde(clementi_roads,
+                  events = origin_sf_filtered,
+                  w = rep(1, nrow(origin_sf_filtered)),
+                  samples = samples,
+                  kernel_name = "quartic",
+                  bw = 300, # Confirm this bandwidth is appropriate for your data
+                  div = "bw",
+                  method = "simple",
+                  digits = 1,
+                  tol = 1,
+                  grid_shape = c(1, 1),
+                  max_depth = 8,
+                  agg = 5, # Aggregates events within a 5m radius
+                  sparse = TRUE,
+                  verbose = FALSE)
 
-{r} tmap_mode('view') tm_shape(lixels)+ tm_lines(col="density")+ tm_shape(origin_sf)+ tm_dots() tmap_mode('plot')
+# Assign Densities and Rescale
+samples$density <- densities * 1000
+lixels$density <- densities * 1000
+
+# Visualize with tmap
+tmap_mode("view")
+tm_shape(lixels) +
+  tm_lines(col = "density") +
+tm_shape(origin_sf_filtered) +
+  tm_dots()
+
+tmap_mode('plot')
+```
+
+```{r}
+# Visualize with tmap
+tmap_mode("view")
+tm_shape(lixels) +
+  tm_lines(col = "density", scale = 2) + 
+  # tm_shape(origin_sf_filtered) +
+  # tm_dots(alpha = 0.1, size=0.01, shape=19) + 
+  tm_basemap("OpenStreetMap") +
+  tm_layout(main.title = "NKDE: Grab Pick Up Locations in Clementi Area")
+
+tmap_mode('plot')
+```
+
+The map above shows that the popular locations for grab pick ups are concentrated in roughly 3 areas:
+
+-   "West Coast Road" along the HDB blocks, Wespeak Terrace, Westview Gardens, and other private housing nearby.
+
+-   "Commonwealth Avenue West", along Block 455 bus stop.
+
+-   "Clementi Avenue 6", along Clementi View, Clementi Ridges and Nan Hua Primary School.
+
+The common trait that all these areas have is that they are residential areas. 
