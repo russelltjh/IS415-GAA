@@ -132,11 +132,13 @@ st_geometry(destination_sf)
 
 ```{r}
 #| eval: false
+#| echo: false
 write_rds(origin_sf,"../../data/rds/Take-home_Ex01/origin_sf.rds")
 write_rds(destination_sf,"../../data/rds/Take-home_Ex01/destination_sf.rds")
 ```
 
 ```{r}
+#| echo: false
 origin_sf <- read_rds("../../data/rds/Take-home_Ex01/origin_sf.rds")
 destination_sf <- read_rds("../../data/rds/Take-home_Ex01/destination_sf.rds")
 ```
@@ -207,16 +209,22 @@ sg_roads <- MySgBr_Roads_SVY21[unlist(indices), ]
 
 ```{r}
 #| eval: false
+#| echo: false
 write_rds(sg_roads, "../../data/rds/Take-home_Ex01/sg_roads.rds")
 ```
 
 ```{r}
+#| echo: false
 sg_roads <- read_rds("../../data/rds/Take-home_Ex01/sg_roads.rds")
 ```
 
 ```{r}
 print(sg_roads)
 ```
+
+### Filtering Road types
+
+Let's check the road classes in the dataset.
 
 ```{r}
 # Assuming sg_roads is your dataset
@@ -227,8 +235,6 @@ unique_road_types <- sg_roads %>%
 # Print the unique road types
 print(unique_road_types)
 ```
-
-### Filtering Road types
 
 We can see that the classes contains road types that does not allows car to be driven on, such as footway, cycleway, pedestrian and etc. We will make some assumptions on which classes do not allow cars and filter them out.
 
@@ -245,10 +251,12 @@ print(sg_car_roads)
 
 ```{r}
 #| eval: false
+#| echo: false
 write_rds(sg_car_roads, "../../data/rds/Take-home_Ex01/sg_car_roads.rds")
 ```
 
 ```{r}
+#| echo: false
 sg_car_roads <- read_rds("../../data/rds/Take-home_Ex01/sg_car_roads.rds")
 ```
 
@@ -270,6 +278,7 @@ jurongwest_roads <- sg_car_roads[unlist(indices), ]
 
 ```{r}
 #| eval: false
+#| echo: false
 write_rds(bedok_roads, "../../data/rds/Take-home_Ex01/bedok_roads.rds")
 write_rds(tamp_roads, "../../data/rds/Take-home_Ex01/tamp_roads.rds")
 write_rds(clementi_roads, "../../data/rds/Take-home_Ex01/clementi_roads.rds")
@@ -277,6 +286,7 @@ write_rds(jurongwest_roads, "../../data/rds/Take-home_Ex01/jurongwest_roads.rds"
 ```
 
 ```{r}
+#| echo: false
 bedok_roads <- read_rds("../../data/rds/Take-home_Ex01/bedok_roads.rds")
 tamp_roads <- read_rds("../../data/rds/Take-home_Ex01/tamp_roads.rds")
 clementi_roads <- read_rds("../../data/rds/Take-home_Ex01/clementi_roads.rds")
@@ -290,7 +300,7 @@ print(bedok_roads)
 ### Displaying Road Study Area
 
 ```{r}
-#| eval: false
+#| eval: true
 ggplot(data = clementi_roads) +
   geom_sf() +
   theme_minimal() +
@@ -301,6 +311,7 @@ ggplot(data = clementi_roads) +
 
 ```{r}
 #| eval: false
+#| echo: false
 # Set tmap mode to view for interactive maps
 tmap_mode("view")
 
@@ -333,6 +344,8 @@ summary(destination_ppp)
 ```
 
 ```{r}
+#| eval: false
+#| echo: false
 write_rds(origin_ppp, "../../data/rds/Take-home_Ex01/origin_ppp.rds")
 write_rds(destination_ppp, "../../data/rds/Take-home_Ex01/destination_ppp.rds")
 ```
@@ -350,6 +363,8 @@ jurongwest_owin <- as.owin(jurongwest)
 ```
 
 ```{r}
+#| echo: false
+#| eval: false
 summary(sg_owin)
 summary(bedok_owin)
 summary(tamp_owin)
@@ -403,6 +418,10 @@ bw <- bw.diggle(destinationSG_ppp)
 bw
 ```
 
+As seen above, there is a concentration of grab pick up and drop of at the airport area. **We can assume that many travellers use grab much more than Singaporeans in their day to day life.**
+
+Let's try using a fixed bandwidth to see if there's any significant difference.
+
 ```{r}
 kde_destinationSG_bw <- density(destinationSG_ppp,
                                 sigma=0.5,
@@ -413,6 +432,8 @@ plot(kde_destinationSG_bw)
 bw <- bw.diggle(destinationSG_ppp)
 bw
 ```
+
+Let's try to see KDE in the Clementi Study Area
 
 ```{r}
 kde_originClementi_bw <- density(originClementi_ppp,
@@ -454,6 +475,7 @@ tm_shape(kde_raster) +
   tm_layout(main.title = "KDE Overlay on OpenStreetMap")
 ```
 
+::: callout-note
 ## Customizing Viridis Palette
 
 The customization involves specifying the number of colors (viridis(100, ...)) and potentially adjusting the portion of the color map used (begin, end, and direction parameters). These adjustments allow for finer control over the visual representation of your data:
@@ -461,6 +483,7 @@ The customization involves specifying the number of colors (viridis(100, ...)) a
 -   Number of Colors: By generating a palette with 100 colors, you create a more granular color transition in the overlay. This can help in distinguishing subtle differences in the KDE values across the map.
 
 -   Begin, End, and Direction: These parameters offer control over which portion of the viridis color map is utilized and the direction of the color gradient. While not demonstrated explicitly in the simplified example, adjusting these parameters can tailor the visual impact of the overlay, emphasizing specific ranges of data values more effectively.
+:::
 
 ## Re-scaling KDE Values
 
@@ -523,7 +546,6 @@ intersects_vector <- apply(intersects_index, 1, any)
 destination_sf_filtered <- destination_sf[intersects_vector, ]
 ```
 
-
 ```{r}
 # Lixelize the Roads Network
 origin_lixels <- lixelize_lines(clementi_roads, 750, mindist = 375)
@@ -535,7 +557,7 @@ origin_samples <- lines_center(origin_lixels)
 origin_densities <- nkde(clementi_roads,
                   events = origin_sf_filtered,
                   w = rep(1, nrow(origin_sf_filtered)),
-                  samples = samples,
+                  samples = origin_samples,
                   kernel_name = "quartic",
                   bw = 300, # Confirm this bandwidth is appropriate for your data
                   div = "bw",
@@ -573,7 +595,7 @@ destination_samples <- lines_center(destination_lixels)
 destination_densities <- nkde(clementi_roads,
                   events = destination_sf_filtered,
                   w = rep(1, nrow(destination_sf_filtered)),
-                  samples = samples,
+                  samples = destination_samples,
                   kernel_name = "quartic",
                   bw = 300, # Confirm this bandwidth is appropriate for your data
                   div = "bw",
@@ -599,6 +621,7 @@ tm_shape(destination_sf_filtered) +
 
 tmap_mode('plot')
 ```
+
 ### Visualizing Origin
 
 ```{r}
@@ -620,7 +643,7 @@ The map above shows that the popular locations for grab pick ups are concentrate
 
 -   "Clementi Avenue 6", along Clementi View, Clementi Ridges and Nan Hua Primary School.
 
-The common trait that all these areas have is that they are residential areas. 
+The common trait that all these areas have is that they are residential areas.
 
 ### Visualizing Destination
 
