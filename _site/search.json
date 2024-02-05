@@ -1188,5 +1188,47 @@
     "title": "Application of Spatial Point Patterns Analysis to discover the geographical distribution of Grab hailing services in Singapore",
     "section": "Clementi Area",
     "text": "Clementi Area\nFirst, let’s filter the origin and destination points that are within the Clementi area only.\n\n# Filter origin points in Clementi\nintersects_index &lt;- st_intersects(origin_sf, clementi, sparse = FALSE)\n\n# Assuming `intersects_index` is a logical matrix from st_intersects\nintersects_vector &lt;- apply(intersects_index, 1, any)\n\n# Use this logical vector to subset origin_sf\norigin_sf_filtered &lt;- origin_sf[intersects_vector, ]\n\n\n# Filter destination points in Clementi\nintersects_index &lt;- st_intersects(destination_sf, clementi, sparse = FALSE)\n\n# Assuming `intersects_index` is a logical matrix from st_intersects\nintersects_vector &lt;- apply(intersects_index, 1, any)\n\n# Use this logical vector to subset origin_sf\ndestination_sf_filtered &lt;- destination_sf[intersects_vector, ]\n\n\n# Lixelize the Roads Network\norigin_lixels &lt;- lixelize_lines(clementi_roads, 750, mindist = 375)\n\n# Generate Line Center Points\norigin_samples &lt;- lines_center(origin_lixels)\n\n# Conduct Network Constrained KDE \norigin_densities &lt;- nkde(clementi_roads,\n                  events = origin_sf_filtered,\n                  w = rep(1, nrow(origin_sf_filtered)),\n                  samples = origin_samples,\n                  kernel_name = \"quartic\",\n                  bw = 300, # Confirm this bandwidth is appropriate for your data\n                  div = \"bw\",\n                  method = \"simple\",\n                  digits = 1,\n                  tol = 1,\n                  grid_shape = c(1, 1),\n                  max_depth = 8,\n                  agg = 5, # Aggregates events within a 5m radius\n                  sparse = TRUE,\n                  verbose = FALSE)\n\n# Assign Densities and Rescale\norigin_samples$density &lt;- origin_densities * 1000\norigin_lixels$density &lt;- origin_densities * 1000\n\n# Visualize with tmap\ntmap_mode(\"view\")\ntm_shape(origin_lixels) +\n  tm_lines(col = \"density\") +\ntm_shape(origin_sf_filtered) +\n  tm_dots()\n\n\n\n\n\ntmap_mode('plot')\n\n\n# Lixelize the Roads Network\ndestination_lixels &lt;- lixelize_lines(clementi_roads, 750, mindist = 375)\n\n# Generate Line Center Points\ndestination_samples &lt;- lines_center(destination_lixels)\n\n# Conduct Network Constrained KDE \ndestination_densities &lt;- nkde(clementi_roads,\n                  events = destination_sf_filtered,\n                  w = rep(1, nrow(destination_sf_filtered)),\n                  samples = destination_samples,\n                  kernel_name = \"quartic\",\n                  bw = 300, # Confirm this bandwidth is appropriate for your data\n                  div = \"bw\",\n                  method = \"simple\",\n                  digits = 1,\n                  tol = 1,\n                  grid_shape = c(1, 1),\n                  max_depth = 8,\n                  agg = 5, # Aggregates events within a 5m radius\n                  sparse = TRUE,\n                  verbose = FALSE)\n\n# Assign Densities and Rescale\ndestination_samples$density &lt;- destination_densities * 1000\ndestination_lixels$density &lt;- destination_densities * 1000\n\n# Visualize with tmap\ntmap_mode(\"view\")\ntm_shape(destination_lixels) +\n  tm_lines(col = \"density\") +\ntm_shape(destination_sf_filtered) +\n  tm_dots()\n\n\n\n\n\ntmap_mode('plot')\n\n\nVisualizing Origin\n\n# Visualize with tmap\ntmap_mode(\"view\")\ntm_shape(origin_lixels) +\n  tm_lines(col = \"density\", scale = 2) + \n  tm_basemap(\"OpenStreetMap\") +\n  tm_layout(main.title = \"NKDE: Grab Pick Up Locations in Clementi Area\")\n\n\n\n\n\ntmap_mode('plot')\n\nThe map above shows that the popular locations for grab pick ups are concentrated in roughly 3 areas:\n\n“West Coast Road” along the HDB blocks, Wespeak Terrace, Westview Gardens, and other private housing nearby.\n“Commonwealth Avenue West”, along Block 455 bus stop.\n“Clementi Avenue 6”, along Clementi View, Clementi Ridges and Nan Hua Primary School.\n\nThe common trait that all these areas have is that they are residential areas.\n\n\nVisualizing Destination\n\n# Visualize with tmap\ntmap_mode(\"view\")\ntm_shape(destination_lixels) +\n  tm_lines(col = \"density\", scale = 2) + \n  tm_basemap(\"OpenStreetMap\") +\n  tm_layout(main.title = \"NKDE: Grab Pick Up Locations in Clementi Area\")\n\n\n\n\n\ntmap_mode('plot')"
+  },
+  {
+    "objectID": "In-class_Ex/In-class_Ex05/In-class_Ex05.html",
+    "href": "In-class_Ex/In-class_Ex05/In-class_Ex05.html",
+    "title": "Global and Local Measures of Spatial Autocorrelation - sfdep methods",
+    "section": "",
+    "text": "Four R packages will be used for this in-class exercise, they are: sf, sfdep, tmap and tidyverse\n\npacman::p_load(sf, sfdep, tmap, tidyverse)"
+  },
+  {
+    "objectID": "In-class_Ex/In-class_Ex05/In-class_Ex05.html#installing-and-loading-the-r-packages",
+    "href": "In-class_Ex/In-class_Ex05/In-class_Ex05.html#installing-and-loading-the-r-packages",
+    "title": "Global and Local Measures of Spatial Autocorrelation - sfdep methods",
+    "section": "",
+    "text": "Four R packages will be used for this in-class exercise, they are: sf, sfdep, tmap and tidyverse\n\npacman::p_load(sf, sfdep, tmap, tidyverse)"
+  },
+  {
+    "objectID": "In-class_Ex/In-class_Ex05/In-class_Ex05.html#importing-geospatial-data",
+    "href": "In-class_Ex/In-class_Ex05/In-class_Ex05.html#importing-geospatial-data",
+    "title": "Global and Local Measures of Spatial Autocorrelation - sfdep methods",
+    "section": "Importing geospatial data",
+    "text": "Importing geospatial data\n\nhunan &lt;- st_read(dsn=\"../../data/geospatial/HunanBoundary\",\n                 layer=\"Hunan\")\n\nReading layer `Hunan' from data source \n  `C:\\russelltjh\\IS415-GAA\\data\\geospatial\\HunanBoundary' using driver `ESRI Shapefile'\nSimple feature collection with 88 features and 7 fields\nGeometry type: POLYGON\nDimension:     XY\nBounding box:  xmin: 108.7831 ymin: 24.6342 xmax: 114.2544 ymax: 30.12812\nGeodetic CRS:  WGS 84"
+  },
+  {
+    "objectID": "In-class_Ex/In-class_Ex05/In-class_Ex05.html#importing-attribute-table",
+    "href": "In-class_Ex/In-class_Ex05/In-class_Ex05.html#importing-attribute-table",
+    "title": "Global and Local Measures of Spatial Autocorrelation - sfdep methods",
+    "section": "Importing attribute table",
+    "text": "Importing attribute table\n\nhunan2012 &lt;- read_csv(\"../../data/aspatial/Hunan/Hunan_2012.csv\")"
+  },
+  {
+    "objectID": "In-class_Ex/In-class_Ex05/In-class_Ex05.html#combining-both-data-frame-by-using-left-join",
+    "href": "In-class_Ex/In-class_Ex05/In-class_Ex05.html#combining-both-data-frame-by-using-left-join",
+    "title": "Global and Local Measures of Spatial Autocorrelation - sfdep methods",
+    "section": "Combining both data frame by using left join",
+    "text": "Combining both data frame by using left join\n\nhunan_GDPPC &lt;- left_join(hunan,hunan2012) %&gt;%\n  select(1:4, 7, 15)"
+  },
+  {
+    "objectID": "In-class_Ex/In-class_Ex05/In-class_Ex05.html#plotting-a-choropleth-map",
+    "href": "In-class_Ex/In-class_Ex05/In-class_Ex05.html#plotting-a-choropleth-map",
+    "title": "Global and Local Measures of Spatial Autocorrelation - sfdep methods",
+    "section": "Plotting a Choropleth Map",
+    "text": "Plotting a Choropleth Map\n\ntmap_mode(\"plot\")\ntm_shape(hunan_GDPPC) +\n  tm_fill(\"GDPPC\",\n          style = 'quantile',\n          palette = 'Blues',\n          title = 'GDPPC') +\n  tm_borders(alpha = 0.5) +\n  tm_layout(main.title=\"Distribution of GDP per capita by county, Hunan Province\",\n            main.title.position = \"center\",\n            main.title.size = 1.2,\n            legend.height = 0.45,\n            legend.width = 0.35,\n            frame = TRUE) +\n  tm_compass(type='8star', size=2) +\n  tm_scale_bar() +\n  tm_grid(alpha = 0.2)\n\n\n\n\n\nwm_q &lt;- hunan_GDPPC %&gt;%\n  mutate(nb = st_contiguity(geometry),\n         wt = st_weights(nb,\n                         style = \"W\"),\n         .before = 1)\n\n\nmoranI &lt;- global_moran(wm_q$GDPPC,\n                       wm_q$nb,\n                       wm_q$wt)\nglimpse(moranI)\n\nList of 2\n $ I: num 0.301\n $ K: num 7.64"
   }
 ]
