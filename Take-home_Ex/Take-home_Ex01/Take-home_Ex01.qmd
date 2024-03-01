@@ -9,6 +9,7 @@ format:
 execute:
   eval: true
   echo: true
+  freeze: true
   warning: False  # This turns off warning messages being displayed
 date: 15 January, 2024
 date-modified: "last-modified"

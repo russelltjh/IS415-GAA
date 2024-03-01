@@ -1,0 +1,270 @@
+---
+title: "Application of Spatial and Spatio-temporal Analysis Methods to Discover the Distribution of Dengue Fever in Tainan City, Taiwan"
+subtitle: "Take-home_Ex02"
+format:
+  html:
+    code-fold: false
+    code-summary: "Show the code"
+    toc: true # Table of Contents
+execute:
+  eval: true
+  echo: true
+  freeze: true
+  warning: False  # This turns off warning messages being displayed
+date: 19 February, 2024
+date-modified: "last-modified"
+---
+
+# 1.0 Introduction
+
+## 1.1 Overview
+
+[Dengue Hemorrhagic Fever](https://www.cdc.gov/dengue/resources/denguedhf-information-for-health-care-practitioners_2009.pdf) (in short dengue fever) is one of the most widespread mosquito-borne diseases in the most tropical and subtropical regions. It is an acute disease caused by dengue virus infection which is transmitted by female Aedes aegypti and Aedes albopictus mosquitoes. In 2015, Taiwan had recorded the most severe dengue fever outbreak with more than 43,000 dengue cases and 228 deaths. Since then, the annual reported dengue fever cases were maintained at the level of not more than 200 cases. However, in 2023, Taiwan recorded 26703 dengue fever cases.
+
+## 1.2 Objectives
+
+As a curious geospatial analytics green horn, you are interested to discover:
+
+-   if the distribution of dengue fever outbreak at Tainan City, Taiwan are independent from space and space and time.
+
+-   If the outbreak is indeed spatial and spatio-temporal dependent, then, you would like to detect where are the clusters and outliers, and the emerging hot spot/cold spot areas.
+
+## 1.3 The Task
+
+The specific tasks of this take-home exercise are as follows:
+
+-   Using appropriate function of **sf** and **tidyverse**, preparing the following geospatial data layer:
+
+    -   a study area layer in sf polygon features. It must be at village level and confined to the D01, D02, D04, D06, D07, D08, D32 and D39 counties of Tainan City, Taiwan.
+
+    -   a dengue fever layer within the study area in sf point features. The dengue fever cases should be confined to epidemiology week 31-50, 2023.
+
+    -   a derived dengue fever layer in [spacetime s3 class of sfdep](https://sfdep.josiahparry.com/articles/spacetime-s3). It should contain, among many other useful information, a data field showing number of dengue fever cases by village and by epidemiology week.
+
+-   Using the extracted data, perform global spatial autocorrelation analysis by using [sfdep methods](https://is415-gaa-tskam.netlify.app/in-class_ex/in-class_ex05/in-class_ex05-glsa).
+
+-   Using the extracted data, perform local spatial autocorrelation analysis by using [sfdep methods](https://r4gdsa.netlify.app/chap10.html).
+
+-   Using the extracted data, perform emerging hotspot analysis by using [sfdep methods](https://is415-gaa-tskam.netlify.app/in-class_ex/in-class_ex05/in-class_ex05-ehsa).
+
+-   Describe the spatial patterns revealed by the analysis above.
+
+# 2.0 Packages
+
+The packages used in this project are:
+
+-   **sf:** for importing, managing, and processing geospatial data
+
+-   **tidyverse**: a family of R packages for performing data science tasks such as importing, wrangling, and visualizing data
+
+-   **tmap:** creating thematic maps
+
+-   **sfdep:** for analyzing spatial dependencies
+
+```{r}
+pacman::p_load(sf, tidyverse, tmap, sfdep, dplyr)
+```
+
+# 3.0 Data Acquisition
+
+For the purpose of this take-home exercise, two data sets are provided, they are:
+
++---------------------+--------+---------------------------------------------------------------------------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------+
+| Data                | Format | Description                                                                                                               | Source                                                                                                              |
++=====================+========+===========================================================================================================================+=====================================================================================================================+
+| TAIWAN_VILLAGE_2020 | ESRI   | A Geospatial data of village boundary of Taiwan. The data is in Taiwan Geographic Coordinate System.                      | [Historical map data of the village boundary: TWD97 longitude and latitude](https://data.gov.tw/en/datasets/130549) |
++---------------------+--------+---------------------------------------------------------------------------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------+
+| Dengue_Daily.csv    | CSV    | An Aspatial data of reported dengue cases in Taiwan since 1998. Below are selected fields that are useful for this study: | [Dengue Daily Confirmed Cases Since 1998](https://data.cdc.gov.tw/en/dataset/dengue-daily-determined-cases-1998)    |
+|                     |        |                                                                                                                           |                                                                                                                     |
+|                     |        | -   發病日: Onset date                                                                                                    |                                                                                                                     |
+|                     |        |                                                                                                                           |                                                                                                                     |
+|                     |        | -   最小統計區中心點X: x-coordinate                                                                                       |                                                                                                                     |
+|                     |        |                                                                                                                           |                                                                                                                     |
+|                     |        | -   最小統計區中心點Y: y-coordinate                                                                                       |                                                                                                                     |
++---------------------+--------+---------------------------------------------------------------------------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------+
+
+# 4.0 Data Wrangling
+
+Can reference In-Class_Ex05
+
+## 4.1 Importing Taiwan Boundary dataset
+
+Let's see what layers the dataset has.
+
+```{r}
+file_path = "../../data/geospatial/TAIWAN_VILLAGE_2020"
+layers <- st_layers(file_path)
+print(layers)
+```
+
+Since it only has one "TAINAN_VILLAGE" layer, lets pull it.
+
+```{r}
+taiwan_sf <- st_read(dsn="../../data/geospatial/TAIWAN_VILLAGE_2020", layer="TAINAN_VILLAGE")
+```
+
+Take note that this dataset is in TWD97 Geographic Coordinate System.
+
+### 4.1.1 Extracting Polygon Study Area
+
+```{r}
+head(taiwan_sf,1)
+```
+
+We are interested in the "TOWNID" column. Specifically the D01, D02, D04, D06, D07, D08, D32 and D39 counties of Tainan City, Taiwan.
+
+```{r}
+# Assuming taiwan_sf is your imported sf object
+study_area_sf <- taiwan_sf %>%
+  filter(TOWNID %in% c("D01", "D02", "D04", "D06", "D07", "D08", "D32", "D39"))
+
+# Check the result
+print(unique(study_area_sf$TOWNID))
+```
+
+## 4.2 Importing Dengue Daily dataset
+
+This dataset contains the dengue cases in 2020 and is in TWD97 Geographic Coordinate System.
+
+The data is in a geographic coordinate system with longitude and latitude, even though it is in decimal. It is not Projected Coordinate System.
+
+```{r}
+dengue2023 <- read_csv("../../data/aspatial/DengueDaily/Dengue_Daily.csv")
+```
+
+```{r}
+summary(dengue2023)
+```
+
+### 4.2.1 Extract Study Area
+
+```{r}
+# First, convert '發病日' to Date format
+dengue2023 <- dengue2023 %>%
+  mutate(發病日期 = ymd(發病日))
+
+# Then, add a column for the epidemiological week and year
+dengue2023 <- dengue2023 %>%
+  mutate(
+    EPID_WEEK = isoweek(發病日期),
+    EPID_YEAR = year(發病日期)
+  )
+
+# Now, filter the data for epidemiological weeks 31-50 in 2023
+dengue_week31_50_2023 <- dengue2023 %>%
+  filter(EPID_YEAR == 2023 & EPID_WEEK >= 31 & EPID_WEEK <= 50)
+
+# Check the result
+print(dengue_week31_50_2023)
+```
+
+### 4.2.2 Drop Unnecessary Columns
+
+In the Data Acquisition section, we mentioned that we only need these columns for the analysis:
+
+-   發病日: Onset date
+
+    -   Since in the above processing, we created a new field called (發病日期) with the modified date object, we will use that instead.
+
+-   最小統計區中心點X: x-coordinate
+
+-   最小統計區中心點Y: y-coordinate
+
+Let's keep only these 3 columns:
+
+```{r}
+# Select only the necessary columns
+dengue_cases <- dengue_week31_50_2023 %>%
+  select(發病日期, 最小統計區中心點X, 最小統計區中心點Y)
+
+# Check the result
+print(dengue_cases)
+```
+
+```{r}
+sum(is.na(dengue_cases$最小統計區中心點X))
+sum(is.na(dengue_cases$最小統計區中心點Y))
+```
+
+## 4.3 Derive a Dengue Fever Layer in spacetime s3 class of sfdep
+
+1.  **Spatial Join**:
+
+    -   Perform a spatial join between the **`dengue_cases`** points and the **`study_area_sf`** polygons to determine which dengue cases occur in which village.
+
+2.  **Date Conversion**:
+
+    -   Convert the '發病日期' to an epidemiological week.
+
+3.  **Aggregation**:
+
+    -   Aggregate the cases by the 'VILLCODE' (village code) and epidemiological week.
+
+4.  **sfdep Object Creation**:
+
+    -   Create an **`s3`** class object suitable for the **`sfdep`** package, which will allow for the analysis of spatial and spatio-temporal patterns.
+
+```{r}
+
+
+```
+
+# 5.0 Global Measures of Spatial Association (Ex05)
+
+[is415-gaa-tskam.netlify.app/in-class_ex/in-class_ex05/in-class_ex05-glsa](https://is415-gaa-tskam.netlify.app/in-class_ex/in-class_ex05/in-class_ex05-glsa)
+
+Deriving contiguity weights: Queen's method
+
+Then draw a bunch of choropleth map
+
+when using sfdep, the wm_q will be saved as dataframe. This means we can just look at the neighbors by looking directly at the dataset (like the in-class exercise), instead of only being able to look at it after printing (like the hands-on exercise)
+
+Moran I test statistics: use p-value to compare with critical value to reject or accept null hypothesis. (usually using 95% -\> alpha value = 0.05 or 90% -\> alpha value = 0.1)
+
+-   Reject Null Hypothesis if p-value \< critical value -\> inferred .... represents clustering
+
+Is there a spacial bias-ness? Test its distribution (like Complete Spatial Randomness, or does it have some clustering). The null hypothesis is that it resembles CSR.
+
+This stuff is called Frequentist test because we only take one result. But in the modern data science world, we don't use this because it's not enough, instead we use monte-carlo simulation to test it multiple times. For this assignment, we can just use monte carlo.
+
+global_moran_perm(wm_q\$GDPPC, wm_q\$nb, wm_q\$wt, nsim = 99)
+
+Correct method to use is always permutation method.
+
+MOVING ON
+
+local moran is a decomposition of moran, so we can detect specific cluster outliers
+
+-   Outlier =\> different from neighbors (high-low, low-high)
+
+-   Clusters =\> similar to neighbors (high-high, low-low)
+
+We can plot the p-value for each region
+
+lisa_sig \<- lisa %\>% filter(p_ii \< 0.05) tmap_mode("plot") .......................
+
+MOVING ON
+
+Gi\* statistics, it needs to be in distance based metrics
+
+Gi\* statistics defines everything as a cluster and tells us if its a hotspot or coldspot cluster
+
+can use fixed distance, adaptive distance or inverse distance (like in-class ex)
+
+The graph from GI will have positive and negative
+
+-   positive = hotspot
+
+-   negative = coldspot
+
+MOVING ON
+
+we can combine both, the statistically significant areas from local moran and the hotspot/coldspot from Gi\* statistics
+
+FOR THIS TAKE HOME ASSIGNMENT, we need to decide which one to use, and see if we need both or just one
+
+MOVING ON
+
+SPATIAL TIME CUBE
+
+each cube represents one geographical area.

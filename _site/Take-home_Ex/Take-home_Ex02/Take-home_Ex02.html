@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.450">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="dcterms.date" content="2024-02-19">
+
+<title>IS415-GAA - Application of Spatial and Spatio-temporal Analysis Methods to Discover the Distribution of Dengue Fever in Tainan City, Taiwan</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">IS415-GAA</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-hands-on-exercise" role="button" data-bs-toggle="dropdown" aria-expanded="false" rel="" target="">
+ <span class="menu-text">Hands-on Exercise</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-hands-on-exercise">    
+        <li>
+    <a class="dropdown-item" href="../../Hands-on_Ex/Hands-on_Ex01/Hands-on_Ex01.html" rel="" target="">
+ <span class="dropdown-text">Hands-on Exercise 1</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html" rel="" target="">
+ <span class="dropdown-text">Hands-on Exercise 2</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex03-1.html" rel="" target="">
+ <span class="dropdown-text">Hands-on Exercise 3-1</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex03-2.html" rel="" target="">
+ <span class="dropdown-text">Hands-on Exercise 3-2</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex04.html" rel="" target="">
+ <span class="dropdown-text">Hands-on Exercise 4</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05-1.html" rel="" target="">
+ <span class="dropdown-text">Hands-on Exercise 5-1</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05-2.html" rel="" target="">
+ <span class="dropdown-text">Hands-on Exercise 5-2</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-in-class-exercise" role="button" data-bs-toggle="dropdown" aria-expanded="false" rel="" target="">
+ <span class="menu-text">In-class Exercise</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-in-class-exercise">    
+        <li>
+    <a class="dropdown-item" href="../../In-class_Ex/In-class_Ex02/In-class_Ex02.html" rel="" target="">
+ <span class="dropdown-text">In-class Exercise 2</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../In-class_Ex/In-class_Ex03/In-class_Ex03-KDE.html" rel="" target="">
+ <span class="dropdown-text">In-class Exercise 3 KDE</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../In-class_Ex/In-class_Ex03/In-class_Ex03-NKDE.html" rel="" target="">
+ <span class="dropdown-text">In-class Exercise 3 NKDE</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex04.html" rel="" target="">
+ <span class="dropdown-text">In-class Exercise 4</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-take-home-exercise" role="button" data-bs-toggle="dropdown" aria-expanded="false" rel="" target="">
+ <span class="menu-text">Take-home Exercise</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-take-home-exercise">    
+        <li>
+    <a class="dropdown-item" href="../../Take-home_Ex/Take-home_Ex01/Take-home_Ex01.html" rel="" target="">
+ <span class="dropdown-text">Take-home Exercise 1</span></a>
+  </li>  
+    </ul>
+  </li>
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html" rel="" target="">
+ <span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html" rel="" target="">
+ <span class="menu-text">About</span></a>
+  </li>  
+</ul>
+            <div class="quarto-navbar-tools">
+</div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">1.0 Introduction</a>
+  <ul class="collapse">
+  <li><a href="#overview" id="toc-overview" class="nav-link" data-scroll-target="#overview">1.1 Overview</a></li>
+  <li><a href="#objectives" id="toc-objectives" class="nav-link" data-scroll-target="#objectives">1.2 Objectives</a></li>
+  <li><a href="#the-task" id="toc-the-task" class="nav-link" data-scroll-target="#the-task">1.3 The Task</a></li>
+  </ul></li>
+  <li><a href="#packages" id="toc-packages" class="nav-link" data-scroll-target="#packages">2.0 Packages</a></li>
+  <li><a href="#data-acquisition" id="toc-data-acquisition" class="nav-link" data-scroll-target="#data-acquisition">3.0 Data Acquisition</a></li>
+  <li><a href="#data-wrangling" id="toc-data-wrangling" class="nav-link" data-scroll-target="#data-wrangling">4.0 Data Wrangling</a>
+  <ul class="collapse">
+  <li><a href="#importing-taiwan-boundary-dataset" id="toc-importing-taiwan-boundary-dataset" class="nav-link" data-scroll-target="#importing-taiwan-boundary-dataset">4.1 Importing Taiwan Boundary dataset</a>
+  <ul class="collapse">
+  <li><a href="#extracting-polygon-study-area" id="toc-extracting-polygon-study-area" class="nav-link" data-scroll-target="#extracting-polygon-study-area">4.1.1 Extracting Polygon Study Area</a></li>
+  </ul></li>
+  <li><a href="#importing-dengue-daily-dataset" id="toc-importing-dengue-daily-dataset" class="nav-link" data-scroll-target="#importing-dengue-daily-dataset">4.2 Importing Dengue Daily dataset</a>
+  <ul class="collapse">
+  <li><a href="#extract-study-area" id="toc-extract-study-area" class="nav-link" data-scroll-target="#extract-study-area">4.2.1 Extract Study Area</a></li>
+  <li><a href="#drop-unnecessary-columns" id="toc-drop-unnecessary-columns" class="nav-link" data-scroll-target="#drop-unnecessary-columns">4.2.2 Drop Unnecessary Columns</a></li>
+  </ul></li>
+  <li><a href="#derive-a-dengue-fever-layer-in-spacetime-s3-class-of-sfdep" id="toc-derive-a-dengue-fever-layer-in-spacetime-s3-class-of-sfdep" class="nav-link" data-scroll-target="#derive-a-dengue-fever-layer-in-spacetime-s3-class-of-sfdep">4.3 Derive a Dengue Fever Layer in spacetime s3 class of sfdep</a></li>
+  </ul></li>
+  <li><a href="#global-measures-of-spatial-association-ex05" id="toc-global-measures-of-spatial-association-ex05" class="nav-link" data-scroll-target="#global-measures-of-spatial-association-ex05">5.0 Global Measures of Spatial Association (Ex05)</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Application of Spatial and Spatio-temporal Analysis Methods to Discover the Distribution of Dengue Fever in Tainan City, Taiwan</h1>
+<p class="subtitle lead">Take-home_Ex02</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">February 19, 2024</p>
+    </div>
+  </div>
+  
+    <div>
+    <div class="quarto-title-meta-heading">Modified</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date-modified">March 1, 2024</p>
+    </div>
+  </div>
+    
+  </div>
+  
+
+</header>
+
+<section id="introduction" class="level1">
+<h1>1.0 Introduction</h1>
+<section id="overview" class="level2">
+<h2 class="anchored" data-anchor-id="overview">1.1 Overview</h2>
+<p><a href="https://www.cdc.gov/dengue/resources/denguedhf-information-for-health-care-practitioners_2009.pdf">Dengue Hemorrhagic Fever</a>&nbsp;(in short dengue fever) is one of the most widespread mosquito-borne diseases in the most tropical and subtropical regions. It is an acute disease caused by dengue virus infection which is transmitted by female Aedes aegypti and Aedes albopictus mosquitoes. In 2015, Taiwan had recorded the most severe dengue fever outbreak with more than 43,000 dengue cases and 228 deaths. Since then, the annual reported dengue fever cases were maintained at the level of not more than 200 cases. However, in 2023, Taiwan recorded 26703 dengue fever cases.</p>
+</section>
+<section id="objectives" class="level2">
+<h2 class="anchored" data-anchor-id="objectives">1.2 Objectives</h2>
+<p>As a curious geospatial analytics green horn, you are interested to discover:</p>
+<ul>
+<li><p>if the distribution of dengue fever outbreak at Tainan City, Taiwan are independent from space and space and time.</p></li>
+<li><p>If the outbreak is indeed spatial and spatio-temporal dependent, then, you would like to detect where are the clusters and outliers, and the emerging hot spot/cold spot areas.</p></li>
+</ul>
+</section>
+<section id="the-task" class="level2">
+<h2 class="anchored" data-anchor-id="the-task">1.3 The Task</h2>
+<p>The specific tasks of this take-home exercise are as follows:</p>
+<ul>
+<li><p>Using appropriate function of <strong>sf</strong> and <strong>tidyverse</strong>, preparing the following geospatial data layer:</p>
+<ul>
+<li><p>a study area layer in sf polygon features. It must be at village level and confined to the D01, D02, D04, D06, D07, D08, D32 and D39 counties of Tainan City, Taiwan.</p></li>
+<li><p>a dengue fever layer within the study area in sf point features. The dengue fever cases should be confined to epidemiology week 31-50, 2023.</p></li>
+<li><p>a derived dengue fever layer in <a href="https://sfdep.josiahparry.com/articles/spacetime-s3">spacetime s3 class of sfdep</a>. It should contain, among many other useful information, a data field showing number of dengue fever cases by village and by epidemiology week.</p></li>
+</ul></li>
+<li><p>Using the extracted data, perform global spatial autocorrelation analysis by using <a href="https://is415-gaa-tskam.netlify.app/in-class_ex/in-class_ex05/in-class_ex05-glsa">sfdep methods</a>.</p></li>
+<li><p>Using the extracted data, perform local spatial autocorrelation analysis by using <a href="https://r4gdsa.netlify.app/chap10.html">sfdep methods</a>.</p></li>
+<li><p>Using the extracted data, perform emerging hotspot analysis by using <a href="https://is415-gaa-tskam.netlify.app/in-class_ex/in-class_ex05/in-class_ex05-ehsa">sfdep methods</a>.</p></li>
+<li><p>Describe the spatial patterns revealed by the analysis above.</p></li>
+</ul>
+</section>
+</section>
+<section id="packages" class="level1">
+<h1>2.0 Packages</h1>
+<p>The packages used in this project are:</p>
+<ul>
+<li><p><strong>sf:</strong> for importing, managing, and processing geospatial data</p></li>
+<li><p><strong>tidyverse</strong>: a family of R packages for performing data science tasks such as importing, wrangling, and visualizing data</p></li>
+<li><p><strong>tmap:</strong> creating thematic maps</p></li>
+<li><p><strong>sfdep:</strong> for analyzing spatial dependencies</p></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(sf, tidyverse, tmap, sfdep, dplyr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="data-acquisition" class="level1">
+<h1>3.0 Data Acquisition</h1>
+<p>For the purpose of this take-home exercise, two data sets are provided, they are:</p>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Data</th>
+<th>Format</th>
+<th>Description</th>
+<th>Source</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>TAIWAN_VILLAGE_2020</td>
+<td>ESRI</td>
+<td>A Geospatial data of village boundary of Taiwan. The data is in Taiwan Geographic Coordinate System.</td>
+<td><a href="https://data.gov.tw/en/datasets/130549">Historical map data of the village boundary: TWD97 longitude and latitude</a></td>
+</tr>
+<tr class="even">
+<td>Dengue_Daily.csv</td>
+<td>CSV</td>
+<td><p>An Aspatial data of reported dengue cases in Taiwan since 1998. Below are selected fields that are useful for this study:</p>
+<ul>
+<li><p>發病日: Onset date</p></li>
+<li><p>最小統計區中心點X: x-coordinate</p></li>
+<li><p>最小統計區中心點Y: y-coordinate</p></li>
+</ul></td>
+<td><a href="https://data.cdc.gov.tw/en/dataset/dengue-daily-determined-cases-1998">Dengue Daily Confirmed Cases Since 1998</a></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="data-wrangling" class="level1">
+<h1>4.0 Data Wrangling</h1>
+<p>Can reference In-Class_Ex05</p>
+<section id="importing-taiwan-boundary-dataset" class="level2">
+<h2 class="anchored" data-anchor-id="importing-taiwan-boundary-dataset">4.1 Importing Taiwan Boundary dataset</h2>
+<p>Let’s see what layers the dataset has.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>file_path <span class="ot">=</span> <span class="st">"../../data/geospatial/TAIWAN_VILLAGE_2020"</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>layers <span class="ot">&lt;-</span> <span class="fu">st_layers</span>(file_path)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(layers)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Driver: ESRI Shapefile 
+Available layers:
+      layer_name geometry_type features fields crs_name
+1 TAINAN_VILLAGE       Polygon      649     10    TWD97</code></pre>
+</div>
+</div>
+<p>Since it only has one “TAINAN_VILLAGE” layer, lets pull it.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>taiwan_sf <span class="ot">&lt;-</span> <span class="fu">st_read</span>(<span class="at">dsn=</span><span class="st">"../../data/geospatial/TAIWAN_VILLAGE_2020"</span>, <span class="at">layer=</span><span class="st">"TAINAN_VILLAGE"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Reading layer `TAINAN_VILLAGE' from data source 
+  `C:\russelltjh\IS415-GAA\data\geospatial\TAIWAN_VILLAGE_2020' 
+  using driver `ESRI Shapefile'
+Simple feature collection with 649 features and 10 fields
+Geometry type: POLYGON
+Dimension:     XY
+Bounding box:  xmin: 120.0269 ymin: 22.88751 xmax: 120.6563 ymax: 23.41374
+Geodetic CRS:  TWD97</code></pre>
+</div>
+</div>
+<p>Take note that this dataset is in TWD97 Geographic Coordinate System.</p>
+<section id="extracting-polygon-study-area" class="level3">
+<h3 class="anchored" data-anchor-id="extracting-polygon-study-area">4.1.1 Extracting Polygon Study Area</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(taiwan_sf,<span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Simple feature collection with 1 feature and 10 fields
+Geometry type: POLYGON
+Dimension:     XY
+Bounding box:  xmin: 120.2695 ymin: 22.93251 xmax: 120.2905 ymax: 22.96072
+Geodetic CRS:  TWD97
+     VILLCODE COUNTYNAME TOWNNAME VILLNAME     VILLENG COUNTYID COUNTYCODE
+1 67000280002     臺南市   歸仁區   六甲里 Liujia Vil.        D      67000
+  TOWNID TOWNCODE NOTE                       geometry
+1    D33 67000280 &lt;NA&gt; POLYGON ((120.2725 22.95868...</code></pre>
+</div>
+</div>
+<p>We are interested in the “TOWNID” column. Specifically the D01, D02, D04, D06, D07, D08, D32 and D39 counties of Tainan City, Taiwan.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Assuming taiwan_sf is your imported sf object</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>study_area_sf <span class="ot">&lt;-</span> taiwan_sf <span class="sc">%&gt;%</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(TOWNID <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"D01"</span>, <span class="st">"D02"</span>, <span class="st">"D04"</span>, <span class="st">"D06"</span>, <span class="st">"D07"</span>, <span class="st">"D08"</span>, <span class="st">"D32"</span>, <span class="st">"D39"</span>))</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Check the result</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">unique</span>(study_area_sf<span class="sc">$</span>TOWNID))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "D06" "D32" "D08" "D02" "D39" "D01" "D04" "D07"</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="importing-dengue-daily-dataset" class="level2">
+<h2 class="anchored" data-anchor-id="importing-dengue-daily-dataset">4.2 Importing Dengue Daily dataset</h2>
+<p>This dataset contains the dengue cases in 2020 and is in TWD97 Geographic Coordinate System.</p>
+<p>The data is in a geographic coordinate system with longitude and latitude, even though it is in decimal. It is not Projected Coordinate System.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>dengue2023 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"../../data/aspatial/DengueDaily/Dengue_Daily.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(dengue2023)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     發病日            個案研判日            通報日          
+ Min.   :1998-01-02   Length:106861      Min.   :1998-01-07  
+ 1st Qu.:2014-10-28   Class :character   1st Qu.:2014-10-31  
+ Median :2015-09-29   Mode  :character   Median :2015-10-01  
+ Mean   :2016-03-31                      Mean   :2016-04-03  
+ 3rd Qu.:2023-06-19                      3rd Qu.:2023-06-23  
+ Max.   :2024-01-29                      Max.   :2024-01-29  
+     性別              年齡層            居住縣市           居住鄉鎮        
+ Length:106861      Length:106861      Length:106861      Length:106861     
+ Class :character   Class :character   Class :character   Class :character  
+ Mode  :character   Mode  :character   Mode  :character   Mode  :character  
+                                                                            
+                                                                            
+                                                                            
+   居住村里          最小統計區        最小統計區中心點X  最小統計區中心點Y 
+ Length:106861      Length:106861      Length:106861      Length:106861     
+ Class :character   Class :character   Class :character   Class :character  
+ Mode  :character   Mode  :character   Mode  :character   Mode  :character  
+                                                                            
+                                                                            
+                                                                            
+  一級統計區         二級統計區          感染縣市           感染鄉鎮        
+ Length:106861      Length:106861      Length:106861      Length:106861     
+ Class :character   Class :character   Class :character   Class :character  
+ Mode  :character   Mode  :character   Mode  :character   Mode  :character  
+                                                                            
+                                                                            
+                                                                            
+   感染村里         是否境外移入         感染國家           確定病例數
+ Length:106861      Length:106861      Length:106861      Min.   :1   
+ Class :character   Class :character   Class :character   1st Qu.:1   
+ Mode  :character   Mode  :character   Mode  :character   Median :1   
+                                                          Mean   :1   
+                                                          3rd Qu.:1   
+                                                          Max.   :2   
+ 居住村里代碼       感染村里代碼          血清型          內政部居住縣市代碼
+ Length:106861      Length:106861      Length:106861      Length:106861     
+ Class :character   Class :character   Class :character   Class :character  
+ Mode  :character   Mode  :character   Mode  :character   Mode  :character  
+                                                                            
+                                                                            
+                                                                            
+ 內政部居住鄉鎮代碼 內政部感染縣市代碼 內政部感染鄉鎮代碼
+ Length:106861      Length:106861      Length:106861     
+ Class :character   Class :character   Class :character  
+ Mode  :character   Mode  :character   Mode  :character  
+                                                         
+                                                         
+                                                         </code></pre>
+</div>
+</div>
+<section id="extract-study-area" class="level3">
+<h3 class="anchored" data-anchor-id="extract-study-area">4.2.1 Extract Study Area</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># First, convert '發病日' to Date format</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>dengue2023 <span class="ot">&lt;-</span> dengue2023 <span class="sc">%&gt;%</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(發病日期 <span class="ot">=</span> <span class="fu">ymd</span>(發病日))</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Then, add a column for the epidemiological week and year</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>dengue2023 <span class="ot">&lt;-</span> dengue2023 <span class="sc">%&gt;%</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">EPID_WEEK =</span> <span class="fu">isoweek</span>(發病日期),</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">EPID_YEAR =</span> <span class="fu">year</span>(發病日期)</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Now, filter the data for epidemiological weeks 31-50 in 2023</span></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>dengue_week31_50_2023 <span class="ot">&lt;-</span> dengue2023 <span class="sc">%&gt;%</span></span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(EPID_YEAR <span class="sc">==</span> <span class="dv">2023</span> <span class="sc">&amp;</span> EPID_WEEK <span class="sc">&gt;=</span> <span class="dv">31</span> <span class="sc">&amp;</span> EPID_WEEK <span class="sc">&lt;=</span> <span class="dv">50</span>)</span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Check the result</span></span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(dengue_week31_50_2023)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 25,480 × 29
+   發病日     個案研判日 通報日     性別  年齡層 居住縣市 居住鄉鎮 居住村里
+   &lt;date&gt;     &lt;chr&gt;      &lt;date&gt;     &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt;    &lt;chr&gt;    &lt;chr&gt;   
+ 1 2023-07-31 2023/07/31 2023-07-31 女    30-34  台南市   永康區   埔園里  
+ 2 2023-07-31 2023/07/31 2023-07-31 男    55-59  台南市   東區     大智里  
+ 3 2023-07-31 2023/07/31 2023-07-31 男    5-9    台南市   永康區   五王里  
+ 4 2023-07-31 2023/07/31 2023-07-31 男    70+    台南市   仁德區   成功里  
+ 5 2023-07-31 2023/07/31 2023-07-31 男    55-59  台南市   永康區   中興里  
+ 6 2023-07-31 2023/07/31 2023-07-31 男    30-34  雲林縣   古坑鄉   高林村  
+ 7 2023-07-31 2023/07/31 2023-07-31 女    40-44  台南市   永康區   復華里  
+ 8 2023-07-31 2023/08/01 2023-08-01 女    30-34  台南市   仁德區   仁德里  
+ 9 2023-07-31 2023/08/01 2023-08-01 男    70+    雲林縣   古坑鄉   荷苞村  
+10 2023-07-31 2023/08/01 2023-08-01 男    15-19  台南市   東區     崇善里  
+# ℹ 25,470 more rows
+# ℹ 21 more variables: 最小統計區 &lt;chr&gt;, 最小統計區中心點X &lt;chr&gt;,
+#   最小統計區中心點Y &lt;chr&gt;, 一級統計區 &lt;chr&gt;, 二級統計區 &lt;chr&gt;,
+#   感染縣市 &lt;chr&gt;, 感染鄉鎮 &lt;chr&gt;, 感染村里 &lt;chr&gt;, 是否境外移入 &lt;chr&gt;,
+#   感染國家 &lt;chr&gt;, 確定病例數 &lt;dbl&gt;, 居住村里代碼 &lt;chr&gt;, 感染村里代碼 &lt;chr&gt;,
+#   血清型 &lt;chr&gt;, 內政部居住縣市代碼 &lt;chr&gt;, 內政部居住鄉鎮代碼 &lt;chr&gt;,
+#   內政部感染縣市代碼 &lt;chr&gt;, 內政部感染鄉鎮代碼 &lt;chr&gt;, 發病日期 &lt;date&gt;, …</code></pre>
+</div>
+</div>
+</section>
+<section id="drop-unnecessary-columns" class="level3">
+<h3 class="anchored" data-anchor-id="drop-unnecessary-columns">4.2.2 Drop Unnecessary Columns</h3>
+<p>In the Data Acquisition section, we mentioned that we only need these columns for the analysis:</p>
+<ul>
+<li><p>發病日: Onset date</p>
+<ul>
+<li>Since in the above processing, we created a new field called (發病日期) with the modified date object, we will use that instead.</li>
+</ul></li>
+<li><p>最小統計區中心點X: x-coordinate</p></li>
+<li><p>最小統計區中心點Y: y-coordinate</p></li>
+</ul>
+<p>Let’s keep only these 3 columns:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Select only the necessary columns</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>dengue_cases <span class="ot">&lt;-</span> dengue_week31_50_2023 <span class="sc">%&gt;%</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(發病日期, 最小統計區中心點X, 最小統計區中心點Y)</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Check the result</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(dengue_cases)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 25,480 × 3
+   發病日期   最小統計區中心點X 最小統計區中心點Y
+   &lt;date&gt;     &lt;chr&gt;             &lt;chr&gt;            
+ 1 2023-07-31 120.253752333     23.031699814     
+ 2 2023-07-31 120.232374917     22.962366283     
+ 3 2023-07-31 120.235733496     23.013083716     
+ 4 2023-07-31 120.225744179     22.957479956     
+ 5 2023-07-31 120.236501733     23.004533744     
+ 6 2023-07-31 120.569102533     23.671263060     
+ 7 2023-07-31 120.248094155     23.014554416     
+ 8 2023-07-31 120.251073582     22.971075521     
+ 9 2023-07-31 120.584381057     23.668717366     
+10 2023-07-31 120.231829094     22.972059640     
+# ℹ 25,470 more rows</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(<span class="fu">is.na</span>(dengue_cases<span class="sc">$</span>最小統計區中心點X))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(<span class="fu">is.na</span>(dengue_cases<span class="sc">$</span>最小統計區中心點Y))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="derive-a-dengue-fever-layer-in-spacetime-s3-class-of-sfdep" class="level2">
+<h2 class="anchored" data-anchor-id="derive-a-dengue-fever-layer-in-spacetime-s3-class-of-sfdep">4.3 Derive a Dengue Fever Layer in spacetime s3 class of sfdep</h2>
+<ol type="1">
+<li><p><strong>Spatial Join</strong>:</p>
+<ul>
+<li>Perform a spatial join between the <strong><code>dengue_cases</code></strong> points and the <strong><code>study_area_sf</code></strong> polygons to determine which dengue cases occur in which village.</li>
+</ul></li>
+<li><p><strong>Date Conversion</strong>:</p>
+<ul>
+<li>Convert the ‘發病日期’ to an epidemiological week.</li>
+</ul></li>
+<li><p><strong>Aggregation</strong>:</p>
+<ul>
+<li>Aggregate the cases by the ‘VILLCODE’ (village code) and epidemiological week.</li>
+</ul></li>
+<li><p><strong>sfdep Object Creation</strong>:</p>
+<ul>
+<li>Create an <strong><code>s3</code></strong> class object suitable for the <strong><code>sfdep</code></strong> package, which will allow for the analysis of spatial and spatio-temporal patterns.</li>
+</ul></li>
+</ol>
+</section>
+</section>
+<section id="global-measures-of-spatial-association-ex05" class="level1">
+<h1>5.0 Global Measures of Spatial Association (Ex05)</h1>
+<p><a href="https://is415-gaa-tskam.netlify.app/in-class_ex/in-class_ex05/in-class_ex05-glsa">is415-gaa-tskam.netlify.app/in-class_ex/in-class_ex05/in-class_ex05-glsa</a></p>
+<p>Deriving contiguity weights: Queen’s method</p>
+<p>Then draw a bunch of choropleth map</p>
+<p>when using sfdep, the wm_q will be saved as dataframe. This means we can just look at the neighbors by looking directly at the dataset (like the in-class exercise), instead of only being able to look at it after printing (like the hands-on exercise)</p>
+<p>Moran I test statistics: use p-value to compare with critical value to reject or accept null hypothesis. (usually using 95% -&gt; alpha value = 0.05 or 90% -&gt; alpha value = 0.1)</p>
+<ul>
+<li>Reject Null Hypothesis if p-value &lt; critical value -&gt; inferred …. represents clustering</li>
+</ul>
+<p>Is there a spacial bias-ness? Test its distribution (like Complete Spatial Randomness, or does it have some clustering). The null hypothesis is that it resembles CSR.</p>
+<p>This stuff is called Frequentist test because we only take one result. But in the modern data science world, we don’t use this because it’s not enough, instead we use monte-carlo simulation to test it multiple times. For this assignment, we can just use monte carlo.</p>
+<p>global_moran_perm(wm_q$GDPPC, wm_q$nb, wm_q$wt, nsim = 99)</p>
+<p>Correct method to use is always permutation method.</p>
+<p>MOVING ON</p>
+<p>local moran is a decomposition of moran, so we can detect specific cluster outliers</p>
+<ul>
+<li><p>Outlier =&gt; different from neighbors (high-low, low-high)</p></li>
+<li><p>Clusters =&gt; similar to neighbors (high-high, low-low)</p></li>
+</ul>
+<p>We can plot the p-value for each region</p>
+<p>lisa_sig &lt;- lisa %&gt;% filter(p_ii &lt; 0.05) tmap_mode(“plot”) …………………..</p>
+<p>MOVING ON</p>
+<p>Gi* statistics, it needs to be in distance based metrics</p>
+<p>Gi* statistics defines everything as a cluster and tells us if its a hotspot or coldspot cluster</p>
+<p>can use fixed distance, adaptive distance or inverse distance (like in-class ex)</p>
+<p>The graph from GI will have positive and negative</p>
+<ul>
+<li><p>positive = hotspot</p></li>
+<li><p>negative = coldspot</p></li>
+</ul>
+<p>MOVING ON</p>
+<p>we can combine both, the statistically significant areas from local moran and the hotspot/coldspot from Gi* statistics</p>
+<p>FOR THIS TAKE HOME ASSIGNMENT, we need to decide which one to use, and see if we need both or just one</p>
+<p>MOVING ON</p>
+<p>SPATIAL TIME CUBE</p>
+<p>each cube represents one geographical area.</p>
+
+
+</section>
+
+<a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Back to top</a></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">Russell Tio</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+      <ul class="footer-items list-unstyled">
+    <li class="nav-item compact">
+    <a class="nav-link" href="https://www.linkedin.com/in/russelltio/">
+      <i class="bi bi-linkedin" role="img">
+</i> 
+    </a>
+  </li>  
+</ul>
+    </div>
+  </div>
+</footer>
+
+
+
+</body></html>
