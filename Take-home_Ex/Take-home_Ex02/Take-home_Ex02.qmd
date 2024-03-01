@@ -62,26 +62,26 @@ The packages used in this project are:
 -   **sfdep:** for analyzing spatial dependencies
 
 ```{r}
-pacman::p_load(sf, tidyverse, tmap, sfdep, dplyr)
+pacman::p_load(sf, tidyverse, tmap, sfdep, dplyr, zoo)
 ```
 
 # 3.0 Data Acquisition
 
 For the purpose of this take-home exercise, two data sets are provided, they are:
 
-+---------------------+--------+---------------------------------------------------------------------------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------+
-| Data                | Format | Description                                                                                                               | Source                                                                                                              |
-+=====================+========+===========================================================================================================================+=====================================================================================================================+
-| TAIWAN_VILLAGE_2020 | ESRI   | A Geospatial data of village boundary of Taiwan. The data is in Taiwan Geographic Coordinate System.                      | [Historical map data of the village boundary: TWD97 longitude and latitude](https://data.gov.tw/en/datasets/130549) |
-+---------------------+--------+---------------------------------------------------------------------------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------+
-| Dengue_Daily.csv    | CSV    | An Aspatial data of reported dengue cases in Taiwan since 1998. Below are selected fields that are useful for this study: | [Dengue Daily Confirmed Cases Since 1998](https://data.cdc.gov.tw/en/dataset/dengue-daily-determined-cases-1998)    |
-|                     |        |                                                                                                                           |                                                                                                                     |
-|                     |        | -   發病日: Onset date                                                                                                    |                                                                                                                     |
-|                     |        |                                                                                                                           |                                                                                                                     |
-|                     |        | -   最小統計區中心點X: x-coordinate                                                                                       |                                                                                                                     |
-|                     |        |                                                                                                                           |                                                                                                                     |
-|                     |        | -   最小統計區中心點Y: y-coordinate                                                                                       |                                                                                                                     |
-+---------------------+--------+---------------------------------------------------------------------------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------+
++---------------------+---------+---------------------------------------------------------------------------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------+
+| Data                | Format  | Description                                                                                                               | Source                                                                                                              |
++=====================+=========+===========================================================================================================================+=====================================================================================================================+
+| TAIWAN_VILLAGE_2020 | ESRI    | A Geospatial data of village boundary of Taiwan. The data is in Taiwan Geographic Coordinate System.                      | [Historical map data of the village boundary: TWD97 longitude and latitude](https://data.gov.tw/en/datasets/130549) |
++---------------------+---------+---------------------------------------------------------------------------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------+
+| Dengue_Daily.csv    | CSV     | An Aspatial data of reported dengue cases in Taiwan since 1998. Below are selected fields that are useful for this study: | [Dengue Daily Confirmed Cases Since 1998](https://data.cdc.gov.tw/en/dataset/dengue-daily-determined-cases-1998)    |
+|                     |         |                                                                                                                           |                                                                                                                     |
+|                     |         | -   發病日: Onset date                                                                                                    |                                                                                                                     |
+|                     |         |                                                                                                                           |                                                                                                                     |
+|                     |         | -   最小統計區中心點X: x-coordinate                                                                                       |                                                                                                                     |
+|                     |         |                                                                                                                           |                                                                                                                     |
+|                     |         | -   最小統計區中心點Y: y-coordinate                                                                                       |                                                                                                                     |
++---------------------+---------+---------------------------------------------------------------------------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------+
 
 # 4.0 Data Wrangling
 
@@ -120,6 +120,19 @@ study_area_sf <- taiwan_sf %>%
 
 # Check the result
 print(unique(study_area_sf$TOWNID))
+```
+
+### 4.1.2 Drop Unnecessary Columns
+
+Let's drop the "NOTE" column from the dataset
+
+```{r}
+# Select only the necessary columns
+study_area_sf <- study_area_sf %>%
+  select(VILLCODE, COUNTYNAME, TOWNNAME, VILLNAME, VILLENG, COUNTYID, COUNTYCODE, TOWNID, TOWNCODE, geometry)
+
+# Check the result
+print(study_area_sf)
 ```
 
 ## 4.2 Importing Dengue Daily dataset
@@ -170,43 +183,84 @@ In the Data Acquisition section, we mentioned that we only need these columns fo
 
 -   最小統計區中心點Y: y-coordinate
 
-Let's keep only these 3 columns:
+-   EPID_WEEK: Epidemiology Week
+
+Let's keep only these 4 columns:
 
 ```{r}
 # Select only the necessary columns
 dengue_cases <- dengue_week31_50_2023 %>%
-  select(發病日期, 最小統計區中心點X, 最小統計區中心點Y)
+  select(發病日期, 最小統計區中心點X, 最小統計區中心點Y, EPID_WEEK)
 
 # Check the result
 print(dengue_cases)
 ```
 
+### 4.2.3 Convert Coordinates to numeric values
+
+I noticed that the coordinates are in 'chr' character strings. We need them to be in numeric.
+
 ```{r}
-sum(is.na(dengue_cases$最小統計區中心點X))
-sum(is.na(dengue_cases$最小統計區中心點Y))
+dengue_cases <- dengue_cases %>%
+  mutate(
+    最小統計區中心點X = as.numeric(最小統計區中心點X),
+    最小統計區中心點Y = as.numeric(最小統計區中心點Y)
+  ) %>%
+  na.omit()
 ```
 
 ## 4.3 Derive a Dengue Fever Layer in spacetime s3 class of sfdep
 
-1.  **Spatial Join**:
+## 4.3.1 Spatial Join
 
-    -   Perform a spatial join between the **`dengue_cases`** points and the **`study_area_sf`** polygons to determine which dengue cases occur in which village.
-
-2.  **Date Conversion**:
-
-    -   Convert the '發病日期' to an epidemiological week.
-
-3.  **Aggregation**:
-
-    -   Aggregate the cases by the 'VILLCODE' (village code) and epidemiological week.
-
-4.  **sfdep Object Creation**:
-
-    -   Create an **`s3`** class object suitable for the **`sfdep`** package, which will allow for the analysis of spatial and spatio-temporal patterns.
+Perform a spatial join between the **`dengue_cases`** points and the **`study_area_sf`** polygons to determine which dengue cases occur in which village.
 
 ```{r}
+# Step 1: Spatial Join
+# Convert dengue_cases to an sf object by using the coordinates
+dengue_cases_sf <- st_as_sf(dengue_cases, coords = c("最小統計區中心點X", "最小統計區中心點Y"), crs = st_crs(study_area_sf))
 
+# Perform the spatial join
+dengue_cases_sf <- st_join(dengue_cases_sf, study_area_sf) %>%
+  na.omit()
+```
 
+## 4.3.2 Aggregation
+
+Aggregate the cases by the 'VILLCODE' (village code) and epidemiological week.
+
+```{r}
+# Step 3: Aggregation
+# Aggregate by village code (VILLCODE) and epidemiological week
+dengue_aggregated <- dengue_cases_sf %>%
+  group_by(VILLCODE, EPID_WEEK) %>%
+  summarise(CASE_COUNT = n())
+```
+
+## 4.3.3 Spacetime Cube Object Creation
+
+Create an spacetime cube object using **`sfdep`** package, which will allow for the analysis of spatial and spatio-temporal patterns.
+
+```{r}
+dengue_st <- spacetime(
+  dengue_aggregated, 
+  study_area_sf, 
+  "VILLCODE", 
+  "EPID_WEEK")
+```
+
+```{r}
+is_spacetime_cube(dengue_st)
+```
+
+Seems like the in certain locations, case_count might have missing values since there could possible be no cases in that location and time period. Let's fill the missing values with NA using the complete_spacetime_cube() function.
+
+```{r}
+# Assuming dengue_st is your current spacetime object
+dengue_st_cube <- complete_spacetime_cube(dengue_st)
+
+# Check if the object is now a valid spacetime cube
+is_spacetime_cube(dengue_st_cube)
 ```
 
 # 5.0 Global Measures of Spatial Association (Ex05)
@@ -268,3 +322,7 @@ MOVING ON
 SPATIAL TIME CUBE
 
 each cube represents one geographical area.
+
+# Local Measures of Spatial Association
+
+# Emerging Hotspot Analysis

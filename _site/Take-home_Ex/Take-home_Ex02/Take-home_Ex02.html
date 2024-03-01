@@ -224,15 +224,22 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#importing-taiwan-boundary-dataset" id="toc-importing-taiwan-boundary-dataset" class="nav-link" data-scroll-target="#importing-taiwan-boundary-dataset">4.1 Importing Taiwan Boundary dataset</a>
   <ul class="collapse">
   <li><a href="#extracting-polygon-study-area" id="toc-extracting-polygon-study-area" class="nav-link" data-scroll-target="#extracting-polygon-study-area">4.1.1 Extracting Polygon Study Area</a></li>
+  <li><a href="#drop-unnecessary-columns" id="toc-drop-unnecessary-columns" class="nav-link" data-scroll-target="#drop-unnecessary-columns">4.1.2 Drop Unnecessary Columns</a></li>
   </ul></li>
   <li><a href="#importing-dengue-daily-dataset" id="toc-importing-dengue-daily-dataset" class="nav-link" data-scroll-target="#importing-dengue-daily-dataset">4.2 Importing Dengue Daily dataset</a>
   <ul class="collapse">
   <li><a href="#extract-study-area" id="toc-extract-study-area" class="nav-link" data-scroll-target="#extract-study-area">4.2.1 Extract Study Area</a></li>
-  <li><a href="#drop-unnecessary-columns" id="toc-drop-unnecessary-columns" class="nav-link" data-scroll-target="#drop-unnecessary-columns">4.2.2 Drop Unnecessary Columns</a></li>
+  <li><a href="#drop-unnecessary-columns-1" id="toc-drop-unnecessary-columns-1" class="nav-link" data-scroll-target="#drop-unnecessary-columns-1">4.2.2 Drop Unnecessary Columns</a></li>
+  <li><a href="#convert-coordinates-to-numeric-values" id="toc-convert-coordinates-to-numeric-values" class="nav-link" data-scroll-target="#convert-coordinates-to-numeric-values">4.2.3 Convert Coordinates to numeric values</a></li>
   </ul></li>
   <li><a href="#derive-a-dengue-fever-layer-in-spacetime-s3-class-of-sfdep" id="toc-derive-a-dengue-fever-layer-in-spacetime-s3-class-of-sfdep" class="nav-link" data-scroll-target="#derive-a-dengue-fever-layer-in-spacetime-s3-class-of-sfdep">4.3 Derive a Dengue Fever Layer in spacetime s3 class of sfdep</a></li>
+  <li><a href="#spatial-join" id="toc-spatial-join" class="nav-link" data-scroll-target="#spatial-join">4.3.1 Spatial Join</a></li>
+  <li><a href="#aggregation" id="toc-aggregation" class="nav-link" data-scroll-target="#aggregation">4.3.2 Aggregation</a></li>
+  <li><a href="#spacetime-cube-object-creation" id="toc-spacetime-cube-object-creation" class="nav-link" data-scroll-target="#spacetime-cube-object-creation">4.3.3 Spacetime Cube Object Creation</a></li>
   </ul></li>
   <li><a href="#global-measures-of-spatial-association-ex05" id="toc-global-measures-of-spatial-association-ex05" class="nav-link" data-scroll-target="#global-measures-of-spatial-association-ex05">5.0 Global Measures of Spatial Association (Ex05)</a></li>
+  <li><a href="#local-measures-of-spatial-association" id="toc-local-measures-of-spatial-association" class="nav-link" data-scroll-target="#local-measures-of-spatial-association">Local Measures of Spatial Association</a></li>
+  <li><a href="#emerging-hotspot-analysis" id="toc-emerging-hotspot-analysis" class="nav-link" data-scroll-target="#emerging-hotspot-analysis">Emerging Hotspot Analysis</a></li>
   </ul>
 </nav>
     </div>
@@ -310,7 +317,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li><p><strong>sfdep:</strong> for analyzing spatial dependencies</p></li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(sf, tidyverse, tmap, sfdep, dplyr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(sf, tidyverse, tmap, sfdep, dplyr, zoo)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="data-acquisition" class="level1">
@@ -407,16 +414,58 @@ Geodetic CRS:  TWD97
 </div>
 </div>
 </section>
+<section id="drop-unnecessary-columns" class="level3">
+<h3 class="anchored" data-anchor-id="drop-unnecessary-columns">4.1.2 Drop Unnecessary Columns</h3>
+<p>Let’s drop the “NOTE” column from the dataset</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Select only the necessary columns</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>study_area_sf <span class="ot">&lt;-</span> study_area_sf <span class="sc">%&gt;%</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(VILLCODE, COUNTYNAME, TOWNNAME, VILLNAME, VILLENG, COUNTYID, COUNTYCODE, TOWNID, TOWNCODE, geometry)</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Check the result</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(study_area_sf)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Simple feature collection with 258 features and 9 fields
+Geometry type: POLYGON
+Dimension:     XY
+Bounding box:  xmin: 120.0627 ymin: 22.89401 xmax: 120.2925 ymax: 23.09144
+Geodetic CRS:  TWD97
+First 10 features:
+      VILLCODE COUNTYNAME TOWNNAME VILLNAME       VILLENG COUNTYID COUNTYCODE
+1  67000350032     臺南市   安南區   青草里  Qingcao Vil.        D      67000
+2  67000270011     臺南市   仁德區   保安里   Bao'an Vil.        D      67000
+3  67000370005     臺南市   中西區   赤嵌里  Chihkan Vil.        D      67000
+4  67000330004     臺南市     南區   大成里  Dacheng Vil.        D      67000
+5  67000350028     臺南市   安南區   城北里 Chengbei Vil.        D      67000
+6  67000350030     臺南市   安南區   城南里 Chengnan Vil.        D      67000
+7  67000370009     臺南市   中西區   法華里    Fahua Vil.        D      67000
+8  67000350017     臺南市   安南區   海南里   Hainan Vil.        D      67000
+9  67000350049     臺南市   安南區   國安里   Guo'an Vil.        D      67000
+10 67000350018     臺南市   安南區   溪心里    Xixin Vil.        D      67000
+   TOWNID TOWNCODE                       geometry
+1     D06 67000350 POLYGON ((120.1176 23.08387...
+2     D32 67000270 POLYGON ((120.2304 22.93544...
+3     D08 67000370 POLYGON ((120.2012 22.99966...
+4     D02 67000330 POLYGON ((120.1985 22.98147...
+5     D06 67000350 POLYGON ((120.1292 23.06512...
+6     D06 67000350 POLYGON ((120.1246 23.06904...
+7     D08 67000370 POLYGON ((120.2094 22.98452...
+8     D06 67000350 POLYGON ((120.175 23.02218,...
+9     D06 67000350 POLYGON ((120.1866 23.02766...
+10    D06 67000350 POLYGON ((120.1834 23.06086...</code></pre>
+</div>
+</div>
+</section>
 </section>
 <section id="importing-dengue-daily-dataset" class="level2">
 <h2 class="anchored" data-anchor-id="importing-dengue-daily-dataset">4.2 Importing Dengue Daily dataset</h2>
 <p>This dataset contains the dengue cases in 2020 and is in TWD97 Geographic Coordinate System.</p>
 <p>The data is in a geographic coordinate system with longitude and latitude, even though it is in decimal. It is not Projected Coordinate System.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>dengue2023 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"../../data/aspatial/DengueDaily/Dengue_Daily.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>dengue2023 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"../../data/aspatial/DengueDaily/Dengue_Daily.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(dengue2023)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(dengue2023)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>     發病日            個案研判日            通報日          
  Min.   :1998-01-02   Length:106861      Min.   :1998-01-07  
@@ -472,23 +521,23 @@ Geodetic CRS:  TWD97
 <section id="extract-study-area" class="level3">
 <h3 class="anchored" data-anchor-id="extract-study-area">4.2.1 Extract Study Area</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># First, convert '發病日' to Date format</span></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>dengue2023 <span class="ot">&lt;-</span> dengue2023 <span class="sc">%&gt;%</span></span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(發病日期 <span class="ot">=</span> <span class="fu">ymd</span>(發病日))</span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Then, add a column for the epidemiological week and year</span></span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>dengue2023 <span class="ot">&lt;-</span> dengue2023 <span class="sc">%&gt;%</span></span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">EPID_WEEK =</span> <span class="fu">isoweek</span>(發病日期),</span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">EPID_YEAR =</span> <span class="fu">year</span>(發病日期)</span>
-<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Now, filter the data for epidemiological weeks 31-50 in 2023</span></span>
-<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>dengue_week31_50_2023 <span class="ot">&lt;-</span> dengue2023 <span class="sc">%&gt;%</span></span>
-<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(EPID_YEAR <span class="sc">==</span> <span class="dv">2023</span> <span class="sc">&amp;</span> EPID_WEEK <span class="sc">&gt;=</span> <span class="dv">31</span> <span class="sc">&amp;</span> EPID_WEEK <span class="sc">&lt;=</span> <span class="dv">50</span>)</span>
-<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Check the result</span></span>
-<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(dengue_week31_50_2023)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># First, convert '發病日' to Date format</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>dengue2023 <span class="ot">&lt;-</span> dengue2023 <span class="sc">%&gt;%</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(發病日期 <span class="ot">=</span> <span class="fu">ymd</span>(發病日))</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Then, add a column for the epidemiological week and year</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>dengue2023 <span class="ot">&lt;-</span> dengue2023 <span class="sc">%&gt;%</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">EPID_WEEK =</span> <span class="fu">isoweek</span>(發病日期),</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">EPID_YEAR =</span> <span class="fu">year</span>(發病日期)</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Now, filter the data for epidemiological weeks 31-50 in 2023</span></span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>dengue_week31_50_2023 <span class="ot">&lt;-</span> dengue2023 <span class="sc">%&gt;%</span></span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(EPID_YEAR <span class="sc">==</span> <span class="dv">2023</span> <span class="sc">&amp;</span> EPID_WEEK <span class="sc">&gt;=</span> <span class="dv">31</span> <span class="sc">&amp;</span> EPID_WEEK <span class="sc">&lt;=</span> <span class="dv">50</span>)</span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Check the result</span></span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(dengue_week31_50_2023)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 25,480 × 29
    發病日     個案研判日 通報日     性別  年齡層 居住縣市 居住鄉鎮 居住村里
@@ -513,8 +562,8 @@ Geodetic CRS:  TWD97
 </div>
 </div>
 </section>
-<section id="drop-unnecessary-columns" class="level3">
-<h3 class="anchored" data-anchor-id="drop-unnecessary-columns">4.2.2 Drop Unnecessary Columns</h3>
+<section id="drop-unnecessary-columns-1" class="level3">
+<h3 class="anchored" data-anchor-id="drop-unnecessary-columns-1">4.2.2 Drop Unnecessary Columns</h3>
 <p>In the Data Acquisition section, we mentioned that we only need these columns for the analysis:</p>
 <ul>
 <li><p>發病日: Onset date</p>
@@ -523,64 +572,101 @@ Geodetic CRS:  TWD97
 </ul></li>
 <li><p>最小統計區中心點X: x-coordinate</p></li>
 <li><p>最小統計區中心點Y: y-coordinate</p></li>
+<li><p>EPID_WEEK: Epidemiology Week</p></li>
 </ul>
-<p>Let’s keep only these 3 columns:</p>
+<p>Let’s keep only these 4 columns:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Select only the necessary columns</span></span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>dengue_cases <span class="ot">&lt;-</span> dengue_week31_50_2023 <span class="sc">%&gt;%</span></span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(發病日期, 最小統計區中心點X, 最小統計區中心點Y)</span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Check the result</span></span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(dengue_cases)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Select only the necessary columns</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>dengue_cases <span class="ot">&lt;-</span> dengue_week31_50_2023 <span class="sc">%&gt;%</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(發病日期, 最小統計區中心點X, 最小統計區中心點Y, EPID_WEEK)</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Check the result</span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(dengue_cases)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 25,480 × 3
-   發病日期   最小統計區中心點X 最小統計區中心點Y
-   &lt;date&gt;     &lt;chr&gt;             &lt;chr&gt;            
- 1 2023-07-31 120.253752333     23.031699814     
- 2 2023-07-31 120.232374917     22.962366283     
- 3 2023-07-31 120.235733496     23.013083716     
- 4 2023-07-31 120.225744179     22.957479956     
- 5 2023-07-31 120.236501733     23.004533744     
- 6 2023-07-31 120.569102533     23.671263060     
- 7 2023-07-31 120.248094155     23.014554416     
- 8 2023-07-31 120.251073582     22.971075521     
- 9 2023-07-31 120.584381057     23.668717366     
-10 2023-07-31 120.231829094     22.972059640     
+<pre><code># A tibble: 25,480 × 4
+   發病日期   最小統計區中心點X 最小統計區中心點Y EPID_WEEK
+   &lt;date&gt;     &lt;chr&gt;             &lt;chr&gt;                 &lt;dbl&gt;
+ 1 2023-07-31 120.253752333     23.031699814             31
+ 2 2023-07-31 120.232374917     22.962366283             31
+ 3 2023-07-31 120.235733496     23.013083716             31
+ 4 2023-07-31 120.225744179     22.957479956             31
+ 5 2023-07-31 120.236501733     23.004533744             31
+ 6 2023-07-31 120.569102533     23.671263060             31
+ 7 2023-07-31 120.248094155     23.014554416             31
+ 8 2023-07-31 120.251073582     22.971075521             31
+ 9 2023-07-31 120.584381057     23.668717366             31
+10 2023-07-31 120.231829094     22.972059640             31
 # ℹ 25,470 more rows</code></pre>
 </div>
 </div>
+</section>
+<section id="convert-coordinates-to-numeric-values" class="level3">
+<h3 class="anchored" data-anchor-id="convert-coordinates-to-numeric-values">4.2.3 Convert Coordinates to numeric values</h3>
+<p>I noticed that the coordinates are in ‘chr’ character strings. We need them to be in numeric.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(<span class="fu">is.na</span>(dengue_cases<span class="sc">$</span>最小統計區中心點X))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 0</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(<span class="fu">is.na</span>(dengue_cases<span class="sc">$</span>最小統計區中心點Y))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 0</code></pre>
-</div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>dengue_cases <span class="ot">&lt;-</span> dengue_cases <span class="sc">%&gt;%</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>    最小統計區中心點<span class="at">X =</span> <span class="fu">as.numeric</span>(最小統計區中心點X),</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>    最小統計區中心點<span class="at">Y =</span> <span class="fu">as.numeric</span>(最小統計區中心點Y)</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">na.omit</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 </section>
 <section id="derive-a-dengue-fever-layer-in-spacetime-s3-class-of-sfdep" class="level2">
 <h2 class="anchored" data-anchor-id="derive-a-dengue-fever-layer-in-spacetime-s3-class-of-sfdep">4.3 Derive a Dengue Fever Layer in spacetime s3 class of sfdep</h2>
-<ol type="1">
-<li><p><strong>Spatial Join</strong>:</p>
-<ul>
-<li>Perform a spatial join between the <strong><code>dengue_cases</code></strong> points and the <strong><code>study_area_sf</code></strong> polygons to determine which dengue cases occur in which village.</li>
-</ul></li>
-<li><p><strong>Date Conversion</strong>:</p>
-<ul>
-<li>Convert the ‘發病日期’ to an epidemiological week.</li>
-</ul></li>
-<li><p><strong>Aggregation</strong>:</p>
-<ul>
-<li>Aggregate the cases by the ‘VILLCODE’ (village code) and epidemiological week.</li>
-</ul></li>
-<li><p><strong>sfdep Object Creation</strong>:</p>
-<ul>
-<li>Create an <strong><code>s3</code></strong> class object suitable for the <strong><code>sfdep</code></strong> package, which will allow for the analysis of spatial and spatio-temporal patterns.</li>
-</ul></li>
-</ol>
+</section>
+<section id="spatial-join" class="level2">
+<h2 class="anchored" data-anchor-id="spatial-join">4.3.1 Spatial Join</h2>
+<p>Perform a spatial join between the <strong><code>dengue_cases</code></strong> points and the <strong><code>study_area_sf</code></strong> polygons to determine which dengue cases occur in which village.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 1: Spatial Join</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert dengue_cases to an sf object by using the coordinates</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>dengue_cases_sf <span class="ot">&lt;-</span> <span class="fu">st_as_sf</span>(dengue_cases, <span class="at">coords =</span> <span class="fu">c</span>(<span class="st">"最小統計區中心點X"</span>, <span class="st">"最小統計區中心點Y"</span>), <span class="at">crs =</span> <span class="fu">st_crs</span>(study_area_sf))</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Perform the spatial join</span></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>dengue_cases_sf <span class="ot">&lt;-</span> <span class="fu">st_join</span>(dengue_cases_sf, study_area_sf) <span class="sc">%&gt;%</span></span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">na.omit</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="aggregation" class="level2">
+<h2 class="anchored" data-anchor-id="aggregation">4.3.2 Aggregation</h2>
+<p>Aggregate the cases by the ‘VILLCODE’ (village code) and epidemiological week.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 3: Aggregation</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Aggregate by village code (VILLCODE) and epidemiological week</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>dengue_aggregated <span class="ot">&lt;-</span> dengue_cases_sf <span class="sc">%&gt;%</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(VILLCODE, EPID_WEEK) <span class="sc">%&gt;%</span></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">CASE_COUNT =</span> <span class="fu">n</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="spacetime-cube-object-creation" class="level2">
+<h2 class="anchored" data-anchor-id="spacetime-cube-object-creation">4.3.3 Spacetime Cube Object Creation</h2>
+<p>Create an spacetime cube object using <strong><code>sfdep</code></strong> package, which will allow for the analysis of spatial and spatio-temporal patterns.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>dengue_st <span class="ot">&lt;-</span> <span class="fu">spacetime</span>(</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  dengue_aggregated, </span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  study_area_sf, </span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">"VILLCODE"</span>, </span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">"EPID_WEEK"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">is_spacetime_cube</span>(dengue_st)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] FALSE</code></pre>
+</div>
+</div>
+<p>Seems like the in certain locations, case_count might have missing values since there could possible be no cases in that location and time period. Let’s fill the missing values with NA using the complete_spacetime_cube() function.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Assuming dengue_st is your current spacetime object</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>dengue_st_cube <span class="ot">&lt;-</span> <span class="fu">complete_spacetime_cube</span>(dengue_st)</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Check if the object is now a valid spacetime cube</span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a><span class="fu">is_spacetime_cube</span>(dengue_st_cube)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] TRUE</code></pre>
+</div>
+</div>
 </section>
 </section>
 <section id="global-measures-of-spatial-association-ex05" class="level1">
@@ -620,6 +706,12 @@ Geodetic CRS:  TWD97
 <p>MOVING ON</p>
 <p>SPATIAL TIME CUBE</p>
 <p>each cube represents one geographical area.</p>
+</section>
+<section id="local-measures-of-spatial-association" class="level1">
+<h1>Local Measures of Spatial Association</h1>
+</section>
+<section id="emerging-hotspot-analysis" class="level1">
+<h1>Emerging Hotspot Analysis</h1>
 
 
 </section>
