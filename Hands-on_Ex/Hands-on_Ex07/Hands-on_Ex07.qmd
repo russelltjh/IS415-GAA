@@ -53,7 +53,7 @@ Use the code chunk below to install and launch the five R packages.
 pacman::p_load(maptools, sf, raster, spatstat, tmap)
 ```
 
-# Spatial Data Wrangling 
+# Spatial Data Wrangling
 
 ## Importing the spatial data
 
@@ -82,7 +82,7 @@ Notice that except `childcare_sf`, both `mpsz_sf` and `sg_sf` do not have proper
 
 > DIY: If necessary, changing the referencing system to Singapore national projected coordinate system.
 
-## Mapping the geospatial data sets 
+## Mapping the geospatial data sets
 
 After checking the referencing system of each geospatial data data frame, it is also useful for us to plot a map to show their spatial patterns.
 
