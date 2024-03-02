@@ -232,12 +232,36 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#drop-unnecessary-columns-1" id="toc-drop-unnecessary-columns-1" class="nav-link" data-scroll-target="#drop-unnecessary-columns-1">4.2.2 Drop Unnecessary Columns</a></li>
   <li><a href="#convert-coordinates-to-numeric-values" id="toc-convert-coordinates-to-numeric-values" class="nav-link" data-scroll-target="#convert-coordinates-to-numeric-values">4.2.3 Convert Coordinates to numeric values</a></li>
   </ul></li>
-  <li><a href="#derive-a-dengue-fever-layer-in-spacetime-s3-class-of-sfdep" id="toc-derive-a-dengue-fever-layer-in-spacetime-s3-class-of-sfdep" class="nav-link" data-scroll-target="#derive-a-dengue-fever-layer-in-spacetime-s3-class-of-sfdep">4.3 Derive a Dengue Fever Layer in spacetime s3 class of sfdep</a></li>
+  <li><a href="#combining-and-aggregating-the-data" id="toc-combining-and-aggregating-the-data" class="nav-link" data-scroll-target="#combining-and-aggregating-the-data">4.3 Combining and Aggregating the data</a>
+  <ul class="collapse">
   <li><a href="#spatial-join" id="toc-spatial-join" class="nav-link" data-scroll-target="#spatial-join">4.3.1 Spatial Join</a></li>
-  <li><a href="#aggregation" id="toc-aggregation" class="nav-link" data-scroll-target="#aggregation">4.3.2 Aggregation</a></li>
-  <li><a href="#spacetime-cube-object-creation" id="toc-spacetime-cube-object-creation" class="nav-link" data-scroll-target="#spacetime-cube-object-creation">4.3.3 Spacetime Cube Object Creation</a></li>
+  <li><a href="#aggregation-by-villeng" id="toc-aggregation-by-villeng" class="nav-link" data-scroll-target="#aggregation-by-villeng">4.3.2 Aggregation by VILLENG</a></li>
   </ul></li>
-  <li><a href="#global-measures-of-spatial-association-ex05" id="toc-global-measures-of-spatial-association-ex05" class="nav-link" data-scroll-target="#global-measures-of-spatial-association-ex05">5.0 Global Measures of Spatial Association (Ex05)</a></li>
+  <li><a href="#visualizing-data" id="toc-visualizing-data" class="nav-link" data-scroll-target="#visualizing-data">4.4 Visualizing Data</a></li>
+  <li><a href="#spacetime-object" id="toc-spacetime-object" class="nav-link" data-scroll-target="#spacetime-object">4.5 Spacetime Object</a>
+  <ul class="collapse">
+  <li><a href="#expanding-the-data" id="toc-expanding-the-data" class="nav-link" data-scroll-target="#expanding-the-data">4.5.1 Expanding the data</a></li>
+  <li><a href="#spacetime-cube-object-creation" id="toc-spacetime-cube-object-creation" class="nav-link" data-scroll-target="#spacetime-cube-object-creation">4.5.2 Spacetime Cube Object Creation</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#global-spatial-autocorrelation" id="toc-global-spatial-autocorrelation" class="nav-link" data-scroll-target="#global-spatial-autocorrelation">5.0 Global Spatial Autocorrelation</a>
+  <ul class="collapse">
+  <li><a href="#computing-contiguity-spatial-weights" id="toc-computing-contiguity-spatial-weights" class="nav-link" data-scroll-target="#computing-contiguity-spatial-weights">5.1 Computing Contiguity Spatial Weights</a></li>
+  <li><a href="#performing-global-morans-i-test" id="toc-performing-global-morans-i-test" class="nav-link" data-scroll-target="#performing-global-morans-i-test">5.2 Performing Global Moran’s I Test</a></li>
+  <li><a href="#performing-global-morans-i-permutation-test" id="toc-performing-global-morans-i-permutation-test" class="nav-link" data-scroll-target="#performing-global-morans-i-permutation-test">5.3 Performing Global Moran’s I Permutation Test</a></li>
+  </ul></li>
+  <li><a href="#local-spatial-autocorrelation" id="toc-local-spatial-autocorrelation" class="nav-link" data-scroll-target="#local-spatial-autocorrelation">6.0 Local Spatial Autocorrelation</a>
+  <ul class="collapse">
+  <li><a href="#computing-local-morans-i" id="toc-computing-local-morans-i" class="nav-link" data-scroll-target="#computing-local-morans-i">6.1 Computing Local Moran’s I</a></li>
+  <li><a href="#visualizing-local-morans-i" id="toc-visualizing-local-morans-i" class="nav-link" data-scroll-target="#visualizing-local-morans-i">6.2 Visualizing Local Moran’s I</a></li>
+  <li><a href="#visualizing-p-value-of-local-morans-i" id="toc-visualizing-p-value-of-local-morans-i" class="nav-link" data-scroll-target="#visualizing-p-value-of-local-morans-i">6.3 Visualizing p-value of local Moran’s I</a></li>
+  <li><a href="#visualizing-lisa-map" id="toc-visualizing-lisa-map" class="nav-link" data-scroll-target="#visualizing-lisa-map">6.4 Visualizing LISA map</a></li>
+  </ul></li>
+  <li><a href="#emerging-hot-spot-and-cold-spot-area-analysis-hcsa" id="toc-emerging-hot-spot-and-cold-spot-area-analysis-hcsa" class="nav-link" data-scroll-target="#emerging-hot-spot-and-cold-spot-area-analysis-hcsa">7.0 Emerging Hot Spot and Cold Spot Area Analysis (HCSA)</a>
+  <ul class="collapse">
+  <li><a href="#computing-local-gi-statistics" id="toc-computing-local-gi-statistics" class="nav-link" data-scroll-target="#computing-local-gi-statistics">7.1 Computing Local Gi* statistics</a></li>
+  </ul></li>
+  <li><a href="#global-measures-of-spatial-association-ex05" id="toc-global-measures-of-spatial-association-ex05" class="nav-link" data-scroll-target="#global-measures-of-spatial-association-ex05">Global Measures of Spatial Association (Ex05)</a></li>
   <li><a href="#local-measures-of-spatial-association" id="toc-local-measures-of-spatial-association" class="nav-link" data-scroll-target="#local-measures-of-spatial-association">Local Measures of Spatial Association</a></li>
   <li><a href="#emerging-hotspot-analysis" id="toc-emerging-hotspot-analysis" class="nav-link" data-scroll-target="#emerging-hotspot-analysis">Emerging Hotspot Analysis</a></li>
   </ul>
@@ -267,7 +291,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Modified</div>
     <div class="quarto-title-meta-contents">
-      <p class="date-modified">March 1, 2024</p>
+      <p class="date-modified">March 3, 2024</p>
     </div>
   </div>
     
@@ -613,11 +637,10 @@ First 10 features:
 </div>
 </section>
 </section>
-<section id="derive-a-dengue-fever-layer-in-spacetime-s3-class-of-sfdep" class="level2">
-<h2 class="anchored" data-anchor-id="derive-a-dengue-fever-layer-in-spacetime-s3-class-of-sfdep">4.3 Derive a Dengue Fever Layer in spacetime s3 class of sfdep</h2>
-</section>
-<section id="spatial-join" class="level2">
-<h2 class="anchored" data-anchor-id="spatial-join">4.3.1 Spatial Join</h2>
+<section id="combining-and-aggregating-the-data" class="level2">
+<h2 class="anchored" data-anchor-id="combining-and-aggregating-the-data">4.3 Combining and Aggregating the data</h2>
+<section id="spatial-join" class="level3">
+<h3 class="anchored" data-anchor-id="spatial-join">4.3.1 Spatial Join</h3>
 <p>Perform a spatial join between the <strong><code>dengue_cases</code></strong> points and the <strong><code>study_area_sf</code></strong> polygons to determine which dengue cases occur in which village.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 1: Spatial Join</span></span>
@@ -625,52 +648,366 @@ First 10 features:
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>dengue_cases_sf <span class="ot">&lt;-</span> <span class="fu">st_as_sf</span>(dengue_cases, <span class="at">coords =</span> <span class="fu">c</span>(<span class="st">"最小統計區中心點X"</span>, <span class="st">"最小統計區中心點Y"</span>), <span class="at">crs =</span> <span class="fu">st_crs</span>(study_area_sf))</span>
 <span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Perform the spatial join</span></span>
-<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>dengue_cases_sf <span class="ot">&lt;-</span> <span class="fu">st_join</span>(dengue_cases_sf, study_area_sf) <span class="sc">%&gt;%</span></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>study_area_cases_sf <span class="ot">&lt;-</span> <span class="fu">st_join</span>(study_area_sf, dengue_cases_sf) <span class="sc">%&gt;%</span></span>
 <span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">na.omit</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="aggregation" class="level2">
-<h2 class="anchored" data-anchor-id="aggregation">4.3.2 Aggregation</h2>
-<p>Aggregate the cases by the ‘VILLCODE’ (village code) and epidemiological week.</p>
+<section id="aggregation-by-villeng" class="level3">
+<h3 class="anchored" data-anchor-id="aggregation-by-villeng">4.3.2 Aggregation by VILLENG</h3>
+<p>Aggregate the cases by the ‘VILLENG’ (village name)</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 3: Aggregation</span></span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Aggregate by village code (VILLCODE) and epidemiological week</span></span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>dengue_aggregated <span class="ot">&lt;-</span> dengue_cases_sf <span class="sc">%&gt;%</span></span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(VILLCODE, EPID_WEEK) <span class="sc">%&gt;%</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Aggregate by village name (VILLENG) and epidemiological week</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>study_area_aggregated <span class="ot">&lt;-</span> study_area_cases_sf <span class="sc">%&gt;%</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(VILLENG) <span class="sc">%&gt;%</span></span>
 <span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">CASE_COUNT =</span> <span class="fu">n</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="spacetime-cube-object-creation" class="level2">
-<h2 class="anchored" data-anchor-id="spacetime-cube-object-creation">4.3.3 Spacetime Cube Object Creation</h2>
+</section>
+<section id="visualizing-data" class="level2">
+<h2 class="anchored" data-anchor-id="visualizing-data">4.4 Visualizing Data</h2>
+<p>Draw a choropleth map</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>equal <span class="ot">&lt;-</span> <span class="fu">tm_shape</span>(study_area_aggregated) <span class="sc">+</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_fill</span>(<span class="st">"CASE_COUNT"</span>,</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>          <span class="at">n =</span> <span class="dv">5</span>,</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>          <span class="at">style =</span> <span class="st">"equal"</span>) <span class="sc">+</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_borders</span>(<span class="at">alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_layout</span>(<span class="at">main.title =</span> <span class="st">"Equal interval classification"</span>)</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>quantile <span class="ot">&lt;-</span> <span class="fu">tm_shape</span>(study_area_aggregated) <span class="sc">+</span></span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_fill</span>(<span class="st">"CASE_COUNT"</span>,</span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>          <span class="at">n =</span> <span class="dv">5</span>,</span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>          <span class="at">style =</span> <span class="st">"quantile"</span>) <span class="sc">+</span></span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_borders</span>(<span class="at">alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_layout</span>(<span class="at">main.title =</span> <span class="st">"Equal quantile classification"</span>)</span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a><span class="fu">tmap_arrange</span>(equal, </span>
+<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a>             quantile, </span>
+<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a>             <span class="at">asp=</span><span class="dv">1</span>, </span>
+<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a>             <span class="at">ncol=</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Take-home_Ex02_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="spacetime-object" class="level2">
+<h2 class="anchored" data-anchor-id="spacetime-object">4.5 Spacetime Object</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 3: Aggregation</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Aggregate by village name (VILLENG) and epidemiological week</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>study_area_time_aggregated <span class="ot">&lt;-</span> study_area_cases_sf <span class="sc">%&gt;%</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(VILLENG, EPID_WEEK) <span class="sc">%&gt;%</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">CASE_COUNT =</span> <span class="fu">n</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="expanding-the-data" class="level3">
+<h3 class="anchored" data-anchor-id="expanding-the-data">4.5.1 Expanding the data</h3>
+<p>Our aggregated dataset only stores the data of cases that occur. However, there will be location and times where no cases occur. We need to expand our data to include those rows with CASE_COUNT values of 0. This is to make the spacetime object creation smoother.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a full grid of location and time period combinations</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>full_grid <span class="ot">&lt;-</span> <span class="fu">expand.grid</span>(</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">VILLENG =</span> <span class="fu">unique</span>(study_area_sf<span class="sc">$</span>VILLENG),</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">EPID_WEEK =</span> <span class="fu">unique</span>(study_area_time_aggregated<span class="sc">$</span>EPID_WEEK)</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Join the grid with spatial data to ensure geometry is present for all villages</span></span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>full_grid_with_geom <span class="ot">&lt;-</span> <span class="fu">left_join</span>(full_grid, study_area_sf <span class="sc">%&gt;%</span> <span class="fu">select</span>(VILLENG, geometry), <span class="at">by =</span> <span class="st">"VILLENG"</span>)</span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Join the spatially enriched grid with case count data</span></span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>complete_data <span class="ot">&lt;-</span> <span class="fu">left_join</span>(full_grid_with_geom, study_area_aggregated, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"VILLENG"</span>, <span class="st">"EPID_WEEK"</span>))</span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Replace NA values in CASE_COUNT with zero </span></span>
+<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a>complete_data<span class="sc">$</span>CASE_COUNT[<span class="fu">is.na</span>(complete_data<span class="sc">$</span>CASE_COUNT)] <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb24-15"><a href="#cb24-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-16"><a href="#cb24-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert back to an sf object </span></span>
+<span id="cb24-17"><a href="#cb24-17" aria-hidden="true" tabindex="-1"></a>complete_data <span class="ot">&lt;-</span> complete_data <span class="sc">%&gt;%</span></span>
+<span id="cb24-18"><a href="#cb24-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>geometry.x) <span class="sc">%&gt;%</span></span>
+<span id="cb24-19"><a href="#cb24-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">geometry =</span> geometry.y)</span>
+<span id="cb24-20"><a href="#cb24-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-21"><a href="#cb24-21" aria-hidden="true" tabindex="-1"></a>complete_data_sf <span class="ot">&lt;-</span> <span class="fu">st_as_sf</span>(complete_data, <span class="at">sf_column_name =</span> <span class="st">"geometry"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Assuming 'complete_data_sf' is your prepared sf object before attempting to create the spacetime cube</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Aggregate to ensure one observation per location-time combination</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Replace 'CASE_COUNT' with your actual case count column, if named differently</span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>aggregated_data <span class="ot">&lt;-</span> complete_data_sf <span class="sc">%&gt;%</span></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(VILLENG, EPID_WEEK) <span class="sc">%&gt;%</span></span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">CASE_COUNT =</span> <span class="fu">sum</span>(CASE_COUNT), <span class="at">.groups =</span> <span class="st">'drop'</span>)</span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Ensure the aggregated data is still an sf object</span></span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>aggregated_data_sf <span class="ot">&lt;-</span> <span class="fu">st_as_sf</span>(aggregated_data, <span class="at">sf_column_name =</span> <span class="st">"geometry"</span>, <span class="at">crs =</span> <span class="fu">st_crs</span>(complete_data_sf))</span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Try creating the spacetime object again</span></span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a>dengue_st <span class="ot">&lt;-</span> <span class="fu">spacetime</span>(</span>
+<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a>  aggregated_data_sf, </span>
+<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a>  study_area_sf, </span>
+<span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a>  <span class="st">"VILLENG"</span>, </span>
+<span id="cb25-17"><a href="#cb25-17" aria-hidden="true" tabindex="-1"></a>  <span class="st">"EPID_WEEK"</span></span>
+<span id="cb25-18"><a href="#cb25-18" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb25-19"><a href="#cb25-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-20"><a href="#cb25-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Attempt to complete the spacetime cube</span></span>
+<span id="cb25-21"><a href="#cb25-21" aria-hidden="true" tabindex="-1"></a>dengue_st_cube <span class="ot">&lt;-</span> <span class="fu">complete_spacetime_cube</span>(dengue_st)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="spacetime-cube-object-creation" class="level3">
+<h3 class="anchored" data-anchor-id="spacetime-cube-object-creation">4.5.2 Spacetime Cube Object Creation</h3>
 <p>Create an spacetime cube object using <strong><code>sfdep</code></strong> package, which will allow for the analysis of spatial and spatio-temporal patterns.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>dengue_st <span class="ot">&lt;-</span> <span class="fu">spacetime</span>(</span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  dengue_aggregated, </span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  study_area_sf, </span>
-<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">"VILLCODE"</span>, </span>
-<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">"EPID_WEEK"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>dengue_st <span class="ot">&lt;-</span> <span class="fu">spacetime</span>(</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  complete_data_sf, </span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>  study_area_sf, </span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">"VILLENG"</span>, </span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">"EPID_WEEK"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">is_spacetime_cube</span>(dengue_st)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] FALSE</code></pre>
-</div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">is_spacetime_cube</span>(dengue_st)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Seems like the in certain locations, case_count might have missing values since there could possible be no cases in that location and time period. Let’s fill the missing values with NA using the complete_spacetime_cube() function.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Assuming dengue_st is your current spacetime object</span></span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>dengue_st_cube <span class="ot">&lt;-</span> <span class="fu">complete_spacetime_cube</span>(dengue_st)</span>
-<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Check if the object is now a valid spacetime cube</span></span>
-<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a><span class="fu">is_spacetime_cube</span>(dengue_st_cube)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Assuming dengue_st is your current spacetime object</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>dengue_st_cube <span class="ot">&lt;-</span> <span class="fu">complete_spacetime_cube</span>(dengue_st)</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Check if the object is now a valid spacetime cube</span></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a><span class="fu">is_spacetime_cube</span>(dengue_st_cube)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+</section>
+<section id="global-spatial-autocorrelation" class="level1">
+<h1>5.0 Global Spatial Autocorrelation</h1>
+<p>Global Spatial Autocorrelation measures the overall degree of spatial dependence within a geographic area. The most common statistic for measuring global spatial autocorrelation is Moran’s I. This statistic compares the value of spatial data at one location with values at neighboring locations over the entire study area to determine if there is a significant pattern. If Moran’s I is positive and significant, it suggests a clustered pattern; if it is negative and significant, it suggests a dispersed pattern; if it is close to zero, it indicates a random spatial pattern.</p>
+<p>Global Autocorrelation Analysis:</p>
+<ul>
+<li><p>Calculate Moran’s I for the entire study area</p></li>
+<li><p>Assess the significance of the statistic to determine if there is a pattern</p></li>
+<li><p>Interpret the result to understand the overall tendency of data clustering or dispersion</p></li>
+</ul>
+<section id="computing-contiguity-spatial-weights" class="level2">
+<h2 class="anchored" data-anchor-id="computing-contiguity-spatial-weights">5.1 Computing Contiguity Spatial Weights</h2>
+<p>Before we can compute the global spatial autocorrelation statistics, we need to construct a spatial weights of the study area. The spatial weights is used to define the neighbourhood relationships between the geographical units (i.e.&nbsp;county) in the study area.</p>
+<p>We will derive the contiguity weights using the <strong>Queen’s method</strong>. (Similar to the way a Queen moves in chess, we will take into account neighbors in all principal directions - cardinal and intercardinal)</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>wm_q <span class="ot">&lt;-</span> study_area_aggregated <span class="sc">%&gt;%</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">nb =</span> <span class="fu">st_contiguity</span>(geometry),</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">wt =</span> <span class="fu">st_weights</span>(nb,</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>                         <span class="at">style =</span> <span class="st">"W"</span>),</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">.before =</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>wm_q</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] TRUE</code></pre>
+<pre><code>Simple feature collection with 248 features and 4 fields
+Geometry type: GEOMETRY
+Dimension:     XY
+Bounding box:  xmin: 120.0627 ymin: 22.89401 xmax: 120.2925 ymax: 23.09144
+Geodetic CRS:  TWD97
+# A tibble: 248 × 5
+   nb        wt        VILLENG     CASE_COUNT                           geometry
+ * &lt;nb&gt;      &lt;list&gt;    &lt;chr&gt;            &lt;int&gt;                      &lt;POLYGON [°]&gt;
+ 1 &lt;int [5]&gt; &lt;dbl [5]&gt; Andong Vil.         67 ((120.2164 23.0404, 120.2154 23.0…
+ 2 &lt;int [5]&gt; &lt;dbl [5]&gt; Anfu Vil.          311 ((120.1932 23.0294, 120.1929 23.0…
+ 3 &lt;int [7]&gt; &lt;dbl [7]&gt; Anhe Vil.           73 ((120.2258 23.04424, 120.2219 23.…
+ 4 &lt;int [3]&gt; &lt;dbl [3]&gt; Ankang Vil.         96 ((120.2269 23.01413, 120.2274 23.…
+ 5 &lt;int [4]&gt; &lt;dbl [4]&gt; Anqing Vil.        111 ((120.2113 23.04414, 120.2111 23.…
+ 6 &lt;int [3]&gt; &lt;dbl [3]&gt; Anshun Vil.         34 ((120.2136 23.05601, 120.2136 23.…
+ 7 &lt;int [8]&gt; &lt;dbl [8]&gt; Anxi Vil.          110 ((120.2123 23.03689, 120.212 23.0…
+ 8 &lt;int [5]&gt; &lt;dbl [5]&gt; Bao'an Vil.         19 ((120.2304 22.93544, 120.2301 22.…
+ 9 &lt;int [6]&gt; &lt;dbl [6]&gt; Beihua Vil.         82 ((120.2034 23.00257, 120.2032 23.…
+10 &lt;int [4]&gt; &lt;dbl [4]&gt; Beimen Vil.        249 ((120.2176 23.02032, 120.2173 23.…
+# ℹ 238 more rows</code></pre>
 </div>
 </div>
+</section>
+<section id="performing-global-morans-i-test" class="level2">
+<h2 class="anchored" data-anchor-id="performing-global-morans-i-test">5.2 Performing Global Moran’s I Test</h2>
+<p>Let’s run the Global Moran’s I test.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">global_moran_test</span>(wm_q<span class="sc">$</span>CASE_COUNT,</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>                  wm_q<span class="sc">$</span>nb,</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>                  wm_q<span class="sc">$</span>wt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Moran I test under randomisation
+
+data:  x  
+weights: listw    
+
+Moran I statistic standard deviate = 11.884, p-value &lt; 2.2e-16
+alternative hypothesis: greater
+sample estimates:
+Moran I statistic       Expectation          Variance 
+      0.436433657      -0.004048583       0.001373754 </code></pre>
+</div>
+</div>
+</section>
+<section id="performing-global-morans-i-permutation-test" class="level2">
+<h2 class="anchored" data-anchor-id="performing-global-morans-i-permutation-test">5.3 Performing Global Moran’s I Permutation Test</h2>
+<p>We will apply Monte Carlo simulation to perform the statistical test 100 times.</p>
+<p>First, we set a seed to maintain the reproduceability of the results.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">8888</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">global_moran_perm</span>(wm_q<span class="sc">$</span>CASE_COUNT,</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>                  wm_q<span class="sc">$</span>nb,</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>                  wm_q<span class="sc">$</span>wt,</span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>                  <span class="at">nsim =</span> <span class="dv">100</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Monte-Carlo simulation of Moran I
+
+data:  x 
+weights: listw  
+number of simulations + 1: 101 
+
+statistic = 0.43643, observed rank = 101, p-value &lt; 2.2e-16
+alternative hypothesis: two.sided</code></pre>
+</div>
+</div>
+<p>The statistical report shows that the p-value is smaller than alpha value 0.05.</p>
+<p>Therefore, we have enough evidence to <strong>reject</strong> the null hypothesis that the <strong>spatial distribution of cases resembles random distribution</strong>.</p>
+<p>Since Moran’s I statistics is greater than 0, we can infer that the <strong>spatial distribution show signs of clustering</strong>.</p>
+</section>
+</section>
+<section id="local-spatial-autocorrelation" class="level1">
+<h1>6.0 Local Spatial Autocorrelation</h1>
+<p>Local Spatial Autocorrelation breaks down the global statistic into contributions from each individual location, allowing for the assessment of where and how much each feature contributes to the overall autocorrelation statistic. Local indicators of spatial association (LISA), such as Local Moran’s I, allow for the identification of clusters or outliers where a feature has a value significantly different from its neighbors. This local approach helps to pinpoint specific areas of interest within the global context.</p>
+<p>Local Autocorrelation Analysis:</p>
+<ul>
+<li><p>Calculate Local Moran’s I for each feature in the dataset</p></li>
+<li><p>Create a significance map that highlights areas of significant local clustering or outliers</p></li>
+<li><p>Use this detailed view to identify hot spots (high values surrounded by high values), cold spots (low values surrounded by low values), and spatial outliers (high values surrounded by low values or vice versa)</p></li>
+</ul>
+<section id="computing-local-morans-i" class="level2">
+<h2 class="anchored" data-anchor-id="computing-local-morans-i">6.1 Computing Local Moran’s I</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>lisa <span class="ot">&lt;-</span> wm_q <span class="sc">%&gt;%</span> </span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">local_moran =</span> <span class="fu">local_moran</span>(</span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>    CASE_COUNT, nb, wt, <span class="at">nsim =</span> <span class="dv">99</span>),</span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">.before =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest</span>(local_moran)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The output of local_moran() is a sf data.frame containing some of the following columns:</p>
+<table class="table">
+<colgroup>
+<col style="width: 18%">
+<col style="width: 81%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Column</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>ii</td>
+<td>Local Moran statistic</td>
+</tr>
+<tr class="even">
+<td>eii</td>
+<td>Expected Local Moran statistic; or the permutation sample mean</td>
+</tr>
+<tr class="odd">
+<td>var_ii</td>
+<td>Variance of Local Moran statistic; or the permutation sample deviations</td>
+</tr>
+<tr class="even">
+<td>z_ii</td>
+<td>Standard deviate of Local Moran statistic</td>
+</tr>
+<tr class="odd">
+<td>p_ii</td>
+<td>p-value of Local Moran statistic using pnorm()</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="visualizing-local-morans-i" class="level2">
+<h2 class="anchored" data-anchor-id="visualizing-local-morans-i">6.2 Visualizing Local Moran’s I</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tmap_mode</span>(<span class="st">"plot"</span>)</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a><span class="fu">tm_shape</span>(lisa) <span class="sc">+</span></span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_fill</span>(<span class="st">"ii"</span>) <span class="sc">+</span> </span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_borders</span>(<span class="at">alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_view</span>(<span class="at">set.zoom.limits =</span> <span class="fu">c</span>(<span class="dv">6</span>,<span class="dv">8</span>)) <span class="sc">+</span></span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_layout</span>(<span class="at">main.title =</span> <span class="st">"local Moran's I of Case Count"</span>,</span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>            <span class="at">main.title.size =</span> <span class="fl">0.8</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Take-home_Ex02_files/figure-html/unnamed-chunk-27-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="visualizing-p-value-of-local-morans-i" class="level2">
+<h2 class="anchored" data-anchor-id="visualizing-p-value-of-local-morans-i">6.3 Visualizing p-value of local Moran’s I</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tmap_mode</span>(<span class="st">"plot"</span>)</span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a><span class="fu">tm_shape</span>(lisa) <span class="sc">+</span></span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_fill</span>(<span class="st">"p_ii_sim"</span>) <span class="sc">+</span> </span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_borders</span>(<span class="at">alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>   <span class="fu">tm_layout</span>(<span class="at">main.title =</span> <span class="st">"p-value of local Moran's I"</span>,</span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a>            <span class="at">main.title.size =</span> <span class="fl">0.8</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Take-home_Ex02_files/figure-html/unnamed-chunk-28-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="visualizing-lisa-map" class="level2">
+<h2 class="anchored" data-anchor-id="visualizing-lisa-map">6.4 Visualizing LISA map</h2>
+<p>The LISA map will categorize each region to show the outliers and clusters.</p>
+<p>Types of clusters and outliers:</p>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Clusters</th>
+<th>Outliers</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>High-High</td>
+<td>High-Low</td>
+</tr>
+<tr class="even">
+<td>Low-Low</td>
+<td>Low-High</td>
+</tr>
+</tbody>
+</table>
+<p>In the lisa sf data.frame, there are 3 fields: mean, median and pysal. In general, classification in mean will be used.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>lisa_sig <span class="ot">&lt;-</span> lisa  <span class="sc">%&gt;%</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(p_ii <span class="sc">&lt;</span> <span class="fl">0.05</span>)</span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a><span class="fu">tmap_mode</span>(<span class="st">"plot"</span>)</span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a><span class="fu">tm_shape</span>(lisa) <span class="sc">+</span></span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_polygons</span>() <span class="sc">+</span></span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_borders</span>(<span class="at">alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a><span class="fu">tm_shape</span>(lisa_sig) <span class="sc">+</span></span>
+<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_fill</span>(<span class="st">"mean"</span>) <span class="sc">+</span> </span>
+<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_borders</span>(<span class="at">alpha =</span> <span class="fl">0.4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Take-home_Ex02_files/figure-html/unnamed-chunk-29-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+</section>
+<section id="emerging-hot-spot-and-cold-spot-area-analysis-hcsa" class="level1">
+<h1>7.0 Emerging Hot Spot and Cold Spot Area Analysis (HCSA)</h1>
+<p>Emerging Hot Spot Analysis (EHSA) is a spatio-temporal analysis method for revealing and describing how hot spot and cold spot areas evolve over time.</p>
+<p>Emerging Hot Spot Analysis:</p>
+<ul>
+<li><p>Build a spacetime cube</p></li>
+<li><p>Calculate Getis-Ord local Gi* statistic for each bin by using an FDR correction</p></li>
+<li><p>Evaluating these hot and cold spot trends by using Mann-Kendall trend test</p></li>
+<li><p>Categorizing each study area location by referring to the resultant trend z-score and p-value for each location with data, and with the hot spot z-score and p-value for each bin.</p></li>
+</ul>
+<section id="computing-local-gi-statistics" class="level2">
+<h2 class="anchored" data-anchor-id="computing-local-gi-statistics">7.1 Computing Local Gi* statistics</h2>
 </section>
 </section>
 <section id="global-measures-of-spatial-association-ex05" class="level1">
-<h1>5.0 Global Measures of Spatial Association (Ex05)</h1>
+<h1>Global Measures of Spatial Association (Ex05)</h1>
 <p><a href="https://is415-gaa-tskam.netlify.app/in-class_ex/in-class_ex05/in-class_ex05-glsa">is415-gaa-tskam.netlify.app/in-class_ex/in-class_ex05/in-class_ex05-glsa</a></p>
 <p>Deriving contiguity weights: Queen’s method</p>
 <p>Then draw a bunch of choropleth map</p>

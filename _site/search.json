@@ -1370,5 +1370,82 @@
     "title": "Application of Spatial and Spatio-temporal Analysis Methods to Discover the Distribution of Dengue Fever in Tainan City, Taiwan",
     "section": "4.3.3 Spacetime Cube Object Creation",
     "text": "4.3.3 Spacetime Cube Object Creation\nCreate an spacetime cube object using sfdep package, which will allow for the analysis of spatial and spatio-temporal patterns.\n\ndengue_st &lt;- spacetime(\n  dengue_aggregated, \n  study_area_sf, \n  \"VILLCODE\", \n  \"EPID_WEEK\")\n\n\nis_spacetime_cube(dengue_st)\n\n[1] FALSE\n\n\nSeems like the in certain locations, case_count might have missing values since there could possible be no cases in that location and time period. Let’s fill the missing values with NA using the complete_spacetime_cube() function.\n\n# Assuming dengue_st is your current spacetime object\ndengue_st_cube &lt;- complete_spacetime_cube(dengue_st)\n\n# Check if the object is now a valid spacetime cube\nis_spacetime_cube(dengue_st_cube)\n\n[1] TRUE"
+  },
+  {
+    "objectID": "Take-home_Ex/Take-home_Ex02/Take-home_Ex02.html#combining-and-aggregating-the-data",
+    "href": "Take-home_Ex/Take-home_Ex02/Take-home_Ex02.html#combining-and-aggregating-the-data",
+    "title": "Application of Spatial and Spatio-temporal Analysis Methods to Discover the Distribution of Dengue Fever in Tainan City, Taiwan",
+    "section": "4.3 Combining and Aggregating the data",
+    "text": "4.3 Combining and Aggregating the data\n\n4.3.1 Spatial Join\nPerform a spatial join between the dengue_cases points and the study_area_sf polygons to determine which dengue cases occur in which village.\n\n# Step 1: Spatial Join\n# Convert dengue_cases to an sf object by using the coordinates\ndengue_cases_sf &lt;- st_as_sf(dengue_cases, coords = c(\"最小統計區中心點X\", \"最小統計區中心點Y\"), crs = st_crs(study_area_sf))\n\n# Perform the spatial join\nstudy_area_cases_sf &lt;- st_join(study_area_sf, dengue_cases_sf) %&gt;%\n  na.omit()\n\n\n\n4.3.2 Aggregation by VILLENG\nAggregate the cases by the ‘VILLENG’ (village name)\n\n# Step 3: Aggregation\n# Aggregate by village name (VILLENG) and epidemiological week\nstudy_area_aggregated &lt;- study_area_cases_sf %&gt;%\n  group_by(VILLENG) %&gt;%\n  summarise(CASE_COUNT = n())"
+  },
+  {
+    "objectID": "Take-home_Ex/Take-home_Ex02/Take-home_Ex02.html#visualizing-data",
+    "href": "Take-home_Ex/Take-home_Ex02/Take-home_Ex02.html#visualizing-data",
+    "title": "Application of Spatial and Spatio-temporal Analysis Methods to Discover the Distribution of Dengue Fever in Tainan City, Taiwan",
+    "section": "4.4 Visualizing Data",
+    "text": "4.4 Visualizing Data\nDraw a choropleth map\n\nequal &lt;- tm_shape(study_area_aggregated) +\n  tm_fill(\"CASE_COUNT\",\n          n = 5,\n          style = \"equal\") +\n  tm_borders(alpha = 0.5) +\n  tm_layout(main.title = \"Equal interval classification\")\n\nquantile &lt;- tm_shape(study_area_aggregated) +\n  tm_fill(\"CASE_COUNT\",\n          n = 5,\n          style = \"quantile\") +\n  tm_borders(alpha = 0.5) +\n  tm_layout(main.title = \"Equal quantile classification\")\n\ntmap_arrange(equal, \n             quantile, \n             asp=1, \n             ncol=2)"
+  },
+  {
+    "objectID": "Take-home_Ex/Take-home_Ex02/Take-home_Ex02.html#spacetime-object",
+    "href": "Take-home_Ex/Take-home_Ex02/Take-home_Ex02.html#spacetime-object",
+    "title": "Application of Spatial and Spatio-temporal Analysis Methods to Discover the Distribution of Dengue Fever in Tainan City, Taiwan",
+    "section": "4.5 Spacetime Object",
+    "text": "4.5 Spacetime Object\n\n# Step 3: Aggregation\n# Aggregate by village name (VILLENG) and epidemiological week\nstudy_area_time_aggregated &lt;- study_area_cases_sf %&gt;%\n  group_by(VILLENG, EPID_WEEK) %&gt;%\n  summarise(CASE_COUNT = n())\n\n\n4.5.1 Expanding the data\nOur aggregated dataset only stores the data of cases that occur. However, there will be location and times where no cases occur. We need to expand our data to include those rows with CASE_COUNT values of 0. This is to make the spacetime object creation smoother.\n\n# Create a full grid of location and time period combinations\nfull_grid &lt;- expand.grid(\n  VILLENG = unique(study_area_sf$VILLENG),\n  EPID_WEEK = unique(study_area_time_aggregated$EPID_WEEK)\n)\n\n# Join the grid with spatial data to ensure geometry is present for all villages\nfull_grid_with_geom &lt;- left_join(full_grid, study_area_sf %&gt;% select(VILLENG, geometry), by = \"VILLENG\")\n\n# Join the spatially enriched grid with case count data\ncomplete_data &lt;- left_join(full_grid_with_geom, study_area_aggregated, by = c(\"VILLENG\", \"EPID_WEEK\"))\n\n# Replace NA values in CASE_COUNT with zero \ncomplete_data$CASE_COUNT[is.na(complete_data$CASE_COUNT)] &lt;- 0\n\n# Convert back to an sf object \ncomplete_data &lt;- complete_data %&gt;%\n  select(-geometry.x) %&gt;%\n  rename(geometry = geometry.y)\n\ncomplete_data_sf &lt;- st_as_sf(complete_data, sf_column_name = \"geometry\")\n\n\n# Assuming 'complete_data_sf' is your prepared sf object before attempting to create the spacetime cube\n\n# Aggregate to ensure one observation per location-time combination\n# Replace 'CASE_COUNT' with your actual case count column, if named differently\naggregated_data &lt;- complete_data_sf %&gt;%\n  group_by(VILLENG, EPID_WEEK) %&gt;%\n  summarize(CASE_COUNT = sum(CASE_COUNT), .groups = 'drop')\n\n# Ensure the aggregated data is still an sf object\naggregated_data_sf &lt;- st_as_sf(aggregated_data, sf_column_name = \"geometry\", crs = st_crs(complete_data_sf))\n\n# Try creating the spacetime object again\ndengue_st &lt;- spacetime(\n  aggregated_data_sf, \n  study_area_sf, \n  \"VILLENG\", \n  \"EPID_WEEK\"\n)\n\n# Attempt to complete the spacetime cube\ndengue_st_cube &lt;- complete_spacetime_cube(dengue_st)\n\n\n\n4.5.2 Spacetime Cube Object Creation\nCreate an spacetime cube object using sfdep package, which will allow for the analysis of spatial and spatio-temporal patterns.\n\ndengue_st &lt;- spacetime(\n  complete_data_sf, \n  study_area_sf, \n  \"VILLENG\", \n  \"EPID_WEEK\")\n\n\nis_spacetime_cube(dengue_st)\n\nSeems like the in certain locations, case_count might have missing values since there could possible be no cases in that location and time period. Let’s fill the missing values with NA using the complete_spacetime_cube() function.\n\n# Assuming dengue_st is your current spacetime object\ndengue_st_cube &lt;- complete_spacetime_cube(dengue_st)\n\n# Check if the object is now a valid spacetime cube\nis_spacetime_cube(dengue_st_cube)"
+  },
+  {
+    "objectID": "Take-home_Ex/Take-home_Ex02/Take-home_Ex02.html#computing-contiguity-spatial-weights",
+    "href": "Take-home_Ex/Take-home_Ex02/Take-home_Ex02.html#computing-contiguity-spatial-weights",
+    "title": "Application of Spatial and Spatio-temporal Analysis Methods to Discover the Distribution of Dengue Fever in Tainan City, Taiwan",
+    "section": "5.1 Computing Contiguity Spatial Weights",
+    "text": "5.1 Computing Contiguity Spatial Weights\nBefore we can compute the global spatial autocorrelation statistics, we need to construct a spatial weights of the study area. The spatial weights is used to define the neighbourhood relationships between the geographical units (i.e. county) in the study area.\nWe will derive the contiguity weights using the Queen’s method. (Similar to the way a Queen moves in chess, we will take into account neighbors in all principal directions - cardinal and intercardinal)\n\nwm_q &lt;- study_area_aggregated %&gt;%\n  mutate(nb = st_contiguity(geometry),\n         wt = st_weights(nb,\n                         style = \"W\"),\n         .before = 1)\n\n\nwm_q\n\nSimple feature collection with 248 features and 4 fields\nGeometry type: GEOMETRY\nDimension:     XY\nBounding box:  xmin: 120.0627 ymin: 22.89401 xmax: 120.2925 ymax: 23.09144\nGeodetic CRS:  TWD97\n# A tibble: 248 × 5\n   nb        wt        VILLENG     CASE_COUNT                           geometry\n * &lt;nb&gt;      &lt;list&gt;    &lt;chr&gt;            &lt;int&gt;                      &lt;POLYGON [°]&gt;\n 1 &lt;int [5]&gt; &lt;dbl [5]&gt; Andong Vil.         67 ((120.2164 23.0404, 120.2154 23.0…\n 2 &lt;int [5]&gt; &lt;dbl [5]&gt; Anfu Vil.          311 ((120.1932 23.0294, 120.1929 23.0…\n 3 &lt;int [7]&gt; &lt;dbl [7]&gt; Anhe Vil.           73 ((120.2258 23.04424, 120.2219 23.…\n 4 &lt;int [3]&gt; &lt;dbl [3]&gt; Ankang Vil.         96 ((120.2269 23.01413, 120.2274 23.…\n 5 &lt;int [4]&gt; &lt;dbl [4]&gt; Anqing Vil.        111 ((120.2113 23.04414, 120.2111 23.…\n 6 &lt;int [3]&gt; &lt;dbl [3]&gt; Anshun Vil.         34 ((120.2136 23.05601, 120.2136 23.…\n 7 &lt;int [8]&gt; &lt;dbl [8]&gt; Anxi Vil.          110 ((120.2123 23.03689, 120.212 23.0…\n 8 &lt;int [5]&gt; &lt;dbl [5]&gt; Bao'an Vil.         19 ((120.2304 22.93544, 120.2301 22.…\n 9 &lt;int [6]&gt; &lt;dbl [6]&gt; Beihua Vil.         82 ((120.2034 23.00257, 120.2032 23.…\n10 &lt;int [4]&gt; &lt;dbl [4]&gt; Beimen Vil.        249 ((120.2176 23.02032, 120.2173 23.…\n# ℹ 238 more rows"
+  },
+  {
+    "objectID": "Take-home_Ex/Take-home_Ex02/Take-home_Ex02.html#performing-global-morans-i-test",
+    "href": "Take-home_Ex/Take-home_Ex02/Take-home_Ex02.html#performing-global-morans-i-test",
+    "title": "Application of Spatial and Spatio-temporal Analysis Methods to Discover the Distribution of Dengue Fever in Tainan City, Taiwan",
+    "section": "5.2 Performing Global Moran’s I Test",
+    "text": "5.2 Performing Global Moran’s I Test\nLet’s run the Global Moran’s I test.\n\nglobal_moran_test(wm_q$CASE_COUNT,\n                  wm_q$nb,\n                  wm_q$wt)\n\n\n    Moran I test under randomisation\n\ndata:  x  \nweights: listw    \n\nMoran I statistic standard deviate = 11.884, p-value &lt; 2.2e-16\nalternative hypothesis: greater\nsample estimates:\nMoran I statistic       Expectation          Variance \n      0.436433657      -0.004048583       0.001373754"
+  },
+  {
+    "objectID": "Take-home_Ex/Take-home_Ex02/Take-home_Ex02.html#performing-global-morans-i-permutation-test",
+    "href": "Take-home_Ex/Take-home_Ex02/Take-home_Ex02.html#performing-global-morans-i-permutation-test",
+    "title": "Application of Spatial and Spatio-temporal Analysis Methods to Discover the Distribution of Dengue Fever in Tainan City, Taiwan",
+    "section": "5.3 Performing Global Moran’s I Permutation Test",
+    "text": "5.3 Performing Global Moran’s I Permutation Test\nWe will apply Monte Carlo simulation to perform the statistical test 100 times.\nFirst, we set a seed to maintain the reproduceability of the results.\n\nset.seed(8888)\n\n\nglobal_moran_perm(wm_q$CASE_COUNT,\n                  wm_q$nb,\n                  wm_q$wt,\n                  nsim = 100)\n\n\n    Monte-Carlo simulation of Moran I\n\ndata:  x \nweights: listw  \nnumber of simulations + 1: 101 \n\nstatistic = 0.43643, observed rank = 101, p-value &lt; 2.2e-16\nalternative hypothesis: two.sided\n\n\nThe statistical report shows that the p-value is smaller than alpha value 0.05.\nTherefore, we have enough evidence to reject the null hypothesis that the spatial distribution of cases resembles random distribution.\nSince Moran’s I statistics is greater than 0, we can infer that the spatial distribution show signs of clustering."
+  },
+  {
+    "objectID": "Take-home_Ex/Take-home_Ex02/Take-home_Ex02.html#computing-local-morans-i",
+    "href": "Take-home_Ex/Take-home_Ex02/Take-home_Ex02.html#computing-local-morans-i",
+    "title": "Application of Spatial and Spatio-temporal Analysis Methods to Discover the Distribution of Dengue Fever in Tainan City, Taiwan",
+    "section": "6.1 Computing Local Moran’s I",
+    "text": "6.1 Computing Local Moran’s I\n\nlisa &lt;- wm_q %&gt;% \n  mutate(local_moran = local_moran(\n    CASE_COUNT, nb, wt, nsim = 99),\n         .before = 1) %&gt;%\n  unnest(local_moran)\n\nThe output of local_moran() is a sf data.frame containing some of the following columns:\n\n\n\n\n\n\n\nColumn\nDescription\n\n\n\n\nii\nLocal Moran statistic\n\n\neii\nExpected Local Moran statistic; or the permutation sample mean\n\n\nvar_ii\nVariance of Local Moran statistic; or the permutation sample deviations\n\n\nz_ii\nStandard deviate of Local Moran statistic\n\n\np_ii\np-value of Local Moran statistic using pnorm()"
+  },
+  {
+    "objectID": "Take-home_Ex/Take-home_Ex02/Take-home_Ex02.html#visualizing-local-morans-i",
+    "href": "Take-home_Ex/Take-home_Ex02/Take-home_Ex02.html#visualizing-local-morans-i",
+    "title": "Application of Spatial and Spatio-temporal Analysis Methods to Discover the Distribution of Dengue Fever in Tainan City, Taiwan",
+    "section": "6.2 Visualizing Local Moran’s I",
+    "text": "6.2 Visualizing Local Moran’s I\n\ntmap_mode(\"plot\")\ntm_shape(lisa) +\n  tm_fill(\"ii\") + \n  tm_borders(alpha = 0.5) +\n  tm_view(set.zoom.limits = c(6,8)) +\n  tm_layout(main.title = \"local Moran's I of Case Count\",\n            main.title.size = 0.8)"
+  },
+  {
+    "objectID": "Take-home_Ex/Take-home_Ex02/Take-home_Ex02.html#visualizing-p-value-of-local-morans-i",
+    "href": "Take-home_Ex/Take-home_Ex02/Take-home_Ex02.html#visualizing-p-value-of-local-morans-i",
+    "title": "Application of Spatial and Spatio-temporal Analysis Methods to Discover the Distribution of Dengue Fever in Tainan City, Taiwan",
+    "section": "6.3 Visualizing p-value of local Moran’s I",
+    "text": "6.3 Visualizing p-value of local Moran’s I\n\ntmap_mode(\"plot\")\ntm_shape(lisa) +\n  tm_fill(\"p_ii_sim\") + \n  tm_borders(alpha = 0.5) +\n   tm_layout(main.title = \"p-value of local Moran's I\",\n            main.title.size = 0.8)"
+  },
+  {
+    "objectID": "Take-home_Ex/Take-home_Ex02/Take-home_Ex02.html#visualizing-lisa-map",
+    "href": "Take-home_Ex/Take-home_Ex02/Take-home_Ex02.html#visualizing-lisa-map",
+    "title": "Application of Spatial and Spatio-temporal Analysis Methods to Discover the Distribution of Dengue Fever in Tainan City, Taiwan",
+    "section": "6.4 Visualizing LISA map",
+    "text": "6.4 Visualizing LISA map\nThe LISA map will categorize each region to show the outliers and clusters.\nTypes of clusters and outliers:\n\n\n\nClusters\nOutliers\n\n\n\n\nHigh-High\nHigh-Low\n\n\nLow-Low\nLow-High\n\n\n\nIn the lisa sf data.frame, there are 3 fields: mean, median and pysal. In general, classification in mean will be used.\n\nlisa_sig &lt;- lisa  %&gt;%\n  filter(p_ii &lt; 0.05)\ntmap_mode(\"plot\")\ntm_shape(lisa) +\n  tm_polygons() +\n  tm_borders(alpha = 0.5) +\ntm_shape(lisa_sig) +\n  tm_fill(\"mean\") + \n  tm_borders(alpha = 0.4)"
+  },
+  {
+    "objectID": "Take-home_Ex/Take-home_Ex02/Take-home_Ex02.html#computing-local-gi-statistics",
+    "href": "Take-home_Ex/Take-home_Ex02/Take-home_Ex02.html#computing-local-gi-statistics",
+    "title": "Application of Spatial and Spatio-temporal Analysis Methods to Discover the Distribution of Dengue Fever in Tainan City, Taiwan",
+    "section": "7.1 Computing Local Gi* statistics",
+    "text": "7.1 Computing Local Gi* statistics"
   }
 ]
