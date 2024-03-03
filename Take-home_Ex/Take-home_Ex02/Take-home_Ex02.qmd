@@ -69,19 +69,19 @@ pacman::p_load(sf, tidyverse, tmap, sfdep, dplyr, zoo)
 
 For the purpose of this take-home exercise, two data sets are provided, they are:
 
-+---------------------+----------+---------------------------------------------------------------------------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------+
-| Data                | Format   | Description                                                                                                               | Source                                                                                                              |
-+=====================+==========+===========================================================================================================================+=====================================================================================================================+
-| TAIWAN_VILLAGE_2020 | ESRI     | A Geospatial data of village boundary of Taiwan. The data is in Taiwan Geographic Coordinate System.                      | [Historical map data of the village boundary: TWD97 longitude and latitude](https://data.gov.tw/en/datasets/130549) |
-+---------------------+----------+---------------------------------------------------------------------------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------+
-| Dengue_Daily.csv    | CSV      | An Aspatial data of reported dengue cases in Taiwan since 1998. Below are selected fields that are useful for this study: | [Dengue Daily Confirmed Cases Since 1998](https://data.cdc.gov.tw/en/dataset/dengue-daily-determined-cases-1998)    |
-|                     |          |                                                                                                                           |                                                                                                                     |
-|                     |          | -   發病日: Onset date                                                                                                    |                                                                                                                     |
-|                     |          |                                                                                                                           |                                                                                                                     |
-|                     |          | -   最小統計區中心點X: x-coordinate                                                                                       |                                                                                                                     |
-|                     |          |                                                                                                                           |                                                                                                                     |
-|                     |          | -   最小統計區中心點Y: y-coordinate                                                                                       |                                                                                                                     |
-+---------------------+----------+---------------------------------------------------------------------------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------+
++---------------------+---------+---------------------------------------------------------------------------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------+
+| Data                | Format  | Description                                                                                                               | Source                                                                                                              |
++=====================+=========+===========================================================================================================================+=====================================================================================================================+
+| TAIWAN_VILLAGE_2020 | ESRI    | A Geospatial data of village boundary of Taiwan. The data is in Taiwan Geographic Coordinate System.                      | [Historical map data of the village boundary: TWD97 longitude and latitude](https://data.gov.tw/en/datasets/130549) |
++---------------------+---------+---------------------------------------------------------------------------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------+
+| Dengue_Daily.csv    | CSV     | An Aspatial data of reported dengue cases in Taiwan since 1998. Below are selected fields that are useful for this study: | [Dengue Daily Confirmed Cases Since 1998](https://data.cdc.gov.tw/en/dataset/dengue-daily-determined-cases-1998)    |
+|                     |         |                                                                                                                           |                                                                                                                     |
+|                     |         | -   發病日: Onset date                                                                                                    |                                                                                                                     |
+|                     |         |                                                                                                                           |                                                                                                                     |
+|                     |         | -   最小統計區中心點X: x-coordinate                                                                                       |                                                                                                                     |
+|                     |         |                                                                                                                           |                                                                                                                     |
+|                     |         | -   最小統計區中心點Y: y-coordinate                                                                                       |                                                                                                                     |
++---------------------+---------+---------------------------------------------------------------------------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------+
 
 # 4.0 Data Wrangling
 
@@ -216,7 +216,6 @@ dengue_cases <- dengue_cases %>%
 Perform a spatial join between the **`dengue_cases`** points and the **`study_area_sf`** polygons to determine which dengue cases occur in which village.
 
 ```{r}
-# Step 1: Spatial Join
 # Convert dengue_cases to an sf object by using the coordinates
 dengue_cases_sf <- st_as_sf(dengue_cases, coords = c("最小統計區中心點X", "最小統計區中心點Y"), crs = st_crs(study_area_sf))
 
@@ -225,15 +224,33 @@ study_area_cases_sf <- st_join(study_area_sf, dengue_cases_sf) %>%
   na.omit()
 ```
 
-### 4.3.2 Aggregation by VILLENG
+### 4.3.2 Aggregation by VILLCODE
 
-Aggregate the cases by the 'VILLENG' (village name)
+Aggregate the cases by the 'VILLCODE' (village code)
 
 ```{r}
-# Step 3: Aggregation
-# Aggregate by village name (VILLENG) and epidemiological week
+# Aggregate by village name (VILLENG)
 study_area_aggregated <- study_area_cases_sf %>%
-  group_by(VILLENG) %>%
+  group_by(VILLCODE) %>%
+  summarise(CASE_COUNT = n())
+```
+
+::: callout-note
+## Why use Village Code instead of Village Name?
+
+When exploring the data, I realized that the number of unique village codes are 257, while the number of unique values for VILLNAME and VILLENG is 252 and 248 respectively.
+
+This means that some village codes will have duplicated Chinese and English village names. Therefore, to make sure the analysis is smoother, we will use the identifier with the most number of unique values.
+:::
+
+### 4.3.3 Aggregation by VILLCODE and EPID_WEEK
+
+Aggregate the cases by the 'VILLCODE' (village code) and 'EPID_WEEK' (epidemiological week) for spatio-temporal analysis later.
+
+```{r}
+# Aggregate by village code (VILLCODE) and epidemiological week (EPID_WEEK)
+study_area_time_aggregated <- study_area_cases_sf %>%
+  group_by(VILLCODE, EPID_WEEK) %>%
   summarise(CASE_COUNT = n())
 ```
 
@@ -264,110 +281,69 @@ tmap_arrange(equal,
 
 ## 4.5 Spacetime Object
 
-```{r}
-#| eval: false
-# Step 3: Aggregation
-# Aggregate by village name (VILLENG) and epidemiological week
-study_area_time_aggregated <- study_area_cases_sf %>%
-  group_by(VILLENG, EPID_WEEK) %>%
-  summarise(CASE_COUNT = n())
-```
+In this section, we will create a spacetime cube object using the **`sfdep`** package.
+
+We will use the **`study_area_time_aggregated`** data.
 
 ### 4.5.1 Expanding the data
 
-Our aggregated dataset only stores the data of cases that occur. However, there will be location and times where no cases occur. We need to expand our data to include those rows with CASE_COUNT values of 0. This is to make the spacetime object creation smoother.
+Our `study_area_time_aggregated` dataset with location and time only stores the data of cases that occur. However, there will be location and times where no cases occur. We need to expand our data to include those rows with `CASE_COUNT` values of 0. This is required to make a proper spacetime cube object.
 
 ```{r}
-#| eval: false
 # Create a full grid of location and time period combinations
 full_grid <- expand.grid(
-  VILLENG = unique(study_area_sf$VILLENG),
+  VILLCODE = unique(study_area_sf$VILLCODE),
   EPID_WEEK = unique(study_area_time_aggregated$EPID_WEEK)
 )
 
 # Join the grid with spatial data to ensure geometry is present for all villages
-full_grid_with_geom <- left_join(full_grid, study_area_sf %>% select(VILLENG, geometry), by = "VILLENG")
+full_grid_with_geom <- left_join(full_grid, study_area_sf %>% select(VILLCODE, geometry), by = "VILLCODE")
 
 # Join the spatially enriched grid with case count data
-complete_data <- left_join(full_grid_with_geom, study_area_aggregated, by = c("VILLENG", "EPID_WEEK"))
+complete_data <- left_join(full_grid_with_geom, study_area_time_aggregated, by = c("VILLCODE", "EPID_WEEK"))
 
 # Replace NA values in CASE_COUNT with zero 
 complete_data$CASE_COUNT[is.na(complete_data$CASE_COUNT)] <- 0
 
 # Convert back to an sf object 
 complete_data <- complete_data %>%
-  select(-geometry.x) %>%
-  rename(geometry = geometry.y)
+  select(-geometry.y) %>%
+  rename(geometry = geometry.x)
 
 complete_data_sf <- st_as_sf(complete_data, sf_column_name = "geometry")
 
 ```
 
-```{r}
-#| eval: false
-# Assuming 'complete_data_sf' is your prepared sf object before attempting to create the spacetime cube
-
-# Aggregate to ensure one observation per location-time combination
-# Replace 'CASE_COUNT' with your actual case count column, if named differently
-aggregated_data <- complete_data_sf %>%
-  group_by(VILLENG, EPID_WEEK) %>%
-  summarize(CASE_COUNT = sum(CASE_COUNT), .groups = 'drop')
-
-# Ensure the aggregated data is still an sf object
-aggregated_data_sf <- st_as_sf(aggregated_data, sf_column_name = "geometry", crs = st_crs(complete_data_sf))
-
-# Try creating the spacetime object again
-dengue_st <- spacetime(
-  aggregated_data_sf, 
-  study_area_sf, 
-  "VILLENG", 
-  "EPID_WEEK"
-)
-
-# Attempt to complete the spacetime cube
-dengue_st_cube <- complete_spacetime_cube(dengue_st)
-```
-
 ### 4.5.2 Spacetime Cube Object Creation
 
-Create an spacetime cube object using **`sfdep`** package, which will allow for the analysis of spatial and spatio-temporal patterns.
+Create a spacetime cube object using **`sfdep`** package, which will allow for the analysis of spatial and spatio-temporal patterns.
 
 ```{r}
-#| eval: false
-dengue_st <- spacetime(
-  complete_data_sf, 
-  study_area_sf, 
-  "VILLENG", 
-  "EPID_WEEK")
+dengue_spt_cube <- as_spacetime(complete_data_sf, "VILLCODE", "EPID_WEEK")
+```
+
+```{r}
+is_spacetime(dengue_spt_cube)
 ```
 
 ```{r}
 #| eval: false
-is_spacetime_cube(dengue_st)
-```
-
-Seems like the in certain locations, case_count might have missing values since there could possible be no cases in that location and time period. Let's fill the missing values with NA using the complete_spacetime_cube() function.
-
-```{r}
-#| eval: false
-# Assuming dengue_st is your current spacetime object
-dengue_st_cube <- complete_spacetime_cube(dengue_st)
-
-# Check if the object is now a valid spacetime cube
-is_spacetime_cube(dengue_st_cube)
+emerging_hotspot_analysis(dengue_spt_cube, "CASE_COUNT", threshold = 0.05)
 ```
 
 # 5.0 Global Spatial Autocorrelation
 
-Global Spatial Autocorrelation measures the overall degree of spatial dependence within a geographic area. The most common statistic for measuring global spatial autocorrelation is Moran's I. This statistic compares the value of spatial data at one location with values at neighboring locations over the entire study area to determine if there is a significant pattern. If Moran's I is positive and significant, it suggests a clustered pattern; if it is negative and significant, it suggests a dispersed pattern; if it is close to zero, it indicates a random spatial pattern.
+Global Spatial Autocorrelation measures the overall degree of spatial dependence within a geographic area.
 
-Global Autocorrelation Analysis:
+The most common statistic for measuring global spatial autocorrelation is **Moran's I**. This statistic compares the value of spatial data at one location with values at neighboring locations over the entire study area to determine if there is a significant pattern. If Moran's I is positive and significant, it suggests a clustered pattern; if it is negative and significant, it suggests a dispersed pattern; if it is close to zero, it indicates a random spatial pattern.
+
+*Global Autocorrelation Analysis:*
 
 -   Calculate Moran's I for the entire study area
 
--   Assess the significance of the statistic to determine if there is a pattern
+-   Apply Monte Carlo simulation / Permutation Tests on the Moran's I statistic
 
--   Interpret the result to understand the overall tendency of data clustering or dispersion
+-   Assess the significance of the statistic to determine if there is a cluster or just random
 
 ## 5.1 Computing Contiguity Spatial Weights
 
@@ -381,15 +357,12 @@ wm_q <- study_area_aggregated %>%
          wt = st_weights(nb,
                          style = "W"),
          .before = 1)
-```
-
-```{r}
 wm_q
 ```
 
 ## 5.2 Performing Global Moran's I Test
 
-Let's run the Global Moran's I test.
+Let's run the Global Moran's I test once.
 
 ```{r}
 global_moran_test(wm_q$CASE_COUNT,
@@ -401,11 +374,13 @@ global_moran_test(wm_q$CASE_COUNT,
 
 We will apply Monte Carlo simulation to perform the statistical test 100 times.
 
-First, we set a seed to maintain the reproduceability of the results.
+First, we set a seed to maintain the reproduce-ability of the results.
 
 ```{r}
 set.seed(8888)
 ```
+
+Next, we will use the `global_moran_perm()` function to run the permutation test.
 
 ```{r}
 global_moran_perm(wm_q$CASE_COUNT,
@@ -422,9 +397,11 @@ Since Moran's I statistics is greater than 0, we can infer that the **spatial di
 
 # 6.0 Local Spatial Autocorrelation
 
-Local Spatial Autocorrelation breaks down the global statistic into contributions from each individual location, allowing for the assessment of where and how much each feature contributes to the overall autocorrelation statistic. Local indicators of spatial association (LISA), such as Local Moran's I, allow for the identification of clusters or outliers where a feature has a value significantly different from its neighbors. This local approach helps to pinpoint specific areas of interest within the global context.
+Local Spatial Autocorrelation breaks down the global statistic into contributions from each individual location, allowing for the assessment of where and how much each feature contributes to the overall autocorrelation statistic.
 
-Local Autocorrelation Analysis:
+**Local indicators of spatial association (LISA)**, such as Local Moran's I, allow for the identification of clusters or outliers where a feature has a value significantly different from its neighbors. This local approach helps to pinpoint specific areas of interest within the global context.
+
+*Local Autocorrelation Analysis:*
 
 -   Calculate Local Moran's I for each feature in the dataset
 
@@ -442,42 +419,44 @@ lisa <- wm_q %>%
   unnest(local_moran)
 ```
 
-The output of local_moran() is a sf data.frame containing some of the following columns:
+The output of `local_moran()` is a sf data.frame containing some of the following columns:
 
-+----------------+-------------------------------------------------------------------------+
-| Column         | Description                                                             |
-+================+=========================================================================+
-| ii             | Local Moran statistic                                                   |
-+----------------+-------------------------------------------------------------------------+
-| eii            | Expected Local Moran statistic; or the permutation sample mean          |
-+----------------+-------------------------------------------------------------------------+
-| var_ii         | Variance of Local Moran statistic; or the permutation sample deviations |
-+----------------+-------------------------------------------------------------------------+
-| z_ii           | Standard deviate of Local Moran statistic                               |
-+----------------+-------------------------------------------------------------------------+
-| p_ii           | p-value of Local Moran statistic using pnorm()                          |
-+----------------+-------------------------------------------------------------------------+
++-------------+-------------------------------------------------------------------------+
+| Column      | Description                                                             |
++=============+=========================================================================+
+| ii          | Local Moran statistic                                                   |
++-------------+-------------------------------------------------------------------------+
+| eii         | Expected Local Moran statistic; or the permutation sample mean          |
++-------------+-------------------------------------------------------------------------+
+| var_ii      | Variance of Local Moran statistic; or the permutation sample deviations |
++-------------+-------------------------------------------------------------------------+
+| z_ii        | Standard deviate of Local Moran statistic                               |
++-------------+-------------------------------------------------------------------------+
+| p_ii        | p-value of Local Moran statistic using pnorm()                          |
++-------------+-------------------------------------------------------------------------+
 
 ## 6.2 Visualizing Local Moran's I
 
 ```{r}
 tmap_mode("plot")
 tm_shape(lisa) +
-  tm_fill("ii") + 
+  tm_fill("ii", midpoint = NA, palette = rev(c("red", "lightyellow"))) + 
   tm_borders(alpha = 0.5) +
   tm_view(set.zoom.limits = c(6,8)) +
-  tm_layout(main.title = "local Moran's I of Case Count",
+  tm_layout(main.title = "Local Moran's I for Case Count",
             main.title.size = 0.8)
 ```
 
 ## 6.3 Visualizing p-value of local Moran's I
+
+Let's plot a map that shows the significance value of each region.
 
 ```{r}
 tmap_mode("plot")
 tm_shape(lisa) +
   tm_fill("p_ii_sim") + 
   tm_borders(alpha = 0.5) +
-   tm_layout(main.title = "p-value of local Moran's I",
+  tm_layout(main.title = "p-value of Local Moran's I",
             main.title.size = 0.8)
 ```
 
@@ -506,86 +485,116 @@ tm_shape(lisa_sig) +
   tm_borders(alpha = 0.4)
 ```
 
+Based on the LISA map, we can see that the outliers are nearer to the surroundings of the study area, while the clusters are in the middle.
+
+We can observe that there is about 2-4 clusters in the middle, with some areas with low intensity being surrounded by those clusters.
+
 # 7.0 Emerging Hot Spot and Cold Spot Area Analysis (HCSA)
 
 Emerging Hot Spot Analysis (EHSA) is a spatio-temporal analysis method for revealing and describing how hot spot and cold spot areas evolve over time.
 
-Emerging Hot Spot Analysis:
+*Emerging Hot Spot Analysis:*
 
--   Build a spacetime cube
+-   Build a spacetime cube (as done in section 4.5 with `dengue_spt_cube`)
 
--   Calculate Getis-Ord local Gi\* statistic for each bin by using an FDR correction
+-   Use the `emerging_hotspot_analysis()` of `sfdep` package.
 
--   Evaluating these hot and cold spot trends by using Mann-Kendall trend test
-
--   Categorizing each study area location by referring to the resultant trend z-score and p-value for each location with data, and with the hot spot z-score and p-value for each bin.
-
-## 7.1 Computing Local Gi\* statistics
+## 7.1 Performing Emerging Hot Spot Analysis
 
 ```{r}
+ehsa <- emerging_hotspot_analysis(
+  x = dengue_spt_cube,
+  .var = "CASE_COUNT",
+  k = 1, # specify number of time lags (default = 1)
+  nsim = 99
+)
+```
+
+## 7.2 Visualizing the distribution of EHSA classes
+
+Below, ggplot2 functions is used to reveal the distribution of EHSA classes.
+
+```{r}
+ehsa_counts <- ehsa %>%
+  group_by(classification) %>%
+  summarise(count = n()) %>%
+  ungroup()
+
+ggplot(data = ehsa_counts,
+       aes(x = classification,
+           y = count, 
+           fill = count)) +
+  geom_col() +
+  scale_fill_gradient(low = "black", high = "blue") +
+  theme(axis.text.x = element_text(size = 10, angle = 45, hjust = 1))
 
 ```
 
-# Global Measures of Spatial Association (Ex05)
+## 7.3 Visualizing EHSA 
 
-[is415-gaa-tskam.netlify.app/in-class_ex/in-class_ex05/in-class_ex05-glsa](https://is415-gaa-tskam.netlify.app/in-class_ex/in-class_ex05/in-class_ex05-glsa)
+We first need to join both our `study_area_sf` (polygon boundaries) and `ehsa` data together.
 
-Deriving contiguity weights: Queen's method
+```{r}
+taiwan_ehsa <- study_area_sf %>%
+  left_join(ehsa,
+            by = join_by(VILLCODE == location))
+```
 
-Then draw a bunch of choropleth map
+Next, we will use tmap functions to plot a categorical choropleth map.
 
-when using sfdep, the wm_q will be saved as dataframe. This means we can just look at the neighbors by looking directly at the dataset (like the in-class exercise), instead of only being able to look at it after printing (like the hands-on exercise)
+```{r}
+ehsa_sig <- taiwan_ehsa  %>%
+  filter(p_value < 0.05)
+tmap_mode("plot")
+tm_shape(taiwan_ehsa) +
+  tm_polygons() +
+  tm_borders(alpha = 0.5) +
+tm_shape(ehsa_sig) +
+  tm_fill("classification", title = "Area Type") + 
+  tm_borders(alpha = 0.4) +
+  tm_layout(main.title = 'Emerging Hot Spot Analysis',
+            main.title.position = 'center',
+            legend.text.size = 0.5,
+            legend.title.size = 1)
+```
 
-Moran I test statistics: use p-value to compare with critical value to reject or accept null hypothesis. (usually using 95% -\> alpha value = 0.05 or 90% -\> alpha value = 0.1)
+## 7.x.x Computing Gi\* statistics
 
--   Reject Null Hypothesis if p-value \< critical value -\> inferred .... represents clustering
+::: callout-warning
+***This section is omitted due to errors.***
+:::
 
-Is there a spacial bias-ness? Test its distribution (like Complete Spatial Randomness, or does it have some clustering). The null hypothesis is that it resembles CSR.
+Let's first identify neighbors and derive their inverse distance weights.
 
-This stuff is called Frequentist test because we only take one result. But in the modern data science world, we don't use this because it's not enough, instead we use monte-carlo simulation to test it multiple times. For this assignment, we can just use monte carlo.
+```{r}
+dengue_nb <- dengue_spt_cube %>%
+  activate("geometry") %>%
+  mutate(nb = include_self(st_contiguity(geometry)),
+         wt = st_inverse_distance(nb, geometry,
+                                  scale = 1,
+                                  alpha = 1),
+         .before = 1) %>%
+  set_nbs("nb") %>%
+  set_wts("wt")
+```
 
-global_moran_perm(wm_q\$GDPPC, wm_q\$nb, wm_q\$wt, nsim = 99)
+```{r}
+dengue_nb <- as_tibble(dengue_nb)
+dengue_nb
+```
 
-Correct method to use is always permutation method.
+Now, we will compute the local Gi\* for each area. We do this by grouping by epideomilegoy week and using `local_gstar_perm()` of sfdep package. After which, we use `unnest()` to unnest *gi_star* column of the newly created data.frame.
 
-MOVING ON
+```{r}
+#| eval: false
+gi_stars <- dengue_nb %>% 
+  group_by(EPID_WEEK) %>% 
+  mutate(gi_star = local_gstar_perm(
+    CASE_COUNT, nb, wt)) %>% 
+  tidyr::unnest(gi_star)
+```
 
-local moran is a decomposition of moran, so we can detect specific cluster outliers
+# 8.0 Useful Resources
 
--   Outlier =\> different from neighbors (high-low, low-high)
-
--   Clusters =\> similar to neighbors (high-high, low-low)
-
-We can plot the p-value for each region
-
-lisa_sig \<- lisa %\>% filter(p_ii \< 0.05) tmap_mode("plot") .......................
-
-MOVING ON
-
-Gi\* statistics, it needs to be in distance based metrics
-
-Gi\* statistics defines everything as a cluster and tells us if its a hotspot or coldspot cluster
-
-can use fixed distance, adaptive distance or inverse distance (like in-class ex)
-
-The graph from GI will have positive and negative
-
--   positive = hotspot
-
--   negative = coldspot
-
-MOVING ON
-
-we can combine both, the statistically significant areas from local moran and the hotspot/coldspot from Gi\* statistics
-
-FOR THIS TAKE HOME ASSIGNMENT, we need to decide which one to use, and see if we need both or just one
-
-MOVING ON
-
-SPATIAL TIME CUBE
-
-each cube represents one geographical area.
-
-# Local Measures of Spatial Association
-
-# Emerging Hotspot Analysis
+-   [Spacetime and Spacetime Cubes documentation](https://sfdep.josiahparry.com/articles/spacetime-s3.html#spacetime-contexts)
+-   [Emerging Hot Spot Analysis documentation](https://sfdep.josiahparry.com/articles/understanding-emerging-hotspots#using-emerging_hotspot_analysis)
