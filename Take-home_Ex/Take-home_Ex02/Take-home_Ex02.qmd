@@ -69,19 +69,19 @@ pacman::p_load(sf, tidyverse, tmap, sfdep, dplyr, zoo)
 
 For the purpose of this take-home exercise, two data sets are provided, they are:
 
-+---------------------+---------+---------------------------------------------------------------------------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------+
-| Data                | Format  | Description                                                                                                               | Source                                                                                                              |
-+=====================+=========+===========================================================================================================================+=====================================================================================================================+
-| TAIWAN_VILLAGE_2020 | ESRI    | A Geospatial data of village boundary of Taiwan. The data is in Taiwan Geographic Coordinate System.                      | [Historical map data of the village boundary: TWD97 longitude and latitude](https://data.gov.tw/en/datasets/130549) |
-+---------------------+---------+---------------------------------------------------------------------------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------+
-| Dengue_Daily.csv    | CSV     | An Aspatial data of reported dengue cases in Taiwan since 1998. Below are selected fields that are useful for this study: | [Dengue Daily Confirmed Cases Since 1998](https://data.cdc.gov.tw/en/dataset/dengue-daily-determined-cases-1998)    |
-|                     |         |                                                                                                                           |                                                                                                                     |
-|                     |         | -   發病日: Onset date                                                                                                    |                                                                                                                     |
-|                     |         |                                                                                                                           |                                                                                                                     |
-|                     |         | -   最小統計區中心點X: x-coordinate                                                                                       |                                                                                                                     |
-|                     |         |                                                                                                                           |                                                                                                                     |
-|                     |         | -   最小統計區中心點Y: y-coordinate                                                                                       |                                                                                                                     |
-+---------------------+---------+---------------------------------------------------------------------------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------+
++---------------------+--------+---------------------------------------------------------------------------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------+
+| Data                | Format | Description                                                                                                               | Source                                                                                                              |
++=====================+========+===========================================================================================================================+=====================================================================================================================+
+| TAIWAN_VILLAGE_2020 | ESRI   | A Geospatial data of village boundary of Taiwan. The data is in Taiwan Geographic Coordinate System.                      | [Historical map data of the village boundary: TWD97 longitude and latitude](https://data.gov.tw/en/datasets/130549) |
++---------------------+--------+---------------------------------------------------------------------------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------+
+| Dengue_Daily.csv    | CSV    | An Aspatial data of reported dengue cases in Taiwan since 1998. Below are selected fields that are useful for this study: | [Dengue Daily Confirmed Cases Since 1998](https://data.cdc.gov.tw/en/dataset/dengue-daily-determined-cases-1998)    |
+|                     |        |                                                                                                                           |                                                                                                                     |
+|                     |        | -   發病日: Onset date                                                                                                    |                                                                                                                     |
+|                     |        |                                                                                                                           |                                                                                                                     |
+|                     |        | -   最小統計區中心點X: x-coordinate                                                                                       |                                                                                                                     |
+|                     |        |                                                                                                                           |                                                                                                                     |
+|                     |        | -   最小統計區中心點Y: y-coordinate                                                                                       |                                                                                                                     |
++---------------------+--------+---------------------------------------------------------------------------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------+
 
 # 4.0 Data Wrangling
 
@@ -421,19 +421,13 @@ lisa <- wm_q %>%
 
 The output of `local_moran()` is a sf data.frame containing some of the following columns:
 
-+-------------+-------------------------------------------------------------------------+
-| Column      | Description                                                             |
-+=============+=========================================================================+
-| ii          | Local Moran statistic                                                   |
-+-------------+-------------------------------------------------------------------------+
-| eii         | Expected Local Moran statistic; or the permutation sample mean          |
-+-------------+-------------------------------------------------------------------------+
-| var_ii      | Variance of Local Moran statistic; or the permutation sample deviations |
-+-------------+-------------------------------------------------------------------------+
-| z_ii        | Standard deviate of Local Moran statistic                               |
-+-------------+-------------------------------------------------------------------------+
-| p_ii        | p-value of Local Moran statistic using pnorm()                          |
-+-------------+-------------------------------------------------------------------------+
+| Column | Description                                                             |
+|--------|-------------------------------------------------------------------------|
+| ii     | Local Moran statistic                                                   |
+| eii    | Expected Local Moran statistic; or the permutation sample mean          |
+| var_ii | Variance of Local Moran statistic; or the permutation sample deviations |
+| z_ii   | Standard deviate of Local Moran statistic                               |
+| p_ii   | p-value of Local Moran statistic using pnorm()                          |
 
 ## 6.2 Visualizing Local Moran's I
 
@@ -530,7 +524,7 @@ ggplot(data = ehsa_counts,
 
 ```
 
-## 7.3 Visualizing EHSA 
+## 7.3 Visualizing EHSA
 
 We first need to join both our `study_area_sf` (polygon boundaries) and `ehsa` data together.
 
