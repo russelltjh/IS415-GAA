@@ -1880,14 +1880,14 @@
     "href": "Project/Project_Proposal.html",
     "title": "Enhancing Urban Living: A Geospatial Analysis of Accessibility in Singapore",
     "section": "",
-    "text": "Russell Tio Junhao (01376735)\nQi Yang\nGlenn"
+    "text": "Russell Tio Junhao (01376735)\nQi Yang\nHam Yan Choon Glenn (01368310)"
   },
   {
     "objectID": "Project/Project_Proposal.html#context",
     "href": "Project/Project_Proposal.html#context",
     "title": "Enhancing Urban Living: A Geospatial Analysis of Accessibility in Singapore",
     "section": "Context",
-    "text": "Context\nFor the HDB transactions, we have obtained a dataset from Kaggle which has transactions of HDBs in different regions from dates 2012 to 2023. \nSource: https://www.kaggle.com/datasets/syrahmadi/resale-hdb-flat-prices-2000-2022"
+    "text": "Context\nFor the HDB transactions, we can obtain the Resale Flat Prices directly from data.gov.sg. The data contains transactions from 1990 to present.\nSource: data.gov.sg"
   },
   {
     "objectID": "Project/Project_Proposal.html#analysis",
