@@ -21,7 +21,7 @@ date-modified: "last-modified"
 
 -   Qi Yang
 
--   Glenn
+-   Ham Yan Choon Glenn (01368310)
 
 # Introduction and Motivation
 
@@ -57,9 +57,9 @@ The project will adopt a multi-faceted approach to analyze accessibility in Sing
 
 ## Context
 
-For the HDB transactions, we have obtained a dataset from Kaggle which has transactions of HDBs in different regions from dates 2012 to 2023. 
+For the HDB transactions, we can obtain the Resale Flat Prices directly from data.gov.sg. The data contains transactions from 1990 to present.
 
-Source: https://www.kaggle.com/datasets/syrahmadi/resale-hdb-flat-prices-2000-2022
+Source: [data.gov.sg](https://beta.data.gov.sg/collections/189/datasets/d_8b84c4ee58e3cfc0ece0d773c8ca6abc/view)
 
 ## Analysis
 
