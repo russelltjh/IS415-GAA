@@ -1,0 +1,103 @@
+---
+title: "Modelling Geographic Accessibility"
+subtitle: "Hands-on Exercise 10"
+execute:
+  eval: true
+  echo: true
+  freeze: true
+  warning: False  # This turns off warning messages being displayed
+date: 17 March, 2024
+date-modified: "last-modified"
+---
+
+# 1 Introduction
+
+In this hands-on exercise, you will gain hands-on experience on how to model geographical accessibility by using R’s geospatial analysis packages.
+
+## 1.1 Learning Outcome
+
+By the end of this hands-on exercise, you will be able:
+
+-   to import GIS polygon data into R and save them as simple feature data frame by using appropriate functions of sf package of R;
+
+-   to import aspatial data into R and save them as simple feature data frame by using appropriate functions of sf package of R;
+
+-   to computer accessibility measure by using Hansen’s potential model and Spatial Accessibility Measure (SAM); and
+
+-   to visualise the accessibility measures by using tmap and ggplot2 packages.
+
+# 2 The data
+
+Four data sets will be used in this hands-on exercise, they are:
+
+-   `MP14_SUBZONE_NO_SEA_PL`: URA Master Plan 2014 subzone boundary GIS data. This data set is downloaded from data.gov.sg.
+
+-   `hexagons`: A 250m radius hexagons GIS data. This data set was created by using [*st_make_grid()*](https://r-spatial.github.io/sf/reference/st_make_grid.html) of sf package. It is in ESRI shapefile format.
+
+-   `ELDERCARE`: GIS data showing location of eldercare service. [This data](https://data.gov.sg/dataset/eldercare-services) is downloaded from data.gov.sg. There are two versions. One in ESRI shapefile format. The other one in Google kml file format. For the purpose of this hands-on exercise, ESRI shapefile format is provided.
+
+-   `OD_Matrix`: a distance matrix in csv format. There are six fields in the data file. They are:
+
+    -   `origin_id`: the unique id values of the origin (i.e. `fid` of hexagon data set.),
+
+    -   `destination_id`: the unique id values of the destination (i.e. `fid` of `ELDERCARE` data set.),
+
+    -   `entry_cost`: the perpendicular distance between the origins and the nearest road),
+
+    -   `network_cost`: the actual network distance from the origin and destination,
+
+    -   `exit_cost`: the perpendicular distance between the destination and the nearest road), and
+
+    -   `total_cost`: the summation of `entry_cost`, `network_cost` and `exit_cost`.
+
+All the values of the cost related fields are in **metres**.
+
+**Reminder:** *Except `MP14_SUBZONE_NO_SEA_PL` data set, the other three data set are specially prepared by Prof. Kam for teaching and research purpose. Students taking IS415 Geospatial Analytics and Applications are allowed to use them for hands-on exercise purpose. Please obtain formal approval from Prof. Kam if you want to use them for other courses or usage.*
+
+# 3 Getting Started
+
+Before we getting started, it is important for us to install the necessary R packages and launch them into RStudio environment.
+
+The R packages need for this exercise are as follows:
+
+-   Spatial data handling
+
+    -   sf
+
+-   Modelling geographical accessibility
+
+    -   spatialAcc
+
+-   Attribute data handling
+
+    -   tidyverse, especially readr and dplyr
+
+-   thematic mapping
+
+    -   tmap
+
+-   Staistical graphic
+
+    -   ggplot2
+
+-   Statistical analysis
+
+    -   ggstatsplot
+
+The code chunk below installs and launches these R packages into RStudio environment.
+
+```{r}
+pacman::p_load(tmap, SpatialAcc, sf, 
+               ggstatsplot, reshape2,
+               tidyverse)
+```
+
+Notice that with tidyverse, we do not have to install readr, dplyr and ggplots packages separately. In fact, tidyverse also installs other R packages such as tidyr, stringr, forcats, tibble, purrr and magrittr.
+
+# 4 Geospatial Data Wrangling
+
+## 4.1 Importing geospatial data
+
+Three geospatial data will be imported from the *data/geospatial* sub-folder. They are MP14_SUBZONE_NO_SEA_PL, hexagons and ELDERCARE.
+
+The code chunk below is used to import these three data sets shapefile by using *st_read()* of **sf** packages.
