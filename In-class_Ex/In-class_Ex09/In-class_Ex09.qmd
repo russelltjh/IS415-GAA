@@ -1,0 +1,313 @@
+---
+title: "Geographically Weighted Predictive Models"
+subtitle: "In-class Exercise 9"
+execute:
+  eval: true
+  echo: true
+  freeze: true
+  warning: False  # This turns off warning messages being displayed
+date: 17 March, 2024
+date-modified: "last-modified"
+---
+
+# Installing and Loading R packages
+
+```{r}
+pacman::p_load(sf, spdep, GWmodel, 
+               SpatialML, tmap, 
+               tidymodels, tidyverse, 
+               gtsummary, 
+               rpart, rpart.plot, 
+               ggstatsplot, performance)
+```
+
+# Preparing Data
+
+## Reading Data
+
+```{r}
+rs_sf <- read_rds("data/rds/HDB_resale.rds")
+```
+
+```{r}
+rs_sf
+```
+
+## Data Sampling
+
+We will split the data into 50% training and 50% testing.
+
+```{r}
+#| eval: false
+set.seed(1234) # Set seed to keep the sample consistent
+resale_split <- initial_split(
+  rs_sf,
+  prop=5/10,)
+train_sf <- training(resale_split)
+test_sf <- testing(resale_split)
+```
+
+```{r}
+#| echo: false
+#| eval: false
+write_rds(train_sf, "data/rds/train_sf.rds")
+write_rds(test_sf, "data/rds/test_sf.rds")
+```
+
+```{r}
+#| echo: false
+train_sf <- read_rds("data/rds/train_sf.rds")
+test_sf <- read_rds("data/rds/test_sf.rds")
+```
+
+From simple feature object, we drop the geometry, turning it into a tibble data.frame. We then turn it into a normal base R dataframe.
+
+```{r}
+#| eval: false
+train_df <- train_sf %>%
+  st_drop_geometry() %>%
+  as.data.frame()
+
+test_df <- test_sf %>%
+  st_drop_geometry() %>%
+  as.data.frame()
+```
+
+```{r}
+#| echo: false
+#| eval: false
+write_rds(train_df, "data/rds/train_df.rds")
+write_rds(test_df, "data/rds/test_df.rds")
+```
+
+```{r}
+#| echo: false
+train_df <- read_rds("data/rds/train_df.rds")
+test_df <- read_rds("data/rds/test_df.rds")
+```
+
+# EDA
+
+## Computing Correlation Matrix
+
+```{r}
+rs_df <- rs_sf %>%
+  st_drop_geometry() %>%
+  as.data.frame()
+
+ggcorrmat(rs_df[,2:17])
+```
+
+# Building a non-spatial multiple linear regression
+
+```{r}
+price_mlr <- lm(RESALE_PRICE ~ 
+                  FLOOR_AREA_SQM +
+                  STOREY_ORDER + 
+                  REMAINING_LEASE_MTHS +
+                  PROX_CBD + 
+                  PROX_ELDERLYCARE + 
+                  PROX_HAWKER +
+                  PROX_MRT + 
+                  PROX_PARK + 
+                  PROX_GOOD_PRISCH + 
+                  PROX_MALL + 
+                  PROX_CHAS +
+                  PROX_SUPERMARKET + 
+                  WITHIN_350M_KINDERGARTEN +
+                  WITHIN_350M_CHILDCARE + 
+                  WITHIN_350M_BUS +
+                  WITHIN_1KM_PRISCH,
+                data=train_df)
+summary(price_mlr)
+```
+
+## Revising mlr model
+
+We want to remove PROX_CHAS because it doesn't make sense logically to predict resale price with this variable.
+
+```{r}
+train_df <- train_df %>%
+  select(-c(PROX_CHAS)) # exclude this variable
+test_df <- test_df %>%
+  select(-c(PROX_CHAS))
+train_sf <- train_sf %>%
+  select(-c(PROX_CHAS))
+test_sf <- test_sf %>%
+  select(-c(PROX_CHAS))
+```
+
+```{r}
+price_mlr <- lm(RESALE_PRICE ~ 
+                  FLOOR_AREA_SQM +
+                  STOREY_ORDER + 
+                  REMAINING_LEASE_MTHS +
+                  PROX_CBD + 
+                  PROX_ELDERLYCARE + 
+                  PROX_HAWKER +
+                  PROX_MRT + 
+                  PROX_PARK + 
+                  PROX_GOOD_PRISCH + 
+                  PROX_MALL +
+                  PROX_SUPERMARKET + 
+                  WITHIN_350M_KINDERGARTEN +
+                  WITHIN_350M_CHILDCARE + 
+                  WITHIN_350M_BUS +
+                  WITHIN_1KM_PRISCH,
+                data=train_df)
+summary(price_mlr)
+```
+
+# ...
+
+Extract the x,y coordinates of the full, training and test data sets.
+
+```{r}
+coords <- st_coordinates(rs_sf)
+coords_train <- st_coordinates(train_sf)
+coords_test <- st_coordinates(test_sf)
+```
+
+Create recursive partitioning
+
+```{r}
+set.seed(1234)
+rs_rp <- rpart(
+  formula = RESALE_PRICE ~ 
+                  FLOOR_AREA_SQM +
+                  STOREY_ORDER + 
+                  REMAINING_LEASE_MTHS +
+                  PROX_CBD + 
+                  PROX_ELDERLYCARE + 
+                  PROX_HAWKER +
+                  PROX_MRT + 
+                  PROX_PARK + 
+                  PROX_GOOD_PRISCH + 
+                  PROX_MALL +
+                  PROX_SUPERMARKET + 
+                  WITHIN_350M_KINDERGARTEN +
+                  WITHIN_350M_CHILDCARE + 
+                  WITHIN_350M_BUS +
+                  WITHIN_1KM_PRISCH,
+                  data=train_df)
+rs_rp
+  
+```
+
+Let's visualize the recursive partitioning
+
+```{r}
+rpart.plot(rs_rp)
+```
+
+```{r}
+set.seed(1234)
+rs_rf <- ranger(
+  formula = RESALE_PRICE ~ 
+                  FLOOR_AREA_SQM +
+                  STOREY_ORDER + 
+                  REMAINING_LEASE_MTHS +
+                  PROX_CBD + 
+                  PROX_ELDERLYCARE + 
+                  PROX_HAWKER +
+                  PROX_MRT + 
+                  PROX_PARK + 
+                  PROX_GOOD_PRISCH + 
+                  PROX_MALL +
+                  PROX_SUPERMARKET + 
+                  WITHIN_350M_KINDERGARTEN +
+                  WITHIN_350M_CHILDCARE + 
+                  WITHIN_350M_BUS +
+                  WITHIN_1KM_PRISCH,
+                  data=train_df,
+                  importance="impurity") # need this line to get the variable importance in the output
+rs_rf
+```
+
+```{r}
+vi <- as.data.frame(rs_rf$variable.importance)
+vi$variables <- rownames(vi) # make it two columns, vi and variable name
+vi <- vi %>% 
+    rename(vi = "rs_rf$variable.importance")
+```
+
+```{r}
+ggplot(data = vi,
+       aes(x=vi,
+           y=reorder(variables, vi))) + # reorder() sorts the variables based on vi
+  geom_bar(stat="identity")
+```
+
+# Compare Model Performance
+
+### Saving predicted output of geographically weighted random forest and preparing final data table
+
+```{r}
+grf_pred <- read_rds("data/models/grf_pred.rds")
+grf_pred_df <- as.data.frame(grf_pred)
+```
+
+cbind() is used to append the predicted values onto the test_df
+
+```{r}
+test_pred <- test_df %>%
+  select(RESALE_PRICE) %>%
+  cbind(grf_pred_df)
+```
+
+### Saving predicted output of random forest and preparing final data table
+
+```{r}
+rf_pred <- predict(rs_rf, test_df)
+```
+
+```{r}
+rf_pred_df <- as.data.frame(rf_pred$predictions) %>%
+  rename(rf_pred = "rf_pred$predictions")
+```
+
+```{r}
+test_pred <- cbind(test_pred,rf_pred_df)
+```
+
+### Saving predicted output of multiple linear regression and preparing final data table
+
+```{r}
+rs_mlr <- read_rds("data/models/rs_mlr.rds")
+```
+
+```{r}
+mlr_pred <- predict(rs_mlr, test_df)
+```
+
+```{r}
+mlr_pred_df <- as.data.frame(mlr_pred) %>%
+  rename(mlr_pred = "mlr_pred")
+```
+
+```{r}
+test_pred <- cbind(test_pred,
+                   mlr_pred_df)
+```
+
+```{r}
+yardstick::rmse(test_pred,
+                RESALE_PRICE,
+                mlr_pred)
+```
+
+Transpose the table
+
+```{r}
+mc <- test_pred %>%
+  pivot_longer (cols = c(2:4),
+                names_to = "models",
+                values_to = "predicted")
+```
+
+```{r}
+mc %>%
+  group_by(models) %>%
+  yardstick::rmse(RESALE_PRICE,
+                  predicted)
+```
