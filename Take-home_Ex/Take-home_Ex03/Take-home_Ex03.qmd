@@ -1,0 +1,213 @@
+---
+title: "Application of Spatial and Spatio-temporal Analysis Methods to Discover the Distribution of Dengue Fever in Tainan City, Taiwan"
+subtitle: "Take-home_Ex03"
+format:
+  html:
+    code-fold: false
+    code-summary: "Show the code"
+    toc: true # Table of Contents
+execute:
+  eval: true
+  echo: true
+  freeze: true
+  warning: False  # This turns off warning messages being displayed
+date: 20 March, 2024
+date-modified: "last-modified"
+---
+
+# 1 Introduction
+
+# 2 The Data
+
+# 3 Getting Started
+
+```{r}
+pacman::p_load(tmap, SpatialAcc, sf, ggstatsplot, reshape2, tidyverse)
+```
+
+# 4 Data Wrangling
+
+## 4.1 Importing geospatial data
+
+```{r}
+mpsz <- st_read(dsn="data/geospatial", layer = "MP14_SUBZONE_NO_SEA_PL") %>%
+  st_transform(3414)
+```
+
+```{r}
+hexagons <- st_read(dsn = "data/geospatial", layer="hexagons") %>%
+  st_transform(3414)
+```
+
+## 4.2 Aspatial Data Wrangling
+
+```{r}
+schools <- read_csv("data/aspatial/school_coordinates.csv")
+```
+
+```{r}
+schools_sf <- st_as_sf(schools,
+                       coords = c("Longitude", "Latitude"),
+                       crs=4326) %>%
+  st_transform(3414)
+```
+
+```{r}
+schools_sf
+```
+
+## 4.3 Cleaning and updating attribute fields of the geospatial data
+
+```{r}
+schools_sf <- schools_sf %>% 
+  select(...1, SCHOOL) %>%
+  mutate(capacity = 100)
+```
+
+```{r}
+hexagons <- hexagons %>%
+  select(fid) %>%
+  mutate(demand = 100)
+```
+
+## 4.4 Getting centroid points from hexagon
+
+We need to get the centroid of the hexagon so that we can use it to calculate the euclidean distance from each school later.
+
+```{r}
+hexagon_points <- st_centroid(hexagons)
+```
+
+```{r}
+hexagon_points
+```
+
+## 4.5 Get Distance Matrix
+
+Based on the hexagon centroids and location of the schools, we will generate a distance matrix.
+
+```{r}
+distance_matrix <- st_distance(hexagon_points, schools_sf, by_element = FALSE) 
+head(distance_matrix, 3)
+```
+
+```{r}
+distance_matrix_km <- distance_matrix / 1000
+head(distance_matrix_km, 3)
+```
+
+```{r}
+distance_matrix_km_numeric <- matrix(as.numeric(distance_matrix_km), nrow = nrow(distance_matrix_km), ncol = ncol(distance_matrix_km))
+```
+
+# 5 Exploratory Data Analysis (EDA)
+
+Let's start by counting the number of schools in each region.
+
+```{r}
+mpsz$`Sch Count`<- lengths(st_intersects(mpsz, schools_sf))
+```
+
+To list the zone with the most number of schools:
+
+```{r}
+top_n(mpsz, 1, `Sch Count`)
+```
+
+We will also calculate the density of schools in that area:
+
+```{r}
+mpsz$Area <- mpsz %>%
+  st_area()
+
+mpsz <- mpsz %>%
+  mutate(`Sch Density` = `Sch Count`/Area *1000000)
+```
+
+```{r}
+ggplot(data=mpsz, 
+       aes(x= as.numeric(`Sch Density`)))+
+  geom_histogram(bins=10, 
+                 color="black", 
+                 fill="light blue") +
+  labs(title = "Are schools evenly distributed in Singapore?",
+       subtitle= "Most sub-zones only have one school.",
+      x = "School density (per km sq)",
+      y = "Frequency")
+```
+
+# 7 Modelling and Visualizing Accessibility using Hansen Method
+
+# 7.1 Computing Hansen's Accessibility
+
+```{r}
+acc_Hansen <- data.frame(ac(hexagons$demand,
+                            schools_sf$capacity,
+                            D = distance_matrix_km_numeric, 
+                            d0 = 50,
+                            power = 2, 
+                            family = "Hansen"))
+```
+
+We will rename the default field name.
+
+```{r}
+colnames(acc_Hansen) <- "accHansen"
+acc_Hansen <- as_tibble(acc_Hansen)
+```
+
+Now, we will bind the acc_Hansen tibble data frame with the hexagons simple feature data frame.
+
+```{r}
+hexagon_Hansen <- bind_cols(hexagons, acc_Hansen)
+```
+
+## 7.2 Visualizing Hansen's Accessibility
+
+### 7.2.1 Extracting Map Extend
+
+```{r}
+mapex <- st_bbox(hexagons)
+```
+
+```{r}
+tmap_mode("plot")
+tm_shape(hexagon_Hansen,
+         bbox = mapex) + 
+  tm_fill(col = "accHansen",
+          n = 10,
+          style = "quantile",
+          border.col = "black",
+          border.lwd = 1) +
+tm_shape(schools_sf) +
+  tm_symbols(size = 0.1) +
+  tm_layout(main.title = "Accessibility to Schools: Hansen method",
+            main.title.position = "center",
+            main.title.size = 2,
+            legend.outside = FALSE,
+            legend.height = 0.45, 
+            legend.width = 3.0,
+            legend.format = list(digits = 6),
+            legend.position = c("right", "top"),
+            frame = TRUE) +
+  tm_compass(type="8star", size = 2) +
+  tm_scale_bar(width = 0.15) +
+  tm_grid(lwd = 0.1, alpha = 0.5)
+```
+
+## 7.3 Statistical Graphic Visualization
+
+```{r}
+hexagon_Hansen <- st_join(hexagon_Hansen, mpsz, join = st_intersects)
+```
+
+```{r}
+ggplot(data=hexagon_Hansen, 
+       aes(y = log(accHansen), 
+           x= REGION_N)) +
+  geom_boxplot() +
+  geom_point(stat="summary", 
+             fun.y="mean", 
+             colour ="red", 
+             size=2)
+```
