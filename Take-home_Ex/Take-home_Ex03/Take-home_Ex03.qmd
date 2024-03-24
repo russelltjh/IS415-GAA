@@ -1,5 +1,5 @@
 ---
-title: "Application of Spatial and Spatio-temporal Analysis Methods to Discover the Distribution of Dengue Fever in Tainan City, Taiwan"
+title: "Prototyping Modules for Geospatial Analytics Shiny Application"
 subtitle: "Take-home_Ex03"
 format:
   html:
@@ -17,7 +17,41 @@ date-modified: "last-modified"
 
 # 1 Introduction
 
+## 1.1 The Objective
+
+The purpose of this is to choose a module of the proposed Geospatial Analytics Shiny Application and complete the following tasks:
+
+-   To evaluate and determine the necessary R packages needed for the Shiny application are supported in R CRAN
+
+-   To prepare and test the specific R codes can be run and return the correct output as expected
+
+-   To determine the parameters and outputs that will be exposed on the Shiny applications
+
+-   To select the appropriate Shiny UI components for exposing the parameters determined above
+
+## 1.2 The Selected Module
+
+The module that I have chosen to work on is "Modeling Geographic Accessibility". The following chapters will show the code used for this module and its output.
+
+The purpose of this module is to map out the **geographic accessibility of different regions in Singapore, taking into account various amenities**, such as schools, MRT stations, malls, supermarkets and hawkers.
+
 # 2 The Data
+
+The data we have chosen has been compiled from multiple sources. For each amenity type, we have alist of names that have been web-scrapped or manually collected from the internet (e.g. school names from MOE). The list of names will then be put through a python API ([onemapsg](https://pypi.org/project/onemapsg/)) which will take a location name as input and output its coordinates in WGS84 format.
+
+The dataset consists of various location names and coordinates under these amenities types:
+
+-   Schools (Pri, Sec, JC, Poly, ITE, Kindergarten)
+-   MRT
+-   Malls
+-   Supermarket
+-   Hawkers
+
+We will also be using:
+
+-   `MP14_SUBZONE_NO_SEA_PL`: URA Master Plan 2014 subzone boundary GIS data. This data set is downloaded from data.gov.sg.
+
+-   `hexagons`: A 250m radius hexagons GIS data. This data set was created by using [*st_make_grid()*](https://r-spatial.github.io/sf/reference/st_make_grid.html) of sf package. It is in ESRI shapefile format.
 
 # 3 Getting Started
 
@@ -28,6 +62,8 @@ pacman::p_load(tmap, SpatialAcc, sf, ggstatsplot, reshape2, tidyverse)
 # 4 Data Wrangling
 
 ## 4.1 Importing geospatial data
+
+We will import the: `mpsz` and `hexagons` data and make sure that it is in the correct format.
 
 ```{r}
 mpsz <- st_read(dsn="data/geospatial", layer = "MP14_SUBZONE_NO_SEA_PL") %>%
@@ -41,11 +77,12 @@ hexagons <- st_read(dsn = "data/geospatial", layer="hexagons") %>%
 
 ## 4.2 Aspatial Data Wrangling
 
-```{r}
-schools <- read_csv("data/aspatial/school_coordinates.csv")
-```
+We will import the amenities data based on type.
+
+### 4.2.1 Schools Data
 
 ```{r}
+schools <- read_csv("data/aspatial/school_coordinates.csv")
 schools_sf <- st_as_sf(schools,
                        coords = c("Longitude", "Latitude"),
                        crs=4326) %>%
@@ -56,11 +93,81 @@ schools_sf <- st_as_sf(schools,
 schools_sf
 ```
 
+### 4.2.2 MRT Data
+
+```{r}
+MRT <- read_csv("data/aspatial/MRT_coordinates.csv")
+MRT_sf <- st_as_sf(MRT,
+                       coords = c("Longitude", "Latitude"),
+                       crs=4326) %>%
+  st_transform(3414)
+```
+
+```{r}
+MRT_sf
+```
+
+### 4.2.3 Mall Data
+
+```{r}
+mall <- read_csv("data/aspatial/mall_coordinates.csv")
+mall_sf <- st_as_sf(mall,
+                       coords = c("Longitude", "Latitude"),
+                       crs=4326) %>%
+  st_transform(3414)
+```
+
+```{r}
+mall_sf
+```
+
+### 4.2.4 Supermarket Data
+
+```{r}
+supermarket <- read_csv("data/aspatial/supermarket_coordinates.csv")
+supermarket_sf <- st_as_sf(supermarket,
+                       coords = c("Longitude", "Latitude"),
+                       crs=4326) %>%
+  st_transform(3414)
+```
+
+```{r}
+supermarket_sf
+```
+
+### 4.2.5 Hawker Data
+
+```{r}
+hawker <- read_csv("data/aspatial/hawker_coordinates.csv")
+hawker_sf <- st_as_sf(hawker,
+                       coords = c("Longitude", "Latitude"),
+                       crs=4326) %>%
+  st_transform(3414)
+```
+
+```{r}
+hawker_sf
+```
+
 ## 4.3 Cleaning and updating attribute fields of the geospatial data
+
+For each amenity, we will specify the capacity, for each hexagon, we will specify the demand.
 
 ```{r}
 schools_sf <- schools_sf %>% 
-  select(...1, SCHOOL) %>%
+  select(...1, SCHOOL, TYPE) %>%
+  mutate(capacity = 100)
+
+MRT_sf <- MRT_sf %>%
+  mutate(capacity = 100)
+
+mall_sf <- mall_sf %>%
+  mutate(capacity = 100)
+
+supermarket_sf <- supermarket_sf %>%
+  mutate(capacity = 100)
+
+hawker_sf <- hawker_sf %>%
   mutate(capacity = 100)
 ```
 
@@ -72,7 +179,7 @@ hexagons <- hexagons %>%
 
 ## 4.4 Getting centroid points from hexagon
 
-We need to get the centroid of the hexagon so that we can use it to calculate the euclidean distance from each school later.
+We need to get the centroid of the hexagon so that we can use it to calculate the euclidean distance from each amenity location later.
 
 ```{r}
 hexagon_points <- st_centroid(hexagons)
@@ -86,18 +193,44 @@ hexagon_points
 
 Based on the hexagon centroids and location of the schools, we will generate a distance matrix.
 
-```{r}
-distance_matrix <- st_distance(hexagon_points, schools_sf, by_element = FALSE) 
-head(distance_matrix, 3)
-```
+### 4.5.1 Schools Distance Matrix
 
 ```{r}
-distance_matrix_km <- distance_matrix / 1000
-head(distance_matrix_km, 3)
+schools_distance_matrix <- st_distance(hexagon_points, schools_sf, by_element = FALSE) 
+schools_distance_matrix_km <- schools_distance_matrix / 1000 
+schools_distance_matrix_km <- matrix(as.numeric(schools_distance_matrix_km), nrow = nrow(schools_distance_matrix_km), ncol = ncol(schools_distance_matrix_km))
 ```
 
+### 4.5.2 MRT Distance Matrix
+
 ```{r}
-distance_matrix_km_numeric <- matrix(as.numeric(distance_matrix_km), nrow = nrow(distance_matrix_km), ncol = ncol(distance_matrix_km))
+MRT_distance_matrix <- st_distance(hexagon_points, MRT_sf, by_element = FALSE) 
+MRT_distance_matrix_km <- MRT_distance_matrix / 1000 
+MRT_distance_matrix_km <- matrix(as.numeric(MRT_distance_matrix_km), nrow = nrow(MRT_distance_matrix_km), ncol = ncol(MRT_distance_matrix_km))
+```
+
+### 4.5.3 Mall Distance Matrix
+
+```{r}
+mall_distance_matrix <- st_distance(hexagon_points, mall_sf, by_element = FALSE) 
+mall_distance_matrix_km <- mall_distance_matrix / 1000 
+mall_distance_matrix_km <- matrix(as.numeric(mall_distance_matrix_km), nrow = nrow(mall_distance_matrix_km), ncol = ncol(mall_distance_matrix_km))
+```
+
+### 4.5.4 Supermarket Distance Matrix
+
+```{r}
+supermarket_distance_matrix <- st_distance(hexagon_points, supermarket_sf, by_element = FALSE) 
+supermarket_distance_matrix_km <- supermarket_distance_matrix / 1000 
+supermarket_distance_matrix_km <- matrix(as.numeric(supermarket_distance_matrix_km), nrow = nrow(supermarket_distance_matrix_km), ncol = ncol(supermarket_distance_matrix_km))
+```
+
+### 4.5.5 Hawker Distance Matrix
+
+```{r}
+hawker_distance_matrix <- st_distance(hexagon_points, hawker_sf, by_element = FALSE) 
+hawker_distance_matrix_km <- hawker_distance_matrix / 1000 
+hawker_distance_matrix_km <- matrix(as.numeric(hawker_distance_matrix_km), nrow = nrow(hawker_distance_matrix_km), ncol = ncol(hawker_distance_matrix_km))
 ```
 
 # 5 Exploratory Data Analysis (EDA)
@@ -136,45 +269,98 @@ ggplot(data=mpsz,
       y = "Frequency")
 ```
 
-# 7 Modelling and Visualizing Accessibility using Hansen Method
+# 7 Analyze Accessibility using Hansen Method
 
-# 7.1 Computing Hansen's Accessibility
+## 7.1 Computing Hansen's Accessibility
+
+### 7.1.1 School Hansen's Accessibility
 
 ```{r}
-acc_Hansen <- data.frame(ac(hexagons$demand,
+schools_acc_Hansen <- data.frame(ac(hexagons$demand,
                             schools_sf$capacity,
-                            D = distance_matrix_km_numeric, 
+                            D = schools_distance_matrix_km, 
                             d0 = 50,
                             power = 2, 
                             family = "Hansen"))
+colnames(schools_acc_Hansen) <- "schools_accHansen"
+schools_acc_Hansen <- as_tibble(schools_acc_Hansen)
 ```
 
-We will rename the default field name.
+### 7.1.2 MRT Hansen's Accessibility
 
 ```{r}
-colnames(acc_Hansen) <- "accHansen"
-acc_Hansen <- as_tibble(acc_Hansen)
+MRT_acc_Hansen <- data.frame(ac(hexagons$demand,
+                            MRT_sf$capacity,
+                            D = MRT_distance_matrix_km, 
+                            d0 = 50,
+                            power = 2, 
+                            family = "Hansen"))
+colnames(MRT_acc_Hansen) <- "MRT_accHansen"
+MRT_acc_Hansen <- as_tibble(MRT_acc_Hansen)
 ```
 
-Now, we will bind the acc_Hansen tibble data frame with the hexagons simple feature data frame.
+### 7.1.3 Mall Hansen's Accessibility
 
 ```{r}
-hexagon_Hansen <- bind_cols(hexagons, acc_Hansen)
+mall_acc_Hansen <- data.frame(ac(hexagons$demand,
+                            mall_sf$capacity,
+                            D = mall_distance_matrix_km, 
+                            d0 = 50,
+                            power = 2, 
+                            family = "Hansen"))
+colnames(mall_acc_Hansen) <- "mall_accHansen"
+mall_acc_Hansen <- as_tibble(mall_acc_Hansen)
+```
+
+### 7.1.4 Supermarket Hansen's Accessibility
+
+```{r}
+supermarket_acc_Hansen <- data.frame(ac(hexagons$demand,
+                            supermarket_sf$capacity,
+                            D = supermarket_distance_matrix_km, 
+                            d0 = 50,
+                            power = 2, 
+                            family = "Hansen"))
+colnames(supermarket_acc_Hansen) <- "supermarket_accHansen"
+supermarket_acc_Hansen <- as_tibble(supermarket_acc_Hansen)
+```
+
+### 7.1.5 Hawker Hansen's Accessibility
+
+```{r}
+hawker_acc_Hansen <- data.frame(ac(hexagons$demand,
+                            hawker_sf$capacity,
+                            D = hawker_distance_matrix_km, 
+                            d0 = 50,
+                            power = 2, 
+                            family = "Hansen"))
+colnames(hawker_acc_Hansen) <- "hawker_accHansen"
+hawker_acc_Hansen <- as_tibble(hawker_acc_Hansen)
+```
+
+### 7.1.6 Combine all Hansen's Accessibility into one data frame
+
+Now, we will bind all the acc_Hansen tibble data frame with the hexagons simple feature data frame.
+
+```{r}
+hexagon_Hansen <- bind_cols(hexagons, schools_acc_Hansen, MRT_acc_Hansen, mall_acc_Hansen, supermarket_acc_Hansen, hawker_acc_Hansen)
 ```
 
 ## 7.2 Visualizing Hansen's Accessibility
-
-### 7.2.1 Extracting Map Extend
 
 ```{r}
 mapex <- st_bbox(hexagons)
 ```
 
+Plotting Hansen's Accessibility for all amenities
+
+### 7.2.1 Schools
+
 ```{r}
 tmap_mode("plot")
 tm_shape(hexagon_Hansen,
          bbox = mapex) + 
-  tm_fill(col = "accHansen",
+  tm_fill(col = "schools_accHansen",
           n = 10,
           style = "quantile",
           border.col = "black",
@@ -195,7 +381,117 @@ tm_shape(schools_sf) +
   tm_grid(lwd = 0.1, alpha = 0.5)
 ```
 
+### 7.2.2 MRTs
+
+```{r}
+tmap_mode("plot")
+tm_shape(hexagon_Hansen,
+         bbox = mapex) + 
+  tm_fill(col = "MRT_accHansen",
+          n = 10,
+          style = "quantile",
+          border.col = "black",
+          border.lwd = 1) +
+tm_shape(MRT_sf) +
+  tm_symbols(size = 0.1) +
+  tm_layout(main.title = "Accessibility to MRTs: Hansen method",
+            main.title.position = "center",
+            main.title.size = 2,
+            legend.outside = FALSE,
+            legend.height = 0.45, 
+            legend.width = 3.0,
+            legend.format = list(digits = 6),
+            legend.position = c("right", "top"),
+            frame = TRUE) +
+  tm_compass(type="8star", size = 2) +
+  tm_scale_bar(width = 0.15) +
+  tm_grid(lwd = 0.1, alpha = 0.5)
+```
+
+### 7.2.3 Malls
+
+```{r}
+tmap_mode("plot")
+tm_shape(hexagon_Hansen,
+         bbox = mapex) + 
+  tm_fill(col = "mall_accHansen",
+          n = 10,
+          style = "quantile",
+          border.col = "black",
+          border.lwd = 1) +
+tm_shape(mall_sf) +
+  tm_symbols(size = 0.1) +
+  tm_layout(main.title = "Accessibility to Malls: Hansen method",
+            main.title.position = "center",
+            main.title.size = 2,
+            legend.outside = FALSE,
+            legend.height = 0.45, 
+            legend.width = 3.0,
+            legend.format = list(digits = 6),
+            legend.position = c("right", "top"),
+            frame = TRUE) +
+  tm_compass(type="8star", size = 2) +
+  tm_scale_bar(width = 0.15) +
+  tm_grid(lwd = 0.1, alpha = 0.5)
+```
+
+### 7.2.4 Supermarkets
+
+```{r}
+tmap_mode("plot")
+tm_shape(hexagon_Hansen,
+         bbox = mapex) + 
+  tm_fill(col = "supermarket_accHansen",
+          n = 10,
+          style = "quantile",
+          border.col = "black",
+          border.lwd = 1) +
+tm_shape(supermarket_sf) +
+  tm_symbols(size = 0.1) +
+  tm_layout(main.title = "Accessibility to Supermarkets: Hansen method",
+            main.title.position = "center",
+            main.title.size = 2,
+            legend.outside = FALSE,
+            legend.height = 0.45, 
+            legend.width = 3.0,
+            legend.format = list(digits = 6),
+            legend.position = c("right", "top"),
+            frame = TRUE) +
+  tm_compass(type="8star", size = 2) +
+  tm_scale_bar(width = 0.15) +
+  tm_grid(lwd = 0.1, alpha = 0.5)
+```
+
+### 7.2.5 Hawkers
+
+```{r}
+tmap_mode("plot")
+tm_shape(hexagon_Hansen,
+         bbox = mapex) + 
+  tm_fill(col = "hawker_accHansen",
+          n = 10,
+          style = "quantile",
+          border.col = "black",
+          border.lwd = 1) +
+tm_shape(hawker_sf) +
+  tm_symbols(size = 0.1) +
+  tm_layout(main.title = "Accessibility to Hawkers: Hansen method",
+            main.title.position = "center",
+            main.title.size = 2,
+            legend.outside = FALSE,
+            legend.height = 0.45, 
+            legend.width = 3.0,
+            legend.format = list(digits = 6),
+            legend.position = c("right", "top"),
+            frame = TRUE) +
+  tm_compass(type="8star", size = 2) +
+  tm_scale_bar(width = 0.15) +
+  tm_grid(lwd = 0.1, alpha = 0.5)
+```
+
 ## 7.3 Statistical Graphic Visualization
+
+Now, let's show an example of how the code will look when using a more statistical visualization.
 
 ```{r}
 hexagon_Hansen <- st_join(hexagon_Hansen, mpsz, join = st_intersects)
@@ -203,11 +499,508 @@ hexagon_Hansen <- st_join(hexagon_Hansen, mpsz, join = st_intersects)
 
 ```{r}
 ggplot(data=hexagon_Hansen, 
-       aes(y = log(accHansen), 
-           x= REGION_N)) +
+       aes(y = log(schools_accHansen), 
+           x = REGION_N)) +
   geom_boxplot() +
   geom_point(stat="summary", 
              fun.y="mean", 
              colour ="red", 
              size=2)
+```
+
+# 8 Analyze Accessibility using KD2SFCA Method
+
+## 8.1 Computing KD2SFCA's Accessibility
+
+### 8.1.1 School KD2SFCA's Accessibility
+
+```{r}
+schools_acc_KD2SFCA <- data.frame(ac(hexagons$demand,
+                            schools_sf$capacity,
+                            schools_distance_matrix_km,
+                            d0 = 50,
+                            power = 2, 
+                            family = "KD2SFCA"))
+
+colnames(schools_acc_KD2SFCA) <- "schools_accKD2SFCA"
+schools_acc_KD2SFCA <- as_tibble(schools_acc_KD2SFCA)
+```
+
+### 8.1.2 MRT KD2SFCA's Accessibility
+
+```{r}
+MRT_acc_KD2SFCA <- data.frame(ac(hexagons$demand,
+                            MRT_sf$capacity,
+                            MRT_distance_matrix_km,
+                            d0 = 50,
+                            power = 2, 
+                            family = "KD2SFCA"))
+
+colnames(MRT_acc_KD2SFCA) <- "MRT_accKD2SFCA"
+MRT_acc_KD2SFCA <- as_tibble(MRT_acc_KD2SFCA)
+```
+
+### 8.1.3 Mall KD2SFCA's Accessibility
+
+```{r}
+mall_acc_KD2SFCA <- data.frame(ac(hexagons$demand,
+                            mall_sf$capacity,
+                            mall_distance_matrix_km,
+                            d0 = 50,
+                            power = 2, 
+                            family = "KD2SFCA"))
+
+colnames(mall_acc_KD2SFCA) <- "mall_accKD2SFCA"
+mall_acc_KD2SFCA <- as_tibble(mall_acc_KD2SFCA)
+```
+
+### 8.1.4 Supermarket KD2SFCA's Accessibility
+
+```{r}
+supermarket_acc_KD2SFCA <- data.frame(ac(hexagons$demand,
+                            supermarket_sf$capacity,
+                            supermarket_distance_matrix_km,
+                            d0 = 50,
+                            power = 2, 
+                            family = "KD2SFCA"))
+
+colnames(supermarket_acc_KD2SFCA) <- "supermarket_accKD2SFCA"
+supermarket_acc_KD2SFCA <- as_tibble(supermarket_acc_KD2SFCA)
+```
+
+### 8.1.5 Hawker KD2SFCA's Accessibility
+
+```{r}
+hawker_acc_KD2SFCA <- data.frame(ac(hexagons$demand,
+                            hawker_sf$capacity,
+                            hawker_distance_matrix_km,
+                            d0 = 50,
+                            power = 2, 
+                            family = "KD2SFCA"))
+
+colnames(hawker_acc_KD2SFCA) <- "hawker_accKD2SFCA"
+hawker_acc_KD2SFCA <- as_tibble(hawker_acc_KD2SFCA)
+```
+
+### 8.1.1 Combine all KD2SFCA's Accessibility into one data frame
+
+```{r}
+hexagon_KD2SFCA <- bind_cols(hexagons, schools_acc_KD2SFCA, MRT_acc_KD2SFCA, mall_acc_KD2SFCA, supermarket_acc_KD2SFCA, hawker_acc_KD2SFCA)
+```
+
+## 8.2 Visualizing KD2SFCA's Accessibility
+
+Plotting KD2SFCA's Accessibility for all amenities
+
+### 8.2.1 Schools
+
+```{r}
+tmap_mode("plot")
+tm_shape(hexagon_KD2SFCA,
+         bbox = mapex) + 
+  tm_fill(col = "schools_accKD2SFCA",
+          n = 10,
+          style = "quantile",
+          palette="Greens",
+          border.col = "black",
+          border.lwd = 1) +
+tm_shape(schools_sf) +
+  tm_symbols(size = 0.1) +
+  tm_layout(main.title = "Accessibility to Schools: KD2SFCA method",
+            main.title.position = "center",
+            main.title.size = 2,
+            legend.outside = FALSE,
+            legend.height = 0.45, 
+            legend.width = 3.0,
+            legend.format = list(digits = 6),
+            legend.position = c("right", "top"),
+            frame = TRUE) +
+  tm_compass(type="8star", size = 2) +
+  tm_scale_bar(width = 0.15) +
+  tm_grid(lwd = 0.1, alpha = 0.5)
+```
+
+### 8.2.2 MRTs
+
+```{r}
+tmap_mode("plot")
+tm_shape(hexagon_KD2SFCA,
+         bbox = mapex) + 
+  tm_fill(col = "MRT_accKD2SFCA",
+          n = 10,
+          style = "quantile",
+          palette="Greens",
+          border.col = "black",
+          border.lwd = 1) +
+tm_shape(MRT_sf) +
+  tm_symbols(size = 0.1) +
+  tm_layout(main.title = "Accessibility to MRT: KD2SFCA method",
+            main.title.position = "center",
+            main.title.size = 2,
+            legend.outside = FALSE,
+            legend.height = 0.45, 
+            legend.width = 3.0,
+            legend.format = list(digits = 6),
+            legend.position = c("right", "top"),
+            frame = TRUE) +
+  tm_compass(type="8star", size = 2) +
+  tm_scale_bar(width = 0.15) +
+  tm_grid(lwd = 0.1, alpha = 0.5)
+```
+
+### 8.2.3 Malls
+
+```{r}
+tmap_mode("plot")
+tm_shape(hexagon_KD2SFCA,
+         bbox = mapex) + 
+  tm_fill(col = "mall_accKD2SFCA",
+          n = 10,
+          style = "quantile",
+          palette="Greens",
+          border.col = "black",
+          border.lwd = 1) +
+tm_shape(mall_sf) +
+  tm_symbols(size = 0.1) +
+  tm_layout(main.title = "Accessibility to Malls: KD2SFCA method",
+            main.title.position = "center",
+            main.title.size = 2,
+            legend.outside = FALSE,
+            legend.height = 0.45, 
+            legend.width = 3.0,
+            legend.format = list(digits = 6),
+            legend.position = c("right", "top"),
+            frame = TRUE) +
+  tm_compass(type="8star", size = 2) +
+  tm_scale_bar(width = 0.15) +
+  tm_grid(lwd = 0.1, alpha = 0.5)
+```
+
+### 8.2.4 Supermarkets
+
+```{r}
+tmap_mode("plot")
+tm_shape(hexagon_KD2SFCA,
+         bbox = mapex) + 
+  tm_fill(col = "supermarket_accKD2SFCA",
+          n = 10,
+          style = "quantile",
+          palette="Greens",
+          border.col = "black",
+          border.lwd = 1) +
+tm_shape(supermarket_sf) +
+  tm_symbols(size = 0.1) +
+  tm_layout(main.title = "Accessibility to Supermarkets: KD2SFCA method",
+            main.title.position = "center",
+            main.title.size = 2,
+            legend.outside = FALSE,
+            legend.height = 0.45, 
+            legend.width = 3.0,
+            legend.format = list(digits = 6),
+            legend.position = c("right", "top"),
+            frame = TRUE) +
+  tm_compass(type="8star", size = 2) +
+  tm_scale_bar(width = 0.15) +
+  tm_grid(lwd = 0.1, alpha = 0.5)
+```
+
+### 8.2.5 Hawkers
+
+```{r}
+tmap_mode("plot")
+tm_shape(hexagon_KD2SFCA,
+         bbox = mapex) + 
+  tm_fill(col = "hawker_accKD2SFCA",
+          n = 10,
+          style = "quantile",
+          palette="Greens",
+          border.col = "black",
+          border.lwd = 1) +
+tm_shape(hawker_sf) +
+  tm_symbols(size = 0.1) +
+  tm_layout(main.title = "Accessibility to Hawkers: KD2SFCA method",
+            main.title.position = "center",
+            main.title.size = 2,
+            legend.outside = FALSE,
+            legend.height = 0.45, 
+            legend.width = 3.0,
+            legend.format = list(digits = 6),
+            legend.position = c("right", "top"),
+            frame = TRUE) +
+  tm_compass(type="8star", size = 2) +
+  tm_scale_bar(width = 0.15) +
+  tm_grid(lwd = 0.1, alpha = 0.5)
+```
+
+# 9 Analyze Accessibility using Spatial Accessibility Measure (SAM) Method
+
+## 9.1 Computing SAM Accessibility
+
+### 9.1.1 School SAM Accessibility
+
+```{r}
+schools_acc_SAM <- data.frame(ac(hexagons$demand,
+                            schools_sf$capacity,
+                            D = schools_distance_matrix_km, 
+                            d0 = 50,
+                            power = 2, 
+                            family = "SAM"))
+colnames(schools_acc_SAM) <- "schools_accSAM"
+schools_acc_SAM <- as_tibble(schools_acc_SAM)
+```
+
+### 9.1.2 MRT SAM Accessibility
+
+```{r}
+MRT_acc_SAM <- data.frame(ac(hexagons$demand,
+                            MRT_sf$capacity,
+                            D = MRT_distance_matrix_km, 
+                            d0 = 50,
+                            power = 2, 
+                            family = "SAM"))
+colnames(MRT_acc_SAM) <- "MRT_accSAM"
+MRT_acc_SAM <- as_tibble(MRT_acc_SAM)
+```
+
+### 9.1.3 Mall SAM Accessibility
+
+```{r}
+mall_acc_SAM <- data.frame(ac(hexagons$demand,
+                            mall_sf$capacity,
+                            D = mall_distance_matrix_km, 
+                            d0 = 50,
+                            power = 2, 
+                            family = "SAM"))
+colnames(mall_acc_SAM) <- "mall_accSAM"
+mall_acc_SAM <- as_tibble(mall_acc_SAM)
+```
+
+### 9.1.4 Supermarket SAM Accessibility
+
+```{r}
+supermarket_acc_SAM <- data.frame(ac(hexagons$demand,
+                            supermarket_sf$capacity,
+                            D = supermarket_distance_matrix_km, 
+                            d0 = 50,
+                            power = 2, 
+                            family = "SAM"))
+colnames(supermarket_acc_SAM) <- "supermarket_accSAM"
+supermarket_acc_SAM <- as_tibble(supermarket_acc_SAM)
+```
+
+### 9.1.5 Hawker SAM Accessibility
+
+```{r}
+hawker_acc_SAM <- data.frame(ac(hexagons$demand,
+                            hawker_sf$capacity,
+                            D = hawker_distance_matrix_km, 
+                            d0 = 50,
+                            power = 2, 
+                            family = "SAM"))
+colnames(hawker_acc_SAM) <- "hawker_accSAM"
+hawker_acc_SAM <- as_tibble(hawker_acc_SAM)
+```
+
+### 9.1.6 Combine all SAM Accessibility into one data frame
+
+```{r}
+hexagon_SAM <- bind_cols(hexagons, schools_acc_SAM, MRT_acc_SAM, mall_acc_SAM, supermarket_acc_SAM, hawker_acc_SAM)
+```
+
+## 9.2 Visualizing SAM's Accessibility
+
+### 9.2.1 Schools
+
+```{r}
+tmap_mode("plot")
+tm_shape(hexagon_SAM,
+         bbox = mapex) + 
+  tm_fill(col = "schools_accSAM",
+          n = 10,
+          style = "quantile",
+          palette = "Blues",
+          border.col = "black",
+          border.lwd = 1) +
+tm_shape(schools_sf) +
+  tm_symbols(size = 0.1) +
+  tm_layout(main.title = "Accessibility to Schools: SAM method",
+            main.title.position = "center",
+            main.title.size = 2,
+            legend.outside = FALSE,
+            legend.height = 0.45, 
+            legend.width = 3.0,
+            legend.format = list(digits = 3),
+            legend.position = c("right", "top"),
+            frame = TRUE) +
+  tm_compass(type="8star", size = 2) +
+  tm_scale_bar(width = 0.15) +
+  tm_grid(lwd = 0.1, alpha = 0.5)
+```
+
+### 9.2.2 MRTs
+
+```{r}
+tmap_mode("plot")
+tm_shape(hexagon_SAM,
+         bbox = mapex) + 
+  tm_fill(col = "MRT_accSAM",
+          n = 10,
+          style = "quantile",
+          palette = "Blues",
+          border.col = "black",
+          border.lwd = 1) +
+tm_shape(MRT_sf) +
+  tm_symbols(size = 0.1) +
+  tm_layout(main.title = "Accessibility to MRTs: SAM method",
+            main.title.position = "center",
+            main.title.size = 2,
+            legend.outside = FALSE,
+            legend.height = 0.45, 
+            legend.width = 3.0,
+            legend.format = list(digits = 3),
+            legend.position = c("right", "top"),
+            frame = TRUE) +
+  tm_compass(type="8star", size = 2) +
+  tm_scale_bar(width = 0.15) +
+  tm_grid(lwd = 0.1, alpha = 0.5)
+```
+
+### 9.2.3 Malls
+
+```{r}
+tmap_mode("plot")
+tm_shape(hexagon_SAM,
+         bbox = mapex) + 
+  tm_fill(col = "mall_accSAM",
+          n = 10,
+          style = "quantile",
+          palette = "Blues",
+          border.col = "black",
+          border.lwd = 1) +
+tm_shape(mall_sf) +
+  tm_symbols(size = 0.1) +
+  tm_layout(main.title = "Accessibility to Malls: SAM method",
+            main.title.position = "center",
+            main.title.size = 2,
+            legend.outside = FALSE,
+            legend.height = 0.45, 
+            legend.width = 3.0,
+            legend.format = list(digits = 3),
+            legend.position = c("right", "top"),
+            frame = TRUE) +
+  tm_compass(type="8star", size = 2) +
+  tm_scale_bar(width = 0.15) +
+  tm_grid(lwd = 0.1, alpha = 0.5)
+```
+
+### 9.2.4 Supermarkets
+
+```{r}
+tmap_mode("plot")
+tm_shape(hexagon_SAM,
+         bbox = mapex) + 
+  tm_fill(col = "supermarket_accSAM",
+          n = 10,
+          style = "quantile",
+          palette = "Blues",
+          border.col = "black",
+          border.lwd = 1) +
+tm_shape(supermarket_sf) +
+  tm_symbols(size = 0.1) +
+  tm_layout(main.title = "Accessibility to Supermarkets: SAM method",
+            main.title.position = "center",
+            main.title.size = 2,
+            legend.outside = FALSE,
+            legend.height = 0.45, 
+            legend.width = 3.0,
+            legend.format = list(digits = 3),
+            legend.position = c("right", "top"),
+            frame = TRUE) +
+  tm_compass(type="8star", size = 2) +
+  tm_scale_bar(width = 0.15) +
+  tm_grid(lwd = 0.1, alpha = 0.5)
+```
+
+### 9.2.5 Hawkers
+
+```{r}
+tmap_mode("plot")
+tm_shape(hexagon_SAM,
+         bbox = mapex) + 
+  tm_fill(col = "hawker_accSAM",
+          n = 10,
+          style = "quantile",
+          palette = "Blues",
+          border.col = "black",
+          border.lwd = 1) +
+tm_shape(hawker_sf) +
+  tm_symbols(size = 0.1) +
+  tm_layout(main.title = "Accessibility to Hawkers: SAM method",
+            main.title.position = "center",
+            main.title.size = 2,
+            legend.outside = FALSE,
+            legend.height = 0.45, 
+            legend.width = 3.0,
+            legend.format = list(digits = 3),
+            legend.position = c("right", "top"),
+            frame = TRUE) +
+  tm_compass(type="8star", size = 2) +
+  tm_scale_bar(width = 0.15) +
+  tm_grid(lwd = 0.1, alpha = 0.5)
+```
+
+# 10 Shiny Application UI Design
+
+The proposed output of this module will be a dashboard of the all the accessibility heat maps. It will feature:
+
+-   A compilation of all 5 maps side-by-side.
+
+-   A filter for accessibility methods. To display by either Hansen, KD2SFCA or SAM method.
+
+-   A toggle to display only the selected Amenity type and all it's accessibility based on all methods. The statistical visualization (box plot) can also be shown alongside here.
+
+-   Possibly use another package with more interactive functions such as to show the details of each amenity point when hovering over it (such as the name of the school and its type)
+
+# 11 Interactive Maps for Dashboards
+
+Here, we experiment with plotting the School SAM accessibility scores on an interactive map that shows the amenity details when clicked on. Try clicking on the red points on the map, it should show the School name and Type.
+
+```{r}
+pacman::p_load(leaflet, scales, sf)
+```
+
+```{r}
+# Transform data into WGS84 since leaflet expects it
+schools_sf_wgs84 <- st_transform(schools_sf, 4326)
+hexagon_SAM_wgs84 <- st_transform(hexagon_SAM, 4326)
+
+
+# Function to assign colors based on quantiles
+assignColors <- function(x, n = 5, palette = "Blues") {
+  # Calculate quantiles
+  bins <- quantile(x, probs = seq(0, 1, length.out = n + 1), na.rm = TRUE)
+  # Create color palette
+  colors <- colorBin(palette = palette, domain = x, bins = bins, na.color = NA)(x)
+  return(colors)
+}
+
+# Apply the function to your accessibility scores
+hex_colors <- assignColors(hexagon_SAM_wgs84$schools_accSAM, n = 10, palette = "Blues")
+
+# Create the leaflet map with manual color assignments
+m <- leaflet() %>%
+  addProviderTiles(providers$CartoDB.Positron) %>%
+  
+  # Add hexagons with manually assigned colors
+  addPolygons(data = hexagon_SAM_wgs84, fillColor = hex_colors,
+              fillOpacity = 1, color = NA, weight = 0, smoothFactor = 0) %>%
+  
+  # Adjust schools' visualization as before
+  addCircleMarkers(data = schools_sf_wgs84, radius = 1, color = "red", fillColor = "red",
+                   fillOpacity = 1, popup = ~paste("<b>SCHOOL:</b>", SCHOOL, "<br><b>TYPE:</b>", TYPE)) %>%
+  
+  setView(lng = mean(st_coordinates(schools_sf_wgs84)[,1]), lat = mean(st_coordinates(schools_sf_wgs84)[,2]), zoom = 12)
+
+# Print the map
+m
 ```
