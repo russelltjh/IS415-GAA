@@ -369,7 +369,7 @@ tm_shape(schools_sf) +
   tm_symbols(size = 0.1) +
   tm_layout(main.title = "Accessibility to Schools: Hansen method",
             main.title.position = "center",
-            main.title.size = 2,
+            main.title.size = 1.5,
             legend.outside = FALSE,
             legend.height = 0.45, 
             legend.width = 3.0,
@@ -396,7 +396,7 @@ tm_shape(MRT_sf) +
   tm_symbols(size = 0.1) +
   tm_layout(main.title = "Accessibility to MRTs: Hansen method",
             main.title.position = "center",
-            main.title.size = 2,
+            main.title.size = 1.5,
             legend.outside = FALSE,
             legend.height = 0.45, 
             legend.width = 3.0,
@@ -423,7 +423,7 @@ tm_shape(mall_sf) +
   tm_symbols(size = 0.1) +
   tm_layout(main.title = "Accessibility to Malls: Hansen method",
             main.title.position = "center",
-            main.title.size = 2,
+            main.title.size = 1.5,
             legend.outside = FALSE,
             legend.height = 0.45, 
             legend.width = 3.0,
@@ -450,7 +450,7 @@ tm_shape(supermarket_sf) +
   tm_symbols(size = 0.1) +
   tm_layout(main.title = "Accessibility to Supermarkets: Hansen method",
             main.title.position = "center",
-            main.title.size = 2,
+            main.title.size = 1.5,
             legend.outside = FALSE,
             legend.height = 0.45, 
             legend.width = 3.0,
@@ -477,7 +477,7 @@ tm_shape(hawker_sf) +
   tm_symbols(size = 0.1) +
   tm_layout(main.title = "Accessibility to Hawkers: Hansen method",
             main.title.position = "center",
-            main.title.size = 2,
+            main.title.size = 1.5,
             legend.outside = FALSE,
             legend.height = 0.45, 
             legend.width = 3.0,
@@ -608,7 +608,7 @@ tm_shape(schools_sf) +
   tm_symbols(size = 0.1) +
   tm_layout(main.title = "Accessibility to Schools: KD2SFCA method",
             main.title.position = "center",
-            main.title.size = 2,
+            main.title.size = 1.5,
             legend.outside = FALSE,
             legend.height = 0.45, 
             legend.width = 3.0,
@@ -636,7 +636,7 @@ tm_shape(MRT_sf) +
   tm_symbols(size = 0.1) +
   tm_layout(main.title = "Accessibility to MRT: KD2SFCA method",
             main.title.position = "center",
-            main.title.size = 2,
+            main.title.size = 1.5,
             legend.outside = FALSE,
             legend.height = 0.45, 
             legend.width = 3.0,
@@ -664,7 +664,7 @@ tm_shape(mall_sf) +
   tm_symbols(size = 0.1) +
   tm_layout(main.title = "Accessibility to Malls: KD2SFCA method",
             main.title.position = "center",
-            main.title.size = 2,
+            main.title.size = 1.5,
             legend.outside = FALSE,
             legend.height = 0.45, 
             legend.width = 3.0,
@@ -692,7 +692,7 @@ tm_shape(supermarket_sf) +
   tm_symbols(size = 0.1) +
   tm_layout(main.title = "Accessibility to Supermarkets: KD2SFCA method",
             main.title.position = "center",
-            main.title.size = 2,
+            main.title.size = 1.5,
             legend.outside = FALSE,
             legend.height = 0.45, 
             legend.width = 3.0,
@@ -720,7 +720,7 @@ tm_shape(hawker_sf) +
   tm_symbols(size = 0.1) +
   tm_layout(main.title = "Accessibility to Hawkers: KD2SFCA method",
             main.title.position = "center",
-            main.title.size = 2,
+            main.title.size = 1.5,
             legend.outside = FALSE,
             legend.height = 0.45, 
             legend.width = 3.0,
@@ -825,7 +825,7 @@ tm_shape(schools_sf) +
   tm_symbols(size = 0.1) +
   tm_layout(main.title = "Accessibility to Schools: SAM method",
             main.title.position = "center",
-            main.title.size = 2,
+            main.title.size = 1.5,
             legend.outside = FALSE,
             legend.height = 0.45, 
             legend.width = 3.0,
@@ -853,7 +853,7 @@ tm_shape(MRT_sf) +
   tm_symbols(size = 0.1) +
   tm_layout(main.title = "Accessibility to MRTs: SAM method",
             main.title.position = "center",
-            main.title.size = 2,
+            main.title.size = 1.5,
             legend.outside = FALSE,
             legend.height = 0.45, 
             legend.width = 3.0,
@@ -881,7 +881,7 @@ tm_shape(mall_sf) +
   tm_symbols(size = 0.1) +
   tm_layout(main.title = "Accessibility to Malls: SAM method",
             main.title.position = "center",
-            main.title.size = 2,
+            main.title.size = 1.5,
             legend.outside = FALSE,
             legend.height = 0.45, 
             legend.width = 3.0,
@@ -909,7 +909,7 @@ tm_shape(supermarket_sf) +
   tm_symbols(size = 0.1) +
   tm_layout(main.title = "Accessibility to Supermarkets: SAM method",
             main.title.position = "center",
-            main.title.size = 2,
+            main.title.size = 1.5,
             legend.outside = FALSE,
             legend.height = 0.45, 
             legend.width = 3.0,
@@ -937,7 +937,7 @@ tm_shape(hawker_sf) +
   tm_symbols(size = 0.1) +
   tm_layout(main.title = "Accessibility to Hawkers: SAM method",
             main.title.position = "center",
-            main.title.size = 2,
+            main.title.size = 1.5,
             legend.outside = FALSE,
             legend.height = 0.45, 
             legend.width = 3.0,
@@ -1004,3 +1004,18 @@ m <- leaflet() %>%
 # Print the map
 m
 ```
+
+```{r}
+saveRDS(hexagon_Hansen, "data/rds/hexagon_Hansen.rds")
+saveRDS(hexagon_KD2SFCA, "data/rds/hexagon_KD2SFCA.rds")
+saveRDS(hexagon_SAM, "data/rds/hexagon_SAM.rds")
+
+saveRDS(schools_sf, "data/rds/schools_sf.rds")
+saveRDS(MRT_sf, "data/rds/MRT_sf.rds")
+saveRDS(mall_sf, "data/rds/mall_sf.rds")
+saveRDS(supermarket_sf, "data/rds/supermarket_sf.rds")
+saveRDS(hawker_sf, "data/rds/hawker_sf.rds")
+
+saveRDS(mapex, "data/rds/mapex.rds")
+```
+

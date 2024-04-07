@@ -1,0 +1,74 @@
+---
+title: "Flow Data"
+subtitle: "In-Class Exercise 11"
+execute:
+  eval: true
+  echo: true
+  freeze: true
+  warning: False  # This turns off warning messages being displayed
+date: 1 April, 2024
+date-modified: "last-modified"
+---
+
+# 1 Overview
+
+# 2 Getting Started
+
+We need to install the new version of spflow directly from github as the normal loading process will use an older version.
+
+```{r}
+#| eval: false
+install.packages('devtools')
+```
+
+```{r}
+#| eval: false
+devtools::install_github("LukeCe/spflow")
+```
+
+```{r}
+pacman::p_load(tmap, sf, spdep, sp, Matrix, spflow, reshape2, knitr, tidyverse)
+```
+
+# 3 Data
+
+```{r}
+mpsz_nb <- read_rds("data/rds/mpsz_nb.rds")
+mpsz_flow <- read_rds("data/rds/mpsz_flow.rds")
+mpsz_var <- read_rds("data/rds/mpsz_var.rds")
+```
+
+# 4 Working with Geospatial Data
+
+```{r}
+mpsz_net <- spflow_network(
+  id_net = "sg",
+  node_neighborhood = nb2mat(mpsz_nb$by_contiguity),
+  node_data = mpsz_var,
+  node_key_column = "SZ_CODE"
+)
+
+mpsz_net
+```
+
+```{r}
+mpsz_net_pairs <- spflow_network_pair(
+  id_orig_net = "sg",
+  id_dest_net = "sg",
+  pair_data = mpsz_flow,
+  orig_key_column = "ORIGIN_SZ",
+  dest_key_column = "DESTIN_SZ"
+)
+
+mpsz_net_pairs
+```
+
+```{r}
+mpsz_multi_net <- spflow_network_multi(mpsz_net,
+                                       mpsz_net_pairs)
+mpsz_multi_net
+```
+
+```{r}
+
+```
